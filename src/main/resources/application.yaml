@@ -1,0 +1,13 @@
+# For configuration property names that use quotes, do not split the string inside the quotes
+quarkus:
+  log:
+    category:
+      "io.quarkus.category":
+        level: INFO
+  http:
+    port: 8081
+mqtt:
+  broker:
+    url: tcp://192.168.1.1:1883
+    config: src/test/resources/example-config01.yaml
+

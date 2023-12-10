@@ -1,0 +1,13 @@
+{
+  "place": "outdoor",
+  "value": "12.1",
+  "taupunkt": "7.4",
+  "humidity": "73",
+  "solar": "11.22",
+  "uv_index": "0",
+  "wind_speed": "1.7",
+  "wind_direction": "257",
+  "rain_day_mm": "0.0",
+  "raining": "0.0",
+  "rain_rate_per_hour": "0.0"
+}

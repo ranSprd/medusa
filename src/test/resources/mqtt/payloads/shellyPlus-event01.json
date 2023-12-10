@@ -1,0 +1,15 @@
+{
+  "src": "shellyplus1-4855199c5cf4",
+  "dst": "shellyplus1-4855199c5cf4/events",
+  "method": "NotifyStatus",
+  "params": {
+    "ts": 1699201956.70,
+    "switch:0": {
+      "id": 0,
+      "output": true,
+      "source": "http",
+      "timer_duration": 30.00,
+      "timer_started_at": 1699201956.70
+    }
+  }
+}

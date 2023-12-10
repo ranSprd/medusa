@@ -1,0 +1,20 @@
+{
+  "src": "shellyplus2pm-b48a0a22aafc",
+  "dst": "shellyplus2pm-b48a0a22aafc/events",
+  "method": "NotifyStatus",
+  "params": {
+    "ts": 1699196520.04,
+    "cover:0": {
+      "id": 0,
+      "aenergy": {
+        "by_minute": [
+          0.000,
+          0.000,
+          0.000
+        ],
+        "minute_ts": 1699196519,
+        "total": 34.745
+      }
+    }
+  }
+}

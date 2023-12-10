@@ -1,0 +1,65 @@
+{
+  "wifi_sta": {
+    "connected": true,
+    "ssid": "Bumblebee",
+    "ip": "192.168.2.203",
+    "rssi": -56
+  },
+  "cloud": {
+    "enabled": true,
+    "connected": true
+  },
+  "mqtt": {
+    "connected": true
+  },
+  "time": "17:32",
+  "unixtime": 1699201959,
+  "serial": 456,
+  "has_update": true,
+  "mac": "8CF681A53E44",
+  "cfg_changed_cnt": 0,
+  "actions_stats": {
+    "skipped": 0
+  },
+  "sleep_time": 0,
+  "lux": {
+    "value": 0,
+    "illumination": "dark",
+    "is_valid": true
+  },
+  "tmp": {
+    "value": 25.0,
+    "units": "C",
+    "is_valid": true
+  },
+  "sensor": {
+    "vibration": false,
+    "motion": true,
+    "timestamp": 1699201959,
+    "active": true,
+    "is_valid": true
+  },
+  "bat": {
+    "value": 99,
+    "voltage": 3.850
+  },
+  "charger": false,
+  "update": {
+    "status": "unknown",
+    "has_update": true,
+    "new_version": "20231009-064331/v2.2.1@1e8f2795",
+    "old_version": "20230929-074305/v2.2.0@3699b77a",
+    "beta_version": null
+  },
+  "ram_total": 97280,
+  "ram_free": 21800,
+  "fs_size": 65536,
+  "fs_free": 59360,
+  "uptime": 424894,
+  "fw_info": {
+    "device": "shellymotion2-8CF681A53E44",
+    "fw": "20230929-074305/v2.2.0@3699b77a"
+  },
+  "ps_mode": 0,
+  "dbg_flags": 0
+}
