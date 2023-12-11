@@ -14,7 +14,7 @@ public enum MetricsRepo {
     
     // @todo
     // replace the hashmap and replace by a sorted list
-    private Map<String, PrometheusGauge> data = new HashMap<>();
+    private final Map<String, PrometheusGauge> data = new HashMap<>();
     
     public void add(PrometheusGauge gauge) {
         if (gauge != null) {

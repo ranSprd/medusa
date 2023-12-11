@@ -5,7 +5,7 @@ import io.quarkus.runtime.StartupEvent;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
 import java.util.UUID;
-import net.kiar.collectorr.config.ConfigLoader;
+import net.kiar.collectorr.config.MappingsConfigLoader;
 import net.kiar.collectorr.config.RuntimeData;
 import net.kiar.collectorr.mqtt.consumer.MqttMessageConsumer;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -55,7 +55,7 @@ public class MQTTObserver {
         log.info("TopicSubscriber initializing...");
 
 //        ConfigLoader conf = ConfigLoader.readFromFile("src/test/resources/example-config01.yaml");
-        ConfigLoader conf = ConfigLoader.readFromFile(configFileName);
+        MappingsConfigLoader conf = MappingsConfigLoader.readFromFile(configFileName);
         RuntimeData.config = conf;
         log.info("file [{}] with mqtt procssing config read, found {} configured topics", configFileName, conf.getNumberOfTopics());
 
@@ -74,7 +74,6 @@ public class MQTTObserver {
 //            final String subTopic = "shellies/+/info";
             final String subTopic = "#";
 //            final String subTopic = "\\#";
-//shellyplus1-4855199c5cf4/events/rpc
 
 
             // Callback - Anonymous inner-class for receiving messages

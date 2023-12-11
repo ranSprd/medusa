@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
-import net.kiar.collectorr.config.ConfigLoader;
+import net.kiar.collectorr.config.MappingsConfigLoader;
 import net.kiar.collectorr.metrics.PrometheusGauge;
 import net.kiar.collectorr.mqtt.mapping.TopicMatcher;
 import net.kiar.collectorr.mqtt.mapping.TopicProcessor;
@@ -25,10 +25,10 @@ public class MqttMessageConsumer implements MqttCallback {
 
     private static final Logger log = LoggerFactory.getLogger(MqttMessageConsumer.class);
 
-    private final ConfigLoader watchingConfig;
+    private final MappingsConfigLoader watchingConfig;
     private final TopicMatcher topicMatcher;
 
-    public MqttMessageConsumer(ConfigLoader watchingConfig) {
+    public MqttMessageConsumer(MappingsConfigLoader watchingConfig) {
         this.watchingConfig = watchingConfig;
         this.topicMatcher = TopicMatcher.getMatcherFor( watchingConfig.getTopicsToObserve());
     }

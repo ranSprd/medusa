@@ -1,6 +1,6 @@
-# data-collectorr
+# Medusa
 
-Data-collectorr is a mapper for prometheus metrics. Currently it can handle mqtt
+Medusa is a mapper for prometheus metrics. Currently it can handle mqtt
 messages and convert they in a prometheus compatible metric format.
 
 ## Features
@@ -31,11 +31,21 @@ are available:
 
 ### How to start
 
-From command line 
+Medusa is shipped with a docker configuration. The easiest way is to build and 
+start with docker. Build the image with:
+
+    docker build -f src/main/docker/Dockerfile.jvm -t quarkus/medusa-jvm .
+
+Then run the container using:
+
+    docker run -i --rm -p 8081:8081 quarkus/medusa-jvm
+
+#### Quick start configuration
 
 
 
 ## configuration
+
 
 
 

@@ -18,19 +18,19 @@ import org.slf4j.LoggerFactory;
  *
  * @author ranSprd
  */
-public class ConfigLoader {
-    private static final org.slf4j.Logger log = LoggerFactory.getLogger(ConfigLoader.class);
+public class MappingsConfigLoader {
+    private static final org.slf4j.Logger log = LoggerFactory.getLogger(MappingsConfigLoader.class);
     
     private static final MappingConfiguration EMPTY = new MappingConfiguration();
     
     private final MappingConfiguration config;
 
-    private ConfigLoader(MappingConfiguration config) {
+    private MappingsConfigLoader(MappingConfiguration config) {
         this.config = config;
     }
     
     
-    public static ConfigLoader readFromFile(String configFileName) {
+    public static MappingsConfigLoader readFromFile(String configFileName) {
         try {
             log.info("read topic mappings from {}", configFileName);
             String content = Files.readString( Path.of(configFileName));
@@ -38,10 +38,10 @@ public class ConfigLoader {
         } catch (Exception e) {
             log.error("loading given config {} failed!", configFileName, e);
         }
-        return new ConfigLoader(EMPTY);
+        return new MappingsConfigLoader(EMPTY);
     }
     
-    public static ConfigLoader readContent(String content) {
+    public static MappingsConfigLoader readContent(String content) {
         MappingConfiguration cc = EMPTY;
         try {
             ObjectMapper mapper = new ObjectMapper(new YAMLFactory()); 
@@ -52,10 +52,10 @@ public class ConfigLoader {
         } catch (Exception e) {
             log.error("can not parse given payload", e);
         }
-        return new ConfigLoader(cc);
+        return new MappingsConfigLoader(cc);
     }
     
-    public static String toYAML(ConfigLoader loader) {
+    public static String toYAML(MappingsConfigLoader loader) {
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory()
                 .disable(Feature.WRITE_DOC_START_MARKER)
         );

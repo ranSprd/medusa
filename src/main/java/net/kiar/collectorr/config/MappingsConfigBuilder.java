@@ -9,16 +9,16 @@ import net.kiar.collectorr.config.model.TopicConfig;
  *
  * @author ranSprd
  */
-public class ConfigBuilder {
+public class MappingsConfigBuilder {
     
     
     private final MappingConfiguration mappingConf = new MappingConfiguration();
     
-    public static ConfigBuilder name(String name) {
+    public static MappingsConfigBuilder name(String name) {
         BaseConfig bc = new BaseConfig();
         bc.setName(name);
         
-        ConfigBuilder configBuilder = new ConfigBuilder();
+        MappingsConfigBuilder configBuilder = new MappingsConfigBuilder();
         configBuilder.mappingConf.setGeneric( bc);
         
         return configBuilder;

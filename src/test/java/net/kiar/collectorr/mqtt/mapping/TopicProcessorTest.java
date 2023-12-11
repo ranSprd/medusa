@@ -1,7 +1,7 @@
 package net.kiar.collectorr.mqtt.mapping;
 
 import java.util.List;
-import net.kiar.collectorr.config.ConfigLoader;
+import net.kiar.collectorr.config.MappingsConfigLoader;
 import net.kiar.collectorr.config.model.TopicConfig;
 import net.kiar.collectorr.metrics.FieldDescription;
 import net.kiar.collectorr.metrics.MetricDefinition;
@@ -81,7 +81,7 @@ topics:
     @Test
     public void testMetricWithLabels() {
         String topicPath = "topic/heizung/ESP8266-1074379";
-        ConfigLoader conf = ConfigLoader.readContent( configContentForTest3);
+        MappingsConfigLoader conf = MappingsConfigLoader.readContent( configContentForTest3);
         
         TopicConfig topicToTest = conf.findTopic("topic/to/test").get();
         

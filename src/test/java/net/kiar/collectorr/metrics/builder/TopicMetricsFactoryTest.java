@@ -1,7 +1,7 @@
 package net.kiar.collectorr.metrics.builder;
 
 import java.util.List;
-import net.kiar.collectorr.config.ConfigLoader;
+import net.kiar.collectorr.config.MappingsConfigLoader;
 import net.kiar.collectorr.config.model.TopicConfig;
 import net.kiar.collectorr.metrics.FieldType;
 import net.kiar.collectorr.metrics.MetricDefinition;
@@ -33,7 +33,7 @@ topics:
     @Test
     public void testMetricFromConfig() {
         String topicPath = "topic/to/test";
-        ConfigLoader conf = ConfigLoader.readContent( configContentForTest1);
+        MappingsConfigLoader conf = MappingsConfigLoader.readContent( configContentForTest1);
         
         TopicConfig topicToTest = conf.findTopic(topicPath).get();
         List<MetricDefinition> metrics = TopicMetricsFactory.INSTANCE.buildMetric(null, topicPath, topicToTest);
@@ -80,7 +80,7 @@ topics:
     // Labels sind nicht in der config definiert - 
     public void testMetricFromBoolean() {
         String topicPath = "topic/to/test";
-        ConfigLoader conf = ConfigLoader.readContent( configContentForTest1);
+        MappingsConfigLoader conf = MappingsConfigLoader.readContent( configContentForTest1);
         
         TopicConfig topicToTest = conf.findTopic(topicPath).get();
 //        TopicConfig topicToTest = new TopicConfig();
@@ -111,7 +111,7 @@ topics:
     @Test
     public void testLabelsFromTopicConfiguration() {
         String topicPath = "topic/to/test";
-        ConfigLoader conf = ConfigLoader.readContent( configContentForTest3);
+        MappingsConfigLoader conf = MappingsConfigLoader.readContent( configContentForTest3);
         
         TopicConfig topicToTest = conf.findTopic(topicPath).get();
         
@@ -143,7 +143,7 @@ topics:
     @Test
     public void testMultipleLabelsConfiguration() {
         String topicPath = "topic/to/test";
-        ConfigLoader conf = ConfigLoader.readContent( configContentForTest4);
+        MappingsConfigLoader conf = MappingsConfigLoader.readContent( configContentForTest4);
         
         TopicConfig topicToTest = conf.findTopic(topicPath).get();
         

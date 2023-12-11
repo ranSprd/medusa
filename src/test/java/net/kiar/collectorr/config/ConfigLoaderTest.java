@@ -18,7 +18,7 @@ public class ConfigLoaderTest {
     @Test
     public void testLoading() throws FileNotFoundException {
 
-        ConfigLoader conf = ConfigLoader.readFromFile("src/test/resources/example-config01.yaml");
+        MappingsConfigLoader conf = MappingsConfigLoader.readFromFile("src/test/resources/example-config01.yaml");
         
         assertNotNull(conf);
         
@@ -38,7 +38,7 @@ public class ConfigLoaderTest {
     
     
     public void testReading() {
-        ConfigLoader conf = ConfigLoader.readContent("""
+        MappingsConfigLoader conf = MappingsConfigLoader.readContent("""
 topics:
 - topic: topic/to/test
   pattern: 
@@ -73,7 +73,7 @@ topics:
     
     @Test
     public void testLabelMappingReading() {
-        ConfigLoader conf = ConfigLoader.readContent("""
+        MappingsConfigLoader conf = MappingsConfigLoader.readContent("""
 topics:
 - topic: topic/to/test
   mappings:

@@ -6,5 +6,5 @@ package net.kiar.collectorr.config;
  */
 public class RuntimeData {
 
-    public static ConfigLoader config;
+    public static MappingsConfigLoader config;
 }
