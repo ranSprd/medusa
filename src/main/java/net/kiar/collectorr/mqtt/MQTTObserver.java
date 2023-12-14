@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author ranSprd
  */
+@Deprecated
 @ApplicationScoped
 public class MQTTObserver {
     private static final Logger log = LoggerFactory.getLogger(MQTTObserver.class);
@@ -33,8 +34,8 @@ public class MQTTObserver {
     private MqttClient mqttClient = null;
 
     public void onStart(@Observes StartupEvent ev) {
-        log.info("The application is starting...");
-        run();
+//        log.info("The application is starting...");
+//        run();
     }
     
     public void onStop(@Observes ShutdownEvent ev) {               
@@ -56,7 +57,8 @@ public class MQTTObserver {
 
 //        ConfigLoader conf = ConfigLoader.readFromFile("src/test/resources/example-config01.yaml");
         MappingsConfigLoader conf = MappingsConfigLoader.readFromFile(configFileName);
-        RuntimeData.config = conf;
+        RuntimeData.registerConfig("main", conf);
+        
         log.info("file [{}] with mqtt procssing config read, found {} configured topics", configFileName, conf.getNumberOfTopics());
 
         try {

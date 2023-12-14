@@ -31,12 +31,14 @@ public class MappingsConfigLoader {
     
     
     public static MappingsConfigLoader readFromFile(String configFileName) {
-        try {
-            log.info("read topic mappings from {}", configFileName);
-            String content = Files.readString( Path.of(configFileName));
-            return readContent(content);
-        } catch (Exception e) {
-            log.error("loading given config {} failed!", configFileName, e);
+        if (configFileName != null && !configFileName.isBlank()) {
+            try {
+                log.info("read topic mappings from {}", configFileName);
+                String content = Files.readString( Path.of(configFileName));
+                return readContent(content);
+            } catch (Exception e) {
+                log.error("loading given config {} failed!", configFileName, e);
+            }
         }
         return new MappingsConfigLoader(EMPTY);
     }

@@ -1,8 +1,8 @@
 package net.kiar.collectorr.repository;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import net.kiar.collectorr.metrics.PrometheusGauge;
 import net.kiar.collectorr.payloads.PayloadResolver;
 import net.kiar.collectorr.payloads.json.JsonResolver;
@@ -13,7 +13,7 @@ import net.kiar.collectorr.payloads.json.JsonResolver;
  */
 public class MqttTopicStats {
     
-    private Map<String, UnknownTopicStatistic> unknownData = new HashMap<>();
+    private final Map<String, UnknownTopicStatistic> unknownData = new ConcurrentHashMap<>();
     
     public static MqttTopicStats getInstance() {
         return MqttTopicStatsHolder.INSTANCE;
@@ -31,7 +31,9 @@ public class MqttTopicStats {
      * @param payload 
      */
     public void registerUnknown(String topic, String payload) {
-        UnknownTopicStatistic stat = unknownData.computeIfAbsent(Integer.toHexString(topic.hashCode()), x -> new UnknownTopicStatistic(topic, payload));
+        UnknownTopicStatistic stat = unknownData.computeIfAbsent(
+                Integer.toHexString(topic.hashCode()), 
+                x -> new UnknownTopicStatistic(topic, payload));
         stat.incReceivedCount();
     }
 
@@ -69,9 +71,6 @@ public class MqttTopicStats {
         public String getTopic() {
             return topic;
         }
-
-        
-        
     }
     
     public static class UnknownTopicStatistic {

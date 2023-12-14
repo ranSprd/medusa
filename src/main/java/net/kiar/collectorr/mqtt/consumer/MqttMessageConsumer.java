@@ -1,6 +1,5 @@
 package net.kiar.collectorr.mqtt.consumer;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
@@ -34,28 +33,38 @@ public class MqttMessageConsumer implements MqttCallback {
     }
     
     
-
+    /**
+     * Called when a message arrives from the server that matches any subscription 
+     * made by the client.
+     * 
+     * @param topic
+     * @param message
+     * @throws Exception 
+     */
     @Override
     public void messageArrived(String topic, MqttMessage message) throws Exception {
-        // Called when a message arrives from the server that
-        // matches any subscription made by the client
-        Optional<TopicProcessor> processor = topicMatcher.find(topic);
-        String payload = new String(message.getPayload());
-        
-        if (processor.isPresent()) {
-            String time = new Timestamp(System.currentTimeMillis()).toString();
-            log.info("\nReceived a Message!"
-//                    + "\n\tTime:    " + time
-                    + "\n\tTopic:   " + topic
-                    + "\n\tMessage: " + payload
-//                    + "\n\tQoS:     " + message.getQos()
-                    + "\n");
-            List<PrometheusGauge> results = processor.get().consumeMessage(payload, topic);
-            MetricsRepo.INSTANCE.add( results);
-            MqttTopicStats.getInstance().registerProcessed(topic, results);
-                    
-        } else {
-            MqttTopicStats.getInstance().registerUnknown(topic, payload);
+        try {
+            Optional<TopicProcessor> processor = topicMatcher.find(topic);
+            String payload = new String(message.getPayload());
+
+            if (processor.isPresent()) {
+                String time = new Timestamp(System.currentTimeMillis()).toString();
+                log.info("\nReceived a Message!"
+    //                    + "\n\tTime:    " + time
+                        + "\n\tTopic:   " + topic
+                        + "\n\tMessage: " + payload
+    //                    + "\n\tQoS:     " + message.getQos()
+                        + "\n");
+                List<PrometheusGauge> results = processor.get().consumeMessage(payload, topic);
+                MetricsRepo.INSTANCE.add( results);
+                MqttTopicStats.getInstance().registerProcessed(topic, results);
+
+            } else {
+                MqttTopicStats.getInstance().registerUnknown(topic, payload);
+            }
+        } catch (Exception e) {
+            // collect metrics...
+            log.error("Processing of incoming message at topic [{}] failed", topic, e);
         }
     }
 
