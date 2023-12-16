@@ -4,17 +4,18 @@ import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
-import java.util.Map;
-import net.kiar.collectorr.repository.MqttTopicStats;
+import java.util.List;
+import net.kiar.collectorr.connector.ConnectorFactory;
+import net.kiar.collectorr.connector.ConnectorSummaryStatistics;
 
 
-@Path("/topics/unknown")
+@Path("/topics")
 public class UnknownResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Map<String, MqttTopicStats.UnknownTopicStatistic> deliver() {
-        return MqttTopicStats.getInstance().getUnknowTopicsStatistics();
+    public List<ConnectorSummaryStatistics> deliver() {
+        return ConnectorFactory.data.getConnectorsOverview();
     }
 
 }

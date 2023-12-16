@@ -1,4 +1,4 @@
-package net.kiar.collectorr.mqtt.mapping;
+package net.kiar.collectorr.connector.mqtt.mapping;
 
 import java.util.Optional;
 import java.util.regex.Pattern;

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.kiar.collectorr.mqtt.mapping;
+package net.kiar.collectorr.connector.mqtt.mapping;
 
 import java.util.List;
 import java.util.Optional;

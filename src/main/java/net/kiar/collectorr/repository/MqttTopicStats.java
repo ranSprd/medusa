@@ -15,14 +15,6 @@ public class MqttTopicStats {
     
     private final Map<String, UnknownTopicStatistic> unknownData = new ConcurrentHashMap<>();
     
-    public static MqttTopicStats getInstance() {
-        return MqttTopicStatsHolder.INSTANCE;
-    }
-    
-    private static class MqttTopicStatsHolder {
-        private static final MqttTopicStats INSTANCE = new MqttTopicStats();
-    }
-    
     /** 
      * 
      * a not configured topic arrived 

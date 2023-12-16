@@ -1,5 +1,6 @@
-package net.kiar.collectorr.mqtt.mapping;
+package net.kiar.collectorr.connector.mqtt.mapping;
 
+import net.kiar.collectorr.connector.mqtt.mapping.TopicProcessor;
 import java.util.List;
 import net.kiar.collectorr.config.MappingsConfigLoader;
 import net.kiar.collectorr.config.model.TopicConfig;

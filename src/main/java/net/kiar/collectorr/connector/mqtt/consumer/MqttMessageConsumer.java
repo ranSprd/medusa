@@ -1,12 +1,12 @@
-package net.kiar.collectorr.mqtt.consumer;
+package net.kiar.collectorr.connector.mqtt.consumer;
 
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 import net.kiar.collectorr.config.MappingsConfigLoader;
 import net.kiar.collectorr.metrics.PrometheusGauge;
-import net.kiar.collectorr.mqtt.mapping.TopicMatcher;
-import net.kiar.collectorr.mqtt.mapping.TopicProcessor;
+import net.kiar.collectorr.connector.mqtt.mapping.TopicMatcher;
+import net.kiar.collectorr.connector.mqtt.mapping.TopicProcessor;
 import net.kiar.collectorr.repository.MetricsRepo;
 import net.kiar.collectorr.repository.MqttTopicStats;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
@@ -24,14 +24,13 @@ public class MqttMessageConsumer implements MqttCallback {
 
     private static final Logger log = LoggerFactory.getLogger(MqttMessageConsumer.class);
 
-    private final MappingsConfigLoader watchingConfig;
     private final TopicMatcher topicMatcher;
+    private final MqttTopicStats stats;
 
-    public MqttMessageConsumer(MappingsConfigLoader watchingConfig) {
-        this.watchingConfig = watchingConfig;
+    public MqttMessageConsumer(MappingsConfigLoader watchingConfig, MqttTopicStats stats) {
         this.topicMatcher = TopicMatcher.getMatcherFor( watchingConfig.getTopicsToObserve());
+        this.stats = stats;
     }
-    
     
     /**
      * Called when a message arrives from the server that matches any subscription 
@@ -57,10 +56,10 @@ public class MqttMessageConsumer implements MqttCallback {
                         + "\n");
                 List<PrometheusGauge> results = processor.get().consumeMessage(payload, topic);
                 MetricsRepo.INSTANCE.add( results);
-                MqttTopicStats.getInstance().registerProcessed(topic, results);
+                stats.registerProcessed(topic, results);
 
             } else {
-                MqttTopicStats.getInstance().registerUnknown(topic, payload);
+                stats.registerUnknown(topic, payload);
             }
         } catch (Exception e) {
             // collect metrics...
@@ -76,6 +75,10 @@ public class MqttMessageConsumer implements MqttCallback {
     @Override
     public void deliveryComplete(IMqttDeliveryToken token) {
         log.info("complete");
+    }
+
+    public MqttTopicStats getStats() {
+        return stats;
     }
 
 }

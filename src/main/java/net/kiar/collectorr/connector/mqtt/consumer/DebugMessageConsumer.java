@@ -1,4 +1,4 @@
-package net.kiar.collectorr.mqtt.consumer;
+package net.kiar.collectorr.connector.mqtt.consumer;
 
 import java.sql.Timestamp;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
