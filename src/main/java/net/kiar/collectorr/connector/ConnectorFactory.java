@@ -162,7 +162,8 @@ public class ConnectorFactory {
                 }
 
                 // Callback - Anonymous inner-class for receiving messages
-                mqttClient.setCallback(new MqttMessageConsumer(mappingConf, new MqttTopicStats()));
+                consumer = new MqttMessageConsumer(mappingConf, new MqttTopicStats());
+                mqttClient.setCallback(consumer);
 
                 // Subscribe client to the topic filter and a QoS level of 0
                 log.info(" {} - Subscribing client to topic: {}", conncetorName, subTopic);
