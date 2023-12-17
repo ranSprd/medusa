@@ -46,6 +46,7 @@ Then run the container using:
 
 ## configuration
 
+- [Example Configuration for Victron Cerbo GX](documentation/victron_cerbo.md)
 - [Example Configuration for Zehnder ComfoAir Q350/450/600](documentation/zehnder_comfoair.md)
 
 
