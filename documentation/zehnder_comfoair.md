@@ -23,7 +23,7 @@ wheryby 192.168.2.228 is my internal IP adress. You should see messages like:
         Client null received PUBLISH (d0, q0, r1, m0, 'N/c0719ba04388/system/0/Serial', ... (25 bytes))
         {"value": "c0719ba04388"}
 
-The interesting part here is the internal *ID* 'c0719ba04388'. Because the brokes 
+The interesting part here is the internal *ID* 'c0719ba04388'. Because the broker 
 does not send the device data continuously but only on trigger request. 
 
 For receiving data you has to send a empty message to the topic 'R/{ID}/keepalive'
