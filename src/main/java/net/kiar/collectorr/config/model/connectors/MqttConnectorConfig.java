@@ -33,6 +33,8 @@ public class MqttConnectorConfig {
      * Optional: subscripe to the given topic. If empty the topic is set to #
      */
     private String rootTopic;
+    
+    private MqttHeartbeatConfig heartbeat;
 
     public String getName() {
         return name;
@@ -65,7 +67,13 @@ public class MqttConnectorConfig {
     public void setRootTopic(String rootTopic) {
         this.rootTopic = rootTopic;
     }
-    
 
+    public MqttHeartbeatConfig getHeartbeat() {
+        return heartbeat;
+    }
+
+    public void setHeartbeat(MqttHeartbeatConfig heartbeat) {
+        this.heartbeat = heartbeat;
+    }
     
 }
