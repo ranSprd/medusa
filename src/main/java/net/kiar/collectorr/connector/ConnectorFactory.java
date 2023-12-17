@@ -71,6 +71,19 @@ public class ConnectorFactory {
                     .map(entry -> entry.getStatsSnapshot())
                     .collect(Collectors.toList());
         }
+        
+        public Map<String, MqttTopicStats.UnknownTopicStatistic> getUnknownStatsForConnector(String connectorName) {
+            if (connectorName == null || connectorName.isBlank()) {
+                return Map.of();
+            }
+            
+            ConnectorHandler handler = map.get(connectorName);
+            if (handler == null) {
+                return Map.of();
+            }
+            
+            return handler.consumer.getStats().getUnknowTopicsStatistics();
+        }
     }
     
     

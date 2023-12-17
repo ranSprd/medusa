@@ -1,4 +1,4 @@
-package net.kiar.collectorr.endpoints.topics;
+package net.kiar.collectorr.endpoints.connectors;
 
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
@@ -9,8 +9,8 @@ import net.kiar.collectorr.connector.ConnectorFactory;
 import net.kiar.collectorr.connector.ConnectorSummaryStatistics;
 
 
-@Path("/topics")
-public class UnknownResource {
+@Path("/connectors")
+public class ConnectorsOverviewRessource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
