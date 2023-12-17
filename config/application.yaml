@@ -3,9 +3,9 @@ quarkus:
   log:
     category:
       "io.quarkus.category":
-        level: INFO
+        level: WARN
   http:
-    port: 8081
+    port: 8085
 connector:
   config:
     file: config/connectors.yaml
