@@ -6,6 +6,15 @@ quarkus:
         level: WARN
   http:
     port: 8085
+
+#
+# enable the internal scheduler which is used for heartbeats    
+#
+  scheduler:
+    start-mode: forced    
+#
+# configuration file of our connectors
+#
 connector:
   config:
     file: config/connectors.yaml

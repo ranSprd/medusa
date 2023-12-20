@@ -48,9 +48,7 @@ public class MqttMessageConsumer implements MqttCallback {
 
             if (processor.isPresent()) {
                 String time = new Timestamp(System.currentTimeMillis()).toString();
-                log.info("\nReceived a Message!"
-    //                    + "\n\tTime:    " + time
-                        + "\n\tTopic:   " + topic
+                log.info("\n\tTopic:   " + topic
                         + "\n\tMessage: " + payload
     //                    + "\n\tQoS:     " + message.getQos()
                         + "\n");
