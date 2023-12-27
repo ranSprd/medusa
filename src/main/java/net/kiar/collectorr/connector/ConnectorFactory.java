@@ -93,7 +93,7 @@ public class ConnectorFactory {
         
         private String conncetorName;
         
-        private MqttConnectorConfig mqttConnectorConfig;
+        private final MqttConnectorConfig mqttConnectorConfig;
         private MappingsConfigLoader mappingConf;
 
         private MqttClient mqttClient;
@@ -163,6 +163,7 @@ public class ConnectorFactory {
                         "MQTT_Prometheus_Mapper_" + conncetorName +"_"+ UUID.randomUUID().toString().substring(0, 8), null);
                 MqttConnectOptions connOpts = new MqttConnectOptions();
                 connOpts.setCleanSession(true);
+                connOpts.setAutomaticReconnect(true);
 
                 // Connect the client
                 log.info("{} - Connecting to MQTT Broker at {}", conncetorName, mqttHost);
