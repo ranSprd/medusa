@@ -5,8 +5,6 @@ generic:
 topics: 
 - topic: "/home/heizung/buderus-123456/heatSources/actualCHPower"
 - topic: topic/to/test
-  pattern: 
-    path : /home/{ort}/{deviceId}/
   mappings:
   - source: deviceId
     target: deviceName
@@ -17,8 +15,7 @@ topics:
   - name:
     valueField: x
 
-- topic: /home/heizung/buderus-123456/system/sensors/temperatures/outdoor_t1
-  pattern: /home/{ort}/{device}/
+- topic: /home/{ort}/buderus-{device}/system/sensors/temperatures/outdoor_t1
 - topic: /home/heizung/victron-12345/N/c0619ab40398/grid/30/Ac/L1/Current
 - topic: /home/heizung/victron-12345/N/c0619ab40398/grid/30/Ac/L2/Current
 

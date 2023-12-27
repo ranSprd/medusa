@@ -42,9 +42,16 @@ Then run the container using:
 
 #### Quick start configuration
 
+## MQTT configuration
 
+    # /home/kitchen/ESP8266-1076281
+    - topic: /home/{place}/ESP8266-{deviceId}
+      metrics:
+      - valueField: freeheap
+        labels: [place, deviceId]
+        name: devices_free_heap
 
-## configuration
+## configuration examples 
 
 - [Example Configuration for Victron Cerbo GX](documentation/victron_cerbo.md)
 - [Example Configuration for Zehnder ComfoAir Q350/450/600](documentation/zehnder_comfoair.md)

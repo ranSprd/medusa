@@ -8,11 +8,8 @@ import java.util.List;
  */
 public class TopicConfig {
     
-    /** The path or topic name, it can contain wildcards  */
+    /** The path or topic name, it can contain wildcards and placeholders for fields  */
     private String topic;
-    
-    /** the topic can splitted into different parts */
-    private TopicConfigPattern pattern;
     
     /** value mappings of labels. This allows adding new labels, 
      * e.g. a human readable name based on a sensor-id */
@@ -40,14 +37,6 @@ public class TopicConfig {
 
     public void setTopic(String topic) {
         this.topic = topic;
-    }
-
-    public TopicConfigPattern getPattern() {
-        return pattern;
-    }
-
-    public void setPattern(TopicConfigPattern pattern) {
-        this.pattern = pattern;
     }
 
     public List<TopicConfigMappings> getMappings() {
