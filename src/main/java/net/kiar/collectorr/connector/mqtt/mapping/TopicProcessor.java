@@ -26,12 +26,14 @@ public class TopicProcessor {
     private static final Logger log = LoggerFactory.getLogger(TopicProcessor.class);
 
     private final TopicConfig topicConfig;
+    private final TopicStructure topicStructure;
     private final List<MetricDefinition> definedMetrics = new ArrayList<>();
     
     private boolean invalid = false;
 
-    public TopicProcessor(TopicConfig topicConfig) {
+    public TopicProcessor(TopicConfig topicConfig, TopicStructure topicStructure) {
         this.topicConfig = topicConfig;
+        this.topicStructure = topicStructure;
     }
 
     /**
@@ -45,9 +47,6 @@ public class TopicProcessor {
     public List<PrometheusGauge> consumeMessage(String messagePayload, String topic) {
         PayloadResolver payloadResolver = JsonResolver.consume(messagePayload);
 
-//        log.info("found {} values [{}]", payloadResolver.getValueNodes().size(), payloadResolver.getValueNamesAsString());
-//        log.info("found {} labels [{}]", payloadResolver.getLabelNodes().size(), payloadResolver.getLabelNamesAsString());
-        
         if (invalid) {
             log.debug("topic is marked as invalid, skip processing");
             return List.of();
@@ -55,7 +54,7 @@ public class TopicProcessor {
         
         if (definedMetrics.isEmpty()) {
             definedMetrics.addAll(
-                TopicMetricsFactory.INSTANCE.buildMetric(payloadResolver, topic, topicConfig)
+                TopicMetricsFactory.INSTANCE.buildMetric(payloadResolver, topic, topicConfig, topicStructure)
             );
             if (definedMetrics.isEmpty()) {
                 invalid = true;

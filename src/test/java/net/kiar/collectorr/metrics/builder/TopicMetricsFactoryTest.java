@@ -3,6 +3,7 @@ package net.kiar.collectorr.metrics.builder;
 import java.util.List;
 import net.kiar.collectorr.config.MappingsConfigLoader;
 import net.kiar.collectorr.config.model.TopicConfig;
+import net.kiar.collectorr.connector.mqtt.mapping.TopicStructure;
 import net.kiar.collectorr.metrics.FieldType;
 import net.kiar.collectorr.metrics.MetricDefinition;
 import net.kiar.collectorr.payloads.PayloadResolver;
@@ -35,8 +36,8 @@ topics:
         String topicPath = "topic/to/test";
         MappingsConfigLoader conf = MappingsConfigLoader.readContent( configContentForTest1);
         
-        TopicConfig topicToTest = conf.findTopic(topicPath).get();
-        List<MetricDefinition> metrics = TopicMetricsFactory.INSTANCE.buildMetric(null, topicPath, topicToTest);
+        TopicConfig testConfig = conf.findTopic(topicPath).get();
+        List<MetricDefinition> metrics = TopicMetricsFactory.INSTANCE.buildMetric(null, topicPath, testConfig, TopicStructure.build("/home/{ort}/{device}/"));
         
         assertNotNull(metrics);
         assertEquals(2, metrics.size());
@@ -61,7 +62,7 @@ topics:
         
         PayloadResolver payloadResolver = JsonResolver.consume(jsonPayload);
         
-        List<MetricDefinition> metrics = TopicMetricsFactory.INSTANCE.buildMetric(payloadResolver, topicPath, topicToTest);
+        List<MetricDefinition> metrics = TopicMetricsFactory.INSTANCE.buildMetric(payloadResolver, topicPath, topicToTest, TopicStructure.build(topicPath));
         
         assertEquals(1, metrics.size());
         assertTrue( metrics.get(0).getName().endsWith("temp"));
@@ -91,7 +92,7 @@ topics:
         
         PayloadResolver payloadResolver = JsonResolver.consume(jsonPayload);
         
-        List<MetricDefinition> metrics = TopicMetricsFactory.INSTANCE.buildMetric(payloadResolver, topicPath, topicToTest);
+        List<MetricDefinition> metrics = TopicMetricsFactory.INSTANCE.buildMetric(payloadResolver, topicPath, topicToTest, TopicStructure.build(topicPath));
         
         assertEquals(1, metrics.size());
         assertTrue( metrics.get(0).getName().endsWith("temp"));
@@ -115,7 +116,7 @@ topics:
         
         TopicConfig topicToTest = conf.findTopic(topicPath).get();
         
-        List<MetricDefinition> metrics = TopicMetricsFactory.INSTANCE.buildMetric(null, topicPath, topicToTest);
+        List<MetricDefinition> metrics = TopicMetricsFactory.INSTANCE.buildMetric(null, topicPath, topicToTest, TopicStructure.build("topic/{label-1}/{label-2}"));
         
         assertNotNull(metrics);
         assertEquals(1, metrics.size());
@@ -147,7 +148,7 @@ topics:
         
         TopicConfig topicToTest = conf.findTopic(topicPath).get();
         
-        List<MetricDefinition> metrics = TopicMetricsFactory.INSTANCE.buildMetric(null, topicPath, topicToTest);
+        List<MetricDefinition> metrics = TopicMetricsFactory.INSTANCE.buildMetric(null, topicPath, topicToTest, TopicStructure.build("topic/{label-1}/{label-2}"));
         
         assertNotNull(metrics);
         assertEquals(1, metrics.size());

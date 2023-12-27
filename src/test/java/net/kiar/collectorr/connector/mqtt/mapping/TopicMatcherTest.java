@@ -16,7 +16,6 @@
 
 package net.kiar.collectorr.connector.mqtt.mapping;
 
-import net.kiar.collectorr.connector.mqtt.mapping.TopicMatcher;
 import java.util.List;
 import net.kiar.collectorr.config.model.TopicConfig;
 import static org.junit.jupiter.api.Assertions.assertFalse;

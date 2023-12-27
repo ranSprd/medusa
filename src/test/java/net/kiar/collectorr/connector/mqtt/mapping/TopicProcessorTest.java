@@ -22,7 +22,7 @@ public class TopicProcessorTest {
         long startTime = System.currentTimeMillis();
         
         TopicConfig topicConfig = new TopicConfig();
-        TopicProcessor p = new TopicProcessor(topicConfig);
+        TopicProcessor p = new TopicProcessor(topicConfig, TopicStructure.build("#"));
         
         List<PrometheusGauge> result = p.consumeMessage("{ \"temp\" : 12.0, \"unit\" : \"celcius\" }", "sensors/room1/a5226");
         assertNotNull(result);
@@ -50,7 +50,7 @@ public class TopicProcessorTest {
     @Test
     public void testTwoMetricsExpected() {
         TopicConfig topicConfig = new TopicConfig();
-        TopicProcessor p = new TopicProcessor(topicConfig);
+        TopicProcessor p = new TopicProcessor(topicConfig, TopicStructure.build("#"));
         
         List<PrometheusGauge> result = p.consumeMessage(" { \"freeheap\" : 45488, \"cpuSpeed\" : 80}", "/home/heizung/ESP8266-1074379");
         
@@ -70,9 +70,7 @@ public class TopicProcessorTest {
  
     private final String configContentForTest3 = """
 topics:
-- topic: topic/to/test
-  pattern:
-      path: topic/{label-1}/{label-2}
+- topic: topic/{label-1}/{label-2}
   metrics:
   - name: testMetric
     valueField: freeheap
@@ -84,11 +82,10 @@ topics:
         String topicPath = "topic/heizung/ESP8266-1074379";
         MappingsConfigLoader conf = MappingsConfigLoader.readContent( configContentForTest3);
         
-        TopicConfig topicToTest = conf.findTopic("topic/to/test").get();
+        TopicConfig topicToTest = conf.getTopicsToObserve().get(0);
+        TopicCache topicCache = TopicCache.buildPattern(topicToTest).get();
         
-        TopicProcessor p = new TopicProcessor(topicToTest);
-        
-        List<PrometheusGauge> result = p.consumeMessage(" { \"freeheap\" : 45488, \"foo\" : \"label-3-content\" }", topicPath);
+        List<PrometheusGauge> result = topicCache.getTopicProcessor().consumeMessage(" { \"freeheap\" : 45488, \"foo\" : \"label-3-content\" }", topicPath);
         
         assertEquals(1, result.size());
         

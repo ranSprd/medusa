@@ -1,6 +1,5 @@
 package net.kiar.collectorr.connector.mqtt.consumer;
 
-import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 import net.kiar.collectorr.config.MappingsConfigLoader;
@@ -47,7 +46,7 @@ public class MqttMessageConsumer implements MqttCallback {
             String payload = new String(message.getPayload());
 
             if (processor.isPresent()) {
-                String time = new Timestamp(System.currentTimeMillis()).toString();
+//                String time = new Timestamp(System.currentTimeMillis()).toString();
                 log.info("\n\tTopic:   " + topic
                         + "\n\tMessage: " + payload
     //                    + "\n\tQoS:     " + message.getQos()

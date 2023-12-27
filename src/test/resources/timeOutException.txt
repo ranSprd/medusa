@@ -1,0 +1,27 @@
+2023-12-23 03:43:00,006 SEVERE [org.ecl.pah.cli.mqt.int.ClientState] (MQTT Ping: MQTT_Prometheus_Mapper_victron_358698d3) MQTT_Prometheus_Mapper_victron_358698d3: Timed out as no activity, keepAlive=60,000 lastOutboundActivity=1,703,302,980,002 lastInboundActivity=1,703,302,857,517 time=1,703,302,980,003 lastPing=1,703,302,920,003
+
+2023-12-23 03:43:00,014 WARN  [net.kia.col.con.ConnectorFactory] (executor-thread-1)  victron - sending heartbeat failed
+
+2023-12-23 03:43:00,015 WARN  [net.kia.col.con.ConnectorFactory] (executor-thread-5)  victron - sending heartbeat failed
+
+2023-12-23 03:43:00,014 WARN  [net.kia.col.con.ConnectorFactory] (executor-thread-3)  victron - sending heartbeat failed
+
+2023-12-23 03:43:00,015 WARN  [net.kia.col.con.ConnectorFactory] (executor-thread-4)  victron - sending heartbeat failed
+
+2023-12-23 03:43:00,015 WARN  [net.kia.col.con.ConnectorFactory] (executor-thread-6)  victron - sending heartbeat failed
+
+2023-12-23 03:43:00,015 WARN  [net.kia.col.con.mqt.con.MqttMessageConsumer] (MQTT Ping: MQTT_Prometheus_Mapper_victron_358698d3) Connection to MQTT broker lost! Timed out waiting for a response from the server: Timed out waiting for a response from the server (32000)
+
+	at org.eclipse.paho.client.mqttv3.internal.ExceptionHelper.createMqttException(ExceptionHelper.java:31)
+
+	at org.eclipse.paho.client.mqttv3.internal.ClientState.checkForActivity(ClientState.java:661)
+
+	at org.eclipse.paho.client.mqttv3.internal.ClientComms.checkForActivity(ClientComms.java:732)
+
+	at org.eclipse.paho.client.mqttv3.internal.ClientComms.checkForActivity(ClientComms.java:718)
+
+	at org.eclipse.paho.client.mqttv3.TimerPingSender$PingTask.run(TimerPingSender.java:77)
+
+	at java.base/java.util.TimerThread.mainLoop(Timer.java:566)
+
+	at java.base/java.util.TimerThread.run(Timer.java:516)

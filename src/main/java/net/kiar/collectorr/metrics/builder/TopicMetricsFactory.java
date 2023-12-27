@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import net.kiar.collectorr.config.model.TopicConfig;
 import net.kiar.collectorr.config.model.TopicConfigMappings;
 import net.kiar.collectorr.config.model.TopicConfigMetric;
+import net.kiar.collectorr.connector.mqtt.mapping.TopicStructure;
 import net.kiar.collectorr.metrics.FieldDescription;
 import net.kiar.collectorr.metrics.FieldType;
 import net.kiar.collectorr.metrics.MetricDefinition;
@@ -28,9 +29,10 @@ public enum TopicMetricsFactory {
     
     private static final Logger log = LoggerFactory.getLogger(TopicMetricsFactory.class);
     
-    public List<MetricDefinition> buildMetric(PayloadResolver payloadResolver, String topic, TopicConfig topicConfig) {
+    public List<MetricDefinition> buildMetric(PayloadResolver payloadResolver, String topic, TopicConfig topicConfig, TopicStructure topicStructure) {
         MetricNameBuilder nameBuilder = new MetricNameBuilder(topic);
-        Map<String, FieldDescription> topicLabels = TopicPatternResolver.extractFieldsFromPattern(topicConfig.getPattern());
+        Map<String, FieldDescription> topicLabels = topicStructure.getFieldDescriptions();
+                //TopicFieldResolver.extractFieldsFromPattern(topicConfig.getPattern());
         
         // start AUTOMATIC construction of metrics based on the given nodes
         if (topicConfig.hasNoMetrics()) {
@@ -101,7 +103,7 @@ public enum TopicMetricsFactory {
         return builder.get();
     }
 
-    private void addAutoLabels(Map<String, FieldDescription>  topicLabels, MetricDefinitionBuilder builder, PayloadResolver payloadResolver) {
+    private void addAutoLabels(Map<String, FieldDescription> topicLabels, MetricDefinitionBuilder builder, PayloadResolver payloadResolver) {
         topicLabels.values().stream()
                 .forEach(labelNode -> builder.topicLabel(labelNode));
         if (payloadResolver != null) {
