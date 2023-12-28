@@ -23,11 +23,14 @@ configure your running prometheus to read all metrics from there.
 The default port of the appilcation is 8081. After startup the following resources
 are available:
 
-- prometheus endpoint with collected metrics http://localhost:8081/metrics
-- a list of received but nit processed metrics http://localhost:8081/topics/unknown
-- Quarkus application start page http://localhost:8081/
+- prometheus endpoint with collected metrics http://localhost:8085/metrics
+- a list of received but not processed metrics http://localhost:8085/topics/unprocessed
+  for each entry you see the received count (means, how often a message came in) and a
+  possible list of values and labels. The values are important, because these are good
+  candidates for metric values.
+- Quarkus application start page http://localhost:8085/
 - Quarkus application devloper page 
-- Swagger UI http://localhost:8081/q/swagger-ui/
+- Swagger UI http://localhost:8085/q/swagger-ui/
 
 ### How to start
 
@@ -42,7 +45,27 @@ Then run the container using:
 
 #### Quick start configuration
 
+Medusa can handle several data sources and transform the received data into metric compatible
+formats. To define a new mqtt data sources, add a new connector entry in section **mqtt-brokers**
+of 'config/connectors.yaml' file
+
+        mqtt-brokers:
+        - name: central
+          url: tcp://192.168.1.2:1883
+          mapping-file: config/topic-mappings.yaml
+
+This creates a new connector named *central* connected to a local mqtt broker. 
+The *central* connector subsripes to all mqtt topics but, as now, no metrics are read from the
+messages. You can find all detected/received topics under the *unprocessed endpoint* (see above).
+
+
+
 ## MQTT configuration
+
+
+
+Metrics are only collected if the topic is defined in mapping file. The mapping 
+file is  set in 
 
     # /home/kitchen/ESP8266-1076281
     - topic: /home/{place}/ESP8266-{deviceId}
