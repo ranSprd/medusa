@@ -80,6 +80,29 @@ file is  set in
 - [Example Configuration for Zehnder ComfoAir Q350/450/600](documentation/zehnder_comfoair.md)
 
 
+### use placeholders in metric names
 
+For some cases it is useful to use placeholders in your configurations. For instance if you have many topics like
+
+    N/c0678ab49344/system/+/Ac/L1
+    N/c0678ab49344/system/+/Ac/L2
+    N/c0678ab49344/system/+/Ac/L3
+
+Instead of define 3 mappings you can use a placeholder
+
+    - topic: N/c0678ab49344/system/+/Ac/{phase}
+      metrics:
+      - valueField: value
+        name: "{phase}_data"
+
+In this case we use a reference to to label *phase* in topic. Another option is to use the
+index of the topic segment. For instance '#5' for our case.
+
+    - topic: N/c0678ab49344/system/+/Ac/{phase}
+      metrics:
+      - valueField: value
+        name: "{#5}_data"
+
+This will produce the same metrics.
 
 ### mapping configuration
