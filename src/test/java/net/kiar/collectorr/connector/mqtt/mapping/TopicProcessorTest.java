@@ -1,6 +1,5 @@
 package net.kiar.collectorr.connector.mqtt.mapping;
 
-import net.kiar.collectorr.connector.mqtt.mapping.TopicProcessor;
 import java.util.List;
 import net.kiar.collectorr.config.MappingsConfigLoader;
 import net.kiar.collectorr.config.model.TopicConfig;
@@ -57,9 +56,9 @@ public class TopicProcessorTest {
         assertEquals(2, result.size());
         
         for(PrometheusGauge g : result) {
-            if (g.getMetricDefinition().getName().endsWith("cpuSpeed")) {
+            if (g.getMetricDefinition().getName().getProcessed().endsWith("cpuSpeed")) {
                 assertEquals(80, g.getValue(), 0.01);
-            } else if (g.getMetricDefinition().getName().endsWith("freeheap")) {
+            } else if (g.getMetricDefinition().getName().getProcessed().endsWith("freeheap")) {
                 assertEquals(45488, g.getValue(), 0.01);
             } else {
                 assertTrue(false, "unexpected case");

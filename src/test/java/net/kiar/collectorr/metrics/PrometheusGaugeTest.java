@@ -1,7 +1,6 @@
 package net.kiar.collectorr.metrics;
 
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
@@ -13,7 +12,7 @@ public class PrometheusGaugeTest {
     @Test
     public void testInvalid() {
         MetricDefinition def = MetricDefinitionBuilder.metricForField("value")
-                .name("exampleMetric")
+                .name( new PlaceholderString("exampleMetric"))
                 .label("label1")
                 .get();
         

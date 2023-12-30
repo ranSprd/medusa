@@ -10,13 +10,13 @@ import java.util.Optional;
  */
 public class MetricDefinition {
 
-    private String name;
+    private PlaceholderString name;
     private String description = "";
  
     private FieldDescription fieldOfValue;
     private final List<FieldDescription> labelNames = new ArrayList<>();
 
-    public MetricDefinition(String name) {
+    public MetricDefinition(PlaceholderString name) {
         this.name = name;
     }
     
@@ -42,7 +42,7 @@ public class MetricDefinition {
     }
     
     public void registerTopicLabel(int indexInTopic, String labelName) {
-        labelNames.add( FieldDescription.topicField(indexInTopic, name));
+        labelNames.add( FieldDescription.topicField(indexInTopic, labelName));
     }
 
     public List<FieldDescription> getLabels() {
@@ -67,11 +67,11 @@ public class MetricDefinition {
         return fieldName;
     }
 
-    public String getName() {
+    public PlaceholderString getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(PlaceholderString name) {
         this.name = name;
     }
 

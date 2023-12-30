@@ -18,6 +18,7 @@ public interface PayloadResolver {
     public String getValueNamesAsString();
     public Optional<PayloadDataNode> findValueNode(String nodeName);
 
+    public Optional<PayloadDataNode> findNode(String nodeName);
     
     /**
      * all nodes classified as label (normally textual and boolean data)

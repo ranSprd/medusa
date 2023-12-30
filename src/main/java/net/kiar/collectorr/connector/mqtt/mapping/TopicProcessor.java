@@ -13,7 +13,6 @@ import net.kiar.collectorr.metrics.builder.TopicMetricsFactory;
 import net.kiar.collectorr.payloads.PayloadDataNode;
 import net.kiar.collectorr.payloads.PayloadResolver;
 import net.kiar.collectorr.payloads.json.JsonResolver;
-import net.kiar.collectorr.payloads.json.TopicPathResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,6 +67,14 @@ public class TopicProcessor {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Enrich given metric with data (value & labels).
+     * 
+     * @param metric
+     * @param topic
+     * @param payloadResolver
+     * @return 
+     */
     private PrometheusGauge createValueEntryForMetric(MetricDefinition metric, String topic, PayloadResolver payloadResolver) {
         if (!metric.isValid()) {
             return null;
@@ -82,16 +89,12 @@ public class TopicProcessor {
         gauge.setValue( valueField.get().value());
         gauge.updateMillisTimestamp();
         
+        DataProvider dataProvider = new DataProvider(payloadResolver, topic, topicStructure);
         if (metric.hasLabels()) {
-            TopicPathResolver topicResolver = new TopicPathResolver(topic);
             List<FieldDescription.FieldMappingValue> foundMappings = new ArrayList<>();
             for(FieldDescription field : metric.getLabels()) {
                 
-                Optional<PayloadDataNode> input = Optional.empty();
-                switch (field.getType()) {
-                    case PAYLOAD -> input = payloadResolver.findLabelNode(field);
-                    case TOPIC -> input = topicResolver.findLabelNode(field);
-                }
+                Optional<PayloadDataNode> input = dataProvider.getData(field);
                 if (input.isPresent()) {
                     String fieldValue = input.get().value();
                     gauge.addValueForLabel(field.getName(), fieldValue);
@@ -105,6 +108,14 @@ public class TopicProcessor {
             for(FieldDescription.FieldMappingValue targetMapping : foundMappings) {
                 gauge.overwriteValueForLabel(targetMapping.targetFieldName(), targetMapping.targetValue());
             }
+            
+            // last step: processing of name and description, because both can contain placeholders
+            List<String> placeholders = metric.getName().getPlaceholderNames().stream()
+                    .map( placeholderName -> dataProvider.resolve(placeholderName, ""))
+                    .collect(Collectors.toList());
+            
+            gauge.setName( metric.getName().getProcessed(placeholders));
+//            gauge.processName();
         }
         
         gauge.buildSignature();

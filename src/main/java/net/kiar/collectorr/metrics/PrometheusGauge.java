@@ -17,6 +17,8 @@ public class PrometheusGauge {
     
     private double value;
     private long millisTimestamp;
+    
+    private String name;
         
     private final List<LabelValue> labels = new ArrayList<>();
     
@@ -43,6 +45,15 @@ public class PrometheusGauge {
     public void setValue(double value) {
         this.value = value;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+    
     
     /**
      * set the value
@@ -127,7 +138,7 @@ public class PrometheusGauge {
     
     public void buildSignature() {
         StringBuilder b = new StringBuilder();
-        b.append(metricDefinition.getName());
+        b.append(name);
         for(LabelValue lv : labels) {
             b.append(lv.getKey()).append(lv.getValue());
         }
@@ -136,9 +147,9 @@ public class PrometheusGauge {
     
     public String toMetricString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("# HELP ").append(metricDefinition.getName()).append(" ").append(metricDefinition.getDescription()).append('\n');
-        builder.append("# TYPE ").append(metricDefinition.getName()).append(" gauge\n");
-        builder.append(metricDefinition.getName());
+        builder.append("# HELP ").append(name).append(" ").append(metricDefinition.getDescription()).append('\n');
+        builder.append("# TYPE ").append(name).append(" gauge\n");
+        builder.append(name);
         if (!labels.isEmpty()) {
             builder.append("{");
             boolean addComma = false;

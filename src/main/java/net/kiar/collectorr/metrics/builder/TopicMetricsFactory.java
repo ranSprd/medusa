@@ -14,6 +14,7 @@ import net.kiar.collectorr.metrics.FieldDescription;
 import net.kiar.collectorr.metrics.FieldType;
 import net.kiar.collectorr.metrics.MetricDefinition;
 import net.kiar.collectorr.metrics.MetricDefinitionBuilder;
+import net.kiar.collectorr.metrics.PlaceholderString;
 import net.kiar.collectorr.payloads.PayloadResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +33,6 @@ public enum TopicMetricsFactory {
     public List<MetricDefinition> buildMetric(PayloadResolver payloadResolver, String topic, TopicConfig topicConfig, TopicStructure topicStructure) {
         MetricNameBuilder nameBuilder = new MetricNameBuilder(topic);
         Map<String, FieldDescription> topicLabels = topicStructure.getFieldDescriptions();
-                //TopicFieldResolver.extractFieldsFromPattern(topicConfig.getPattern());
         
         // start AUTOMATIC construction of metrics based on the given nodes
         if (topicConfig.hasNoMetrics()) {
@@ -47,7 +47,7 @@ public enum TopicMetricsFactory {
 
             if (configuredMetric.hasConfiguredLabels()) {
                 configuredMetric.getLabels().stream()
-                        .map(raw -> toFieldDescription(raw, topicLabels))
+                        .map(labelName -> toFieldDescription(labelName, topicLabels))
                         .forEach(fieldDesc -> builder.insertLabel(fieldDesc));
             } else {
                 // put all known labels from topic, because other labels are not present
@@ -149,19 +149,21 @@ public enum TopicMetricsFactory {
             }
         }
         
-        public String getNameFromField(String fieldName) {
+        public PlaceholderString getNameFromField(String fieldName) {
             return getName(null, fieldName);
         }
         
-        public String getName(String preferedName, String fieldName) {
+        public PlaceholderString getName(String preferedName, String fieldName) {
             if (preferedName == null || preferedName.isBlank()) {
                 if (fieldName == null || fieldName.isBlank()) {
-                    return namePrefix +"_" +UUID.randomUUID().toString();
+                    return new PlaceholderString(namePrefix +"_" +UUID.randomUUID().toString());
                 }
-                return namePrefix +"_" +fieldName;
+                return new PlaceholderString(namePrefix +"_" +fieldName);
             }
-            return preferedName;
+            return new PlaceholderString(preferedName);
         }
+        
+        
     }
     
 }

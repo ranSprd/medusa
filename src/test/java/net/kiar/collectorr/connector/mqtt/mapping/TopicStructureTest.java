@@ -46,20 +46,20 @@ public class TopicStructureTest {
         assertNotNull(result);
         assertEquals(4, result.getNumberOfSegments());
         
-        TopicStructure.TopicSegment segment1 = result.getSegement(0);
+        TopicStructure.TopicSegment segment1 = result.getSegment(0);
         assertNotNull(segment1);
         assertEquals("first", segment1.getSegmentPattern());
 
-        TopicStructure.TopicSegment segment2 = result.getSegement(1);
+        TopicStructure.TopicSegment segment2 = result.getSegment(1);
         assertNotNull(segment2);
         assertEquals("sec[^/]\\+" , segment2.getSegmentPattern());
         assertEquals("Field1", segment2.getFieldName());
 
-        TopicStructure.TopicSegment segment3 = result.getSegement(2);
+        TopicStructure.TopicSegment segment3 = result.getSegment(2);
         assertNotNull(segment3);
         assertEquals("other", segment3.getSegmentPattern());
 
-        TopicStructure.TopicSegment segment4 = result.getSegement(3);
+        TopicStructure.TopicSegment segment4 = result.getSegment(3);
         assertNotNull(segment4);
         assertEquals("[^/]\\+", segment4.getSegmentPattern());
         assertEquals("field2", segment4.getFieldName());
@@ -127,6 +127,14 @@ public class TopicStructureTest {
         Map<String, FieldDescription> fields = TopicStructure.build("{field-1}{ignored-2}").getFieldDescriptions();
         assertEquals(1, fields.size());
         assertTrue(fields.containsKey("field-1"));
+    }
+    
+    @Test
+    public void testFieldName() {
+        TopicStructure struct = TopicStructure.build("a/b/c/{field-x}/");
+        assertEquals( "#0", struct.getFieldNameOfSegment(0, true));
+        assertEquals( "#7", struct.getFieldNameOfSegment(7, true));
+        assertEquals( "field-x", struct.getFieldNameOfSegment(3, true));
     }
     
 }

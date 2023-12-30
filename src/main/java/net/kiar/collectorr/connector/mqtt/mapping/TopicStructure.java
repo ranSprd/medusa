@@ -85,10 +85,17 @@ public class TopicStructure {
         return segments.size();
     }
 
-    public TopicSegment getSegement(int index) {
-        return segments.get(index);
+    public TopicSegment getSegment(int index) {
+        if (index < segments.size()) {
+            return segments.get(index);
+        }
+        return null;
     }
 
+    /**
+     * The topic with wildcards (for pattern matching) but without field definitions
+     * @return 
+     */
     public String getTopicPatternStr() {
         return topicPatternStr;
     }
@@ -97,6 +104,25 @@ public class TopicStructure {
         return segments;
     }
     
+    /**
+     * 
+     * @param segmentIndex
+     * @param createEmptyFieldNames if true and there is no fieldName (null or blank)
+     * the a fieldname in form of '#segment-Index' is created
+     * @return 
+     */
+    public String getFieldNameOfSegment(int segmentIndex, boolean createEmptyFieldNames) {
+        String result = null;
+        if (segmentIndex < segments.size()) {
+            result = segments.get(segmentIndex).getFieldName();
+        } 
+        
+        if ((result == null || result.isBlank()) && createEmptyFieldNames) {
+            result = "#" +segmentIndex;
+        }
+        
+        return result;
+    }
 
     /**
      * Generate a map with all fields found in topic pattern

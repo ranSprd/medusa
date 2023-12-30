@@ -21,12 +21,12 @@ public class MetricDefinitionBuilder {
     private final MetricDefinition metric;
     
     private MetricDefinitionBuilder(String valueName) {
-        metric = new MetricDefinition("metric_" +valueName);
+        metric = new MetricDefinition( new PlaceholderString("metric_" +valueName));
         metric.setFieldOfValue(valueName);
     }
     
-    public MetricDefinitionBuilder name(String metricName) {
-        metric.setName(metricName);
+    public MetricDefinitionBuilder name(PlaceholderString metricName) {
+        metric.setName( metricName);
         return this;
     }
     

@@ -20,9 +20,6 @@ public class TopicMetricsFactoryTest {
     private final String configContentForTest1 = """
 topics:
 - topic: topic/to/test
-  pattern: 
-    path : /home/{ort}/{device}/
-    name: buderus
   metrics:
   - name: testMetric
     valueField: abc
@@ -43,7 +40,7 @@ topics:
         assertEquals(2, metrics.size());
         
         MetricDefinition testMetric = metrics.stream()
-                .filter(def -> "testMetric".equals(def.getName()))
+                .filter(def -> "testMetric".equals(def.getName().getProcessed()))
                 .findAny()
                 .get();
         
@@ -65,7 +62,7 @@ topics:
         List<MetricDefinition> metrics = TopicMetricsFactory.INSTANCE.buildMetric(payloadResolver, topicPath, topicToTest, TopicStructure.build(topicPath));
         
         assertEquals(1, metrics.size());
-        assertTrue( metrics.get(0).getName().endsWith("temp"));
+        assertTrue( metrics.get(0).getName().getProcessed().endsWith("temp"));
     }
     
     
@@ -95,15 +92,13 @@ topics:
         List<MetricDefinition> metrics = TopicMetricsFactory.INSTANCE.buildMetric(payloadResolver, topicPath, topicToTest, TopicStructure.build(topicPath));
         
         assertEquals(1, metrics.size());
-        assertTrue( metrics.get(0).getName().endsWith("temp"));
+        assertTrue( metrics.get(0).getName().getProcessed().endsWith("temp"));
     }
     
     
     private final String configContentForTest3 = """
 topics:
 - topic: topic/to/test
-  pattern:
-      path: topic/{label-1}/{label-2}
   metrics:
   - name: testMetric
     valueField: outdoor
@@ -134,8 +129,6 @@ topics:
     private final String configContentForTest4 = """
 topics:
 - topic: topic/to/test
-  pattern:
-      path: topic/{label-1}/{label-2}
   metrics:
   - name: testMetric
     valueField: outdoor

@@ -66,6 +66,7 @@ public class JsonResolver implements PayloadResolver {
                 .findAny();
     }
     
+    @Override
     public Optional<PayloadDataNode> findNode(String nodeName) {
         if (nodeName == null) {
             return Optional.empty();
