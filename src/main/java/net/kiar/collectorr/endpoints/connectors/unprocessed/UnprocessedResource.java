@@ -24,7 +24,7 @@ public class UnprocessedResource {
         if (result != null) {
             return result.entrySet().stream()
                     .map(entry -> new UnprocessedStatisticsDTO(entry.getKey(), entry.getValue()))
-                    .sorted( (o1, o2) -> Integer.compare(o1.stats.getReceivedCount(), o2.stats.getReceivedCount()))
+                    .sorted( (o1, o2) -> Integer.compare(o2.stats.getReceivedCount(), o1.stats.getReceivedCount())) // sort descending
                     .collect(Collectors.toList());
         } else {
             return List.of();
@@ -33,14 +33,29 @@ public class UnprocessedResource {
     
     
     public static class UnprocessedStatisticsDTO {
-        String id;
-        MqttTopicStats.UnknownTopicStatistic stats;
+        private String id;
+        private MqttTopicStats.UnknownTopicStatistic stats;
 
         public UnprocessedStatisticsDTO(String id, MqttTopicStats.UnknownTopicStatistic stats) {
             this.id = id;
             this.stats = stats;
         }
-        
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public MqttTopicStats.UnknownTopicStatistic getStats() {
+            return stats;
+        }
+
+        public void setStats(MqttTopicStats.UnknownTopicStatistic stats) {
+            this.stats = stats;
+        }
         
     }
     
