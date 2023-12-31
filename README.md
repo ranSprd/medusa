@@ -20,7 +20,7 @@ configure your running prometheus to read all metrics from there.
 
 ### endpoints
 
-The default port of the appilcation is 8081. After startup the following resources
+The default port of the appilcation is 8085. After startup the following resources
 are available:
 
 - prometheus endpoint with collected metrics http://localhost:8085/metrics
@@ -41,7 +41,7 @@ start with docker. Build the image with:
 
 Then run the container using:
 
-    docker run -i --rm -p 8081:8081 quarkus/medusa-jvm
+    docker run -i --rm -p 8085:8085 quarkus/medusa-jvm
 
 #### Quick start configuration
 
@@ -64,8 +64,11 @@ messages. You can find all detected/received topics under the *unprocessed endpo
 
 
 
-Metrics are only collected if the topic is defined in mapping file. The mapping 
-file is  set in 
+Metrics are only collected if the topic is defined in mapping file. This file is
+defined as *mapping-file* in *config/connectors.yaml*
+
+Here is a short example of a mapping for a topic. It contains placeholder and therefor it 
+can handle several topics.
 
     # /home/kitchen/ESP8266-1076281
     - topic: /home/{place}/ESP8266-{deviceId}
@@ -73,6 +76,12 @@ file is  set in
       - valueField: freeheap
         labels: [place, deviceId]
         name: devices_free_heap
+
+In short all topics of the following format are catched */home/+/ESP-8266-+*
+If the payload contains a field *feeheap* with a valid numeric value, a metric is 
+generated. It can be found as *devices_free_heap* (name) and can be picked up by prometheus under 
+the default metrics endpoint. Furthermore the metric is enriched with the labels *place* and *deviceId*. 
+Both fields are part of the topic path.
 
 ## configuration examples 
 
@@ -88,15 +97,15 @@ For some cases it is useful to use placeholders in your configurations. For inst
     N/c0678ab49344/system/+/Ac/L2
     N/c0678ab49344/system/+/Ac/L3
 
-Instead of define 3 mappings you can use a placeholder
+Instead of define 3 mappings you can use a placeholder in your metric name
 
     - topic: N/c0678ab49344/system/+/Ac/{phase}
       metrics:
       - valueField: value
         name: "{phase}_data"
 
-In this case we use a reference to to label *phase* in topic. Another option is to use the
-index of the topic segment. For instance '#5' for our case.
+In this case we use a reference to to label *phase* which comes from our topic. 
+Another option is to use the index of the topic segment. For instance '#5' for our case.
 
     - topic: N/c0678ab49344/system/+/Ac/{phase}
       metrics:
@@ -107,7 +116,8 @@ This will produce the same metrics.
 
 ### partial data 
 
-Some payloads can contain mixed data. For instance, my weather station from ecowitt delivers something like
+Some payloads can contain mixed data in a single field. For instance, my weather station from ecowitt 
+delivers something like:
 
     {
       "id": "0x19",
@@ -119,9 +129,9 @@ Some payloads can contain mixed data. For instance, my weather station from ecow
     },
 
 Here the *val* field contains the numeric data for my metric and a unit part. To solve this problem, 
-a label and a value definition can contain field, name and index (of whitespace separated array)
+a label and a value definition can contain *field*, *name* and *index* (of whitespace separated array)
 
-means a definition like
+means a definition in our mapping configuration like
 
     'val|unit#1' 
 

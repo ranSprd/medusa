@@ -62,4 +62,24 @@ processing of the messages into metrics in a mapping file (here *config/cerbo-ma
             topic: R/c0719ba04388/keepalive
             message: ""
 
+A short mapping file (*config/cerbo-mappings.yaml*) can look like:
+
+    topics: 
+    
+    # N/c0719ba04388/system/0/Ac/PvOnGrid/L1/Power 
+    - topic: N/c0719ba04388/system/+/Ac/{sourceType}/{phase}/{type}
+      metrics:
+      - valueField: value
+        labels: [sourceType, type, value]
+        name: "{phase}_power"
+
+In a system with 3 line conductors (L1, L2, L3) you will see multiple metrics named
+
+- L1_power
+- L2_power
+- L3_power
+
+
+
+
 
