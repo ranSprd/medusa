@@ -105,4 +105,49 @@ index of the topic segment. For instance '#5' for our case.
 
 This will produce the same metrics.
 
+### partial data 
+
+Some payloads can contain mixed data. For instance, my weather station from ecowitt delivers something like
+
+    {
+      "id": "0x19",
+      "val": "5.6 m/s"
+    },
+    {
+      "id": "0x15",
+      "val": "26.61 W/m2"
+    },
+
+Here the *val* field contains the numeric data for my metric and a unit part. To solve this problem, 
+a label and a value definition can contain field, name and index (of whitespace separated array)
+
+means a definition like
+
+    'val|unit#1' 
+
+or
+
+    'val#1|unit'
+
+is interpreted as: use the field *val*, splitt its content by whitespace and take the
+2nd entry as value. The name should be *unit*. 
+
+For the example above a full definition whould be
+
+    topics:
+    - topic: topic/wheater
+      metrics:
+      - valueField: val#0
+        labels: [val|unit#1]
+
+The input
+
+    {
+      "id": "0x15",
+      "val": "26.61 W/m2"
+    }
+
+will produce a metric with value 26.61 and a label unit=W/m2.
+
+
 ### mapping configuration

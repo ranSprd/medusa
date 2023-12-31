@@ -16,7 +16,7 @@ public interface PayloadResolver {
      */
     public List<PayloadDataNode> getValueNodes();
     public String getValueNamesAsString();
-    public Optional<PayloadDataNode> findValueNode(String nodeName);
+    public Optional<PayloadDataNode> findValueNode(FieldDescription fieldDesc);
 
     public Optional<PayloadDataNode> findNode(String nodeName);
     

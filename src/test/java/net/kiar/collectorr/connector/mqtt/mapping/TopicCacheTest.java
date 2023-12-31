@@ -31,7 +31,7 @@ public class TopicCacheTest {
         TopicConfig tc = new TopicConfig();
         tc.setTopic("foo/+/bar");
         
-        Optional<TopicCache> topicCache = TopicCache.buildPattern(tc);
+        Optional<TopicCache> topicCache = TopicCache.buildTopicPattern(tc);
         assertTrue(topicCache.isPresent());
         
         boolean result = topicCache.get().isMatch("foo/blub/bar");

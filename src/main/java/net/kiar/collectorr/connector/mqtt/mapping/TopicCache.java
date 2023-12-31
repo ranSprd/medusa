@@ -18,7 +18,13 @@ public class TopicCache {
         this.topicProcessor = topicProcessor;
     }
     
-    public static Optional<TopicCache> buildPattern(TopicConfig topicConfig) {
+    /**
+     * parse and prepare topic definitions 
+     * 
+     * @param topicConfig
+     * @return 
+     */
+    public static Optional<TopicCache> buildTopicPattern(TopicConfig topicConfig) {
 
         TopicStructure ts = TopicStructure.build(topicConfig.getTopic());
         Pattern pattern = Pattern.compile(ts.getTopicPatternStr());

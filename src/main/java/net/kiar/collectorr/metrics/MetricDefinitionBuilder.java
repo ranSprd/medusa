@@ -18,6 +18,23 @@ public class MetricDefinitionBuilder {
         return new MetricDefinitionBuilder(fieldNameOfMetricValue);
     }
     
+    /**
+     * Builder for a value field which is defined through the given string.
+     * @param fieldDescriptor something like 'value#2'
+     * @return 
+     */
+    public static MetricDefinitionBuilder metricFromFieldDescriptor(String fieldDescriptor) {
+        Optional<FieldDescription> fieldDescription = FieldDescription.parseFieldDescriptor(fieldDescriptor);
+        if (fieldDescription.isPresent()) {
+            MetricDefinitionBuilder result = new MetricDefinitionBuilder(fieldDescription.get().getFieldName());
+            result.metric.setFieldOfValue(fieldDescription.get());
+            return result;
+        }
+        return new MetricDefinitionBuilder("value");
+    }
+    
+    
+    
     private final MetricDefinition metric;
     
     private MetricDefinitionBuilder(String valueName) {
@@ -59,6 +76,7 @@ public class MetricDefinitionBuilder {
     public MetricDefinitionBuilder noDescription() {
         return this;
     }
+    
     public MetricDefinitionBuilder description(String description) {
         metric.setDescription(description);
         return this;

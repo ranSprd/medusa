@@ -82,7 +82,7 @@ topics:
         MappingsConfigLoader conf = MappingsConfigLoader.readContent( configContentForTest3);
         
         TopicConfig topicToTest = conf.getTopicsToObserve().get(0);
-        TopicCache topicCache = TopicCache.buildPattern(topicToTest).get();
+        TopicCache topicCache = TopicCache.buildTopicPattern(topicToTest).get();
         
         List<PrometheusGauge> result = topicCache.getTopicProcessor().consumeMessage(" { \"freeheap\" : 45488, \"foo\" : \"label-3-content\" }", topicPath);
         
@@ -94,6 +94,32 @@ topics:
         assertEquals("heizung", gauge.getLabelValue("label-1"));
         assertEquals("ESP8266-1074379", gauge.getLabelValue("label-2"));
         assertEquals("label-3-content", gauge.getLabelValue("label-3"));
+    }
+    
+    
+    private final String configContentForTest4 = """
+topics:
+- topic: topic/wheater
+  metrics:
+  - valueField: val#0
+    labels: [val|unit#1]
+                                                 """;
+    @Test
+    public void testSplittedFields() {
+        String topicPath = "topic/wheater";
+        MappingsConfigLoader conf = MappingsConfigLoader.readContent( configContentForTest4);
+        
+        TopicConfig topicToTest = conf.getTopicsToObserve().get(0);
+        TopicCache topicCache = TopicCache.buildTopicPattern(topicToTest).get();
+        
+        List<PrometheusGauge> result = topicCache.getTopicProcessor().consumeMessage("{\"id\": \"0x13\",\"val\": \"350.1 mm\",\"battery\": \"0\"}", topicPath);
+        
+        assertEquals(1, result.size());
+        
+        PrometheusGauge gauge = result.get(0);
+        assertEquals(1, gauge.getNumberOfLabels(), "one label (unit) for metric is expected");
+        assertEquals("mm", gauge.getLabelValue("unit"));
+        assertEquals(350.1, gauge.getValue());
     }
     
 }

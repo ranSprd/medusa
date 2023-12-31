@@ -66,6 +66,16 @@ public class JsonResolver implements PayloadResolver {
                 .findAny();
     }
     
+    public Optional<PayloadDataNode> findNode(FieldDescription nodeDesc) {
+        Optional<PayloadDataNode> node = findNode(nodeDesc.getFieldName());
+        if (node.isPresent() && nodeDesc.getFieldIndex() >= 0) {
+            // create a new Payloadnode which contains only a part of the full payload
+            return Optional.of( new PayloadDataNode( nodeDesc.getFieldName(), 
+                                                    extractPart(node.get().value(), nodeDesc.getFieldIndex())));
+        }
+        return node;
+    }
+    
     @Override
     public Optional<PayloadDataNode> findNode(String nodeName) {
         if (nodeName == null) {
@@ -109,9 +119,10 @@ public class JsonResolver implements PayloadResolver {
     }
     
     @Override
-    public Optional<PayloadDataNode> findValueNode(String nodeName) {
-        return findNode(valueNodes, nodeName);
+    public Optional<PayloadDataNode> findValueNode(FieldDescription valueNodeDesc) {
+        return findNode(valueNodeDesc);
     }
+    
     
 
     @Override
@@ -130,7 +141,19 @@ public class JsonResolver implements PayloadResolver {
     
     @Override
     public Optional<PayloadDataNode> findLabelNode(FieldDescription fieldDescription) {
-        return findNode( labelNodes, fieldDescription.getFieldName());
+        return findNode(fieldDescription);
+    }
+    
+    public static String extractPart(String value, int index) {
+        if (value == null || value.isBlank() || index < 0) {
+            return "";
+        }
+        
+        String[] parts = value.split(" ");
+        if (parts.length > 0 && index < parts.length) {
+            return parts[index];
+        }
+        return value;
     }
     
 }

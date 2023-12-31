@@ -42,7 +42,7 @@ public class TopicMatcher {
         }
 
         // build a pre-compiled list of topics and remember the mapping to the topic
-        List<TopicCache> preCompiled = topics.stream().map(topic -> TopicCache.buildPattern(topic))
+        List<TopicCache> preCompiled = topics.stream().map(topic -> TopicCache.buildTopicPattern(topic))
                 .filter(pattern -> pattern.isPresent())
                 .map(opt -> opt.get())
                 .collect(Collectors.toList());

@@ -18,7 +18,7 @@ public class FieldDescription {
     public static final String DESCRIPTOR_DELIMITER = "\\|";
     
     private final String fieldName;
-    private int fieldIndex = 0;
+    private int fieldIndex = -1;
     private String name;
     private FieldType type = FieldType.PAYLOAD;
     
@@ -31,7 +31,12 @@ public class FieldDescription {
     }
     /**
      *  A field descriptor is a string which contains the field name and an optional label name.
-     *  both names are separated by :. For example field:label 
+     *  both names are separated by |. For example field|label. Furthermore the descriptor can contain
+     *  an index in the value. For instance, if you have a value like '5.6 m/s' then the interesting part 
+     *  is '5.6'. For easy access to that part of the input data, each value is splitted by whitespaces 
+     *  and each of the the resulting fields can be accessed by index. For our example '5.6 m/s' the 
+     *  descriptor is 'value#0' (if the field is named value).
+     * 
      * @param content
      * @return 
      */
@@ -46,26 +51,38 @@ public class FieldDescription {
             if (parts[0].isBlank()) {
                 log.warn("invalid field descriptor [{}] missing fieldname at index 0", content);
             } else {
-                result = new FieldDescription( parts[0]);
+                result = new FieldDescription( FieldIndexDescriptor.parse(parts[0]));
                 
                 if (parts.length > 1) {
-                    result.setName(parts[1]);
+                    FieldIndexDescriptor namePart = FieldIndexDescriptor.parse(parts[1]);
+                    result.setName( namePart.getName());
+                    if (result.getFieldIndex() < 0) {
+                        // maybe the name part contains an index (field|name#1), so we add this info
+                        result.setFieldIndex(namePart.getIndex());
+                    }
                 }
             }
         }
         return Optional.ofNullable( result);
     }
-
+    
+    private FieldDescription( FieldIndexDescriptor fieldIndexDescriptor) {
+        this(fieldIndexDescriptor.getName());
+        if (fieldIndexDescriptor.getIndex() >= 0) {
+            this.fieldIndex = fieldIndexDescriptor.getIndex();
+        }
+    }
+    
     public FieldDescription(String fieldName) {
         this.fieldName = fieldName;
         this.name = fieldName;
-        this.fieldIndex = 0;
+        this.fieldIndex = -1;
     }
 
     public FieldDescription(String fieldName, String name) {
         this.fieldName = fieldName;
         this.name = name;
-        this.fieldIndex = 0;
+        this.fieldIndex = -1;
     }
 
     public FieldDescription(int fieldIndex, String fieldName, String name) {
@@ -138,4 +155,50 @@ public class FieldDescription {
     }
     
     public static record FieldMappingValue(String targetFieldName, String targetValue) {};
+    
+    
+    public static class FieldIndexDescriptor {
+        private int index = -1;
+        private String name;
+        
+        private static FieldIndexDescriptor parse(String descriptor) {
+            FieldIndexDescriptor result = new FieldIndexDescriptor();
+            
+            if (descriptor == null) {
+                return result;
+            }
+            
+            String[] parts = descriptor.split("#");
+
+            if (parts.length > 0) {
+                result.name = parts[0];
+                if (parts.length > 1) {
+                    try {
+                        result.index = Integer.parseInt(parts[1]);
+                    } catch (Exception e) {
+                    }
+                }
+            }
+            return result;
+        }
+
+        private FieldIndexDescriptor() {
+        }
+
+        public int getIndex() {
+            return index;
+        }
+
+        public void setIndex(int index) {
+            this.index = index;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+    }
 }

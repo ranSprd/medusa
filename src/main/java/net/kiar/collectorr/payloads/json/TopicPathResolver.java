@@ -46,7 +46,8 @@ public class TopicPathResolver implements PayloadResolver {
     }
 
     @Override
-    public Optional<PayloadDataNode> findValueNode(String nodeName) {
+    public Optional<PayloadDataNode> findValueNode(FieldDescription nodeName) {
+        // a topic should not contain any value for a metric....
         return Optional.empty();
     }
 

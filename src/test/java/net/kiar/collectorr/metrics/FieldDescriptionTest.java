@@ -1,6 +1,5 @@
 package net.kiar.collectorr.metrics;
 
-import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -23,10 +22,21 @@ public class FieldDescriptionTest {
         FieldDescription fd1 = FieldDescription.parseFieldDescriptor("field1").get();
         assertEquals("field1", fd1.getFieldName());
         assertEquals("field1", fd1.getName());
+        assertEquals(-1, fd1.getFieldIndex());
         
         FieldDescription fd2 = FieldDescription.parseFieldDescriptor("field1|name").get();
         assertEquals("field1", fd2.getFieldName());
         assertEquals("name", fd2.getName());
+        assertEquals(-1, fd2.getFieldIndex());
+    }
+    
+    @Test
+    public void testWithFieldIndex() {
+        FieldDescription fd2 = FieldDescription.parseFieldDescriptor("field1#2|name#9").get();
+        assertEquals("field1", fd2.getFieldName());
+        assertEquals("name", fd2.getName());
+        assertEquals(2, fd2.getFieldIndex());
+        
     }
     
 }

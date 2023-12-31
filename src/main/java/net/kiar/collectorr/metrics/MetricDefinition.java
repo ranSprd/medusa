@@ -32,6 +32,10 @@ public class MetricDefinition {
     public void setFieldOfValue(String fieldName) {
         this.fieldOfValue = new FieldDescription(fieldName);
     }
+    
+    public void setFieldOfValue(FieldDescription fieldDescription) {
+        this.fieldOfValue = fieldDescription;
+    }
 
     public FieldDescription getFieldOfValue() {
         return fieldOfValue;

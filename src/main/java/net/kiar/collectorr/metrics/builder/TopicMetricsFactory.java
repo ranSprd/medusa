@@ -42,7 +42,7 @@ public enum TopicMetricsFactory {
         List<MetricDefinition> result = new ArrayList<>();
         for(TopicConfigMetric configuredMetric : topicConfig.getMetrics()) {
             MetricDefinitionBuilder builder = MetricDefinitionBuilder
-                    .metricForField( configuredMetric.getValueField())
+                    .metricFromFieldDescriptor(configuredMetric.getValueField())
                     .name(nameBuilder.getName(configuredMetric.getName(), configuredMetric.getValueField()));
 
             if (configuredMetric.hasConfiguredLabels()) {
@@ -89,11 +89,11 @@ public enum TopicMetricsFactory {
         } 
             // construct metrics (definition)
         return payloadResolver.getValueNodes().stream()
-                    .map(valueNode -> constructMetricForValue(valueNode.name(), nameBuilder, payloadResolver, topicLabels))
+                    .map(valueNode -> constructDefaultMetricForValueField(valueNode.name(), nameBuilder, payloadResolver, topicLabels))
                     .collect(Collectors.toList());
     }
     
-    private MetricDefinition constructMetricForValue(String valueFieldName, MetricNameBuilder nameBuilder, PayloadResolver payloadResolver, Map<String, FieldDescription>  topicLabels) {
+    private MetricDefinition constructDefaultMetricForValueField(String valueFieldName, MetricNameBuilder nameBuilder, PayloadResolver payloadResolver, Map<String, FieldDescription>  topicLabels) {
         MetricDefinitionBuilder builder = MetricDefinitionBuilder
                 .metricForField( valueFieldName)
                 .name(nameBuilder.getNameFromField(valueFieldName));

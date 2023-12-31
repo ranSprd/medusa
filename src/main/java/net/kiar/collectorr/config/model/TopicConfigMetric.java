@@ -27,7 +27,10 @@ public class TopicConfigMetric {
      *  If a label is not set (means empty) it will not be added to the metric. */
     private List<String> labels;
 
-    /** the fieldname of the metric
+    /** 
+     * Contains the value field of the metric. It can contain index informations like
+     * 'value#2' which splitts the content of the field value by whitespace an use the
+     * 3rd entry of the array.
      * 
      * @return the name of the field
      */
