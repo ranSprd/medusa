@@ -153,7 +153,7 @@ public class JsonResolver implements PayloadResolver {
         if (parts.length > 0 && index < parts.length) {
             return parts[index];
         }
-        return value;
+        return "";
     }
     
 }

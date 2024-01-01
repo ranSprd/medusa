@@ -3,6 +3,7 @@ package net.kiar.collectorr.metrics;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import net.kiar.collectorr.payloads.DoubleParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,6 +46,15 @@ public class PrometheusGauge {
     public void setValue(double value) {
         this.value = value;
     }
+    
+    /**
+     * set the value. The logic tries to get the first numerical value from that string
+     * @param stringValue
+     * @return false if the given string can't be parsed as a double
+     */
+    public void setValue(String stringValue) {
+        setValue( DoubleParser.parse(stringValue));
+    }
 
     public String getName() {
         return name;
@@ -55,20 +65,6 @@ public class PrometheusGauge {
     }
     
     
-    /**
-     * set the value
-     * @param stringValue
-     * @return false if the given string can't be parsed as a double
-     */
-    public boolean setValue(String stringValue) {
-        try {
-            setValue( Double.parseDouble(stringValue));
-            return true;
-        } catch (Exception e) {
-            log.warn("Error parsing double value. Input is[{}]", stringValue, e);
-        }
-        return false;
-    }
 
     public long getMillisTimestamp() {
         return millisTimestamp;

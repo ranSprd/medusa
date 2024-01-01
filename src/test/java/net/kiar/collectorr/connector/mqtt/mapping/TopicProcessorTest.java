@@ -122,4 +122,29 @@ topics:
         assertEquals(350.1, gauge.getValue());
     }
     
+    
+    
+    private final String configContentForTest5 = """
+topics:
+- topic: topic/test
+  metrics:
+  - valueField: val
+                                                 """;
+    @Test
+    public void testRobustValueParsing() {
+        String topicPath = "topic/test";
+        MappingsConfigLoader conf = MappingsConfigLoader.readContent( configContentForTest5);
+        
+        TopicConfig topicToTest = conf.getTopicsToObserve().get(0);
+        TopicCache topicCache = TopicCache.buildTopicPattern(topicToTest).get();
+        
+        List<PrometheusGauge> result = topicCache.getTopicProcessor().consumeMessage("{\"val\": \"71%\"}", topicPath);
+        
+        assertEquals(1, result.size());
+        
+        PrometheusGauge gauge = result.get(0);
+
+        assertEquals(71, gauge.getValue());
+    }
+    
 }
