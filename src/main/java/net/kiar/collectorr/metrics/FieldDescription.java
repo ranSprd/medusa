@@ -45,8 +45,14 @@ public class FieldDescription {
             return Optional.empty();
         }
         
+        // ignore labels with leading -
+        String rawContent = content.trim();
+        if (rawContent.startsWith("-")) {
+            return Optional.empty();
+        }
+        
         FieldDescription result = null;
-        String parts[] = content.split(DESCRIPTOR_DELIMITER);
+        String parts[] = rawContent.split(DESCRIPTOR_DELIMITER);
         if (parts.length > 0) {
             if (parts[0].isBlank()) {
                 log.warn("invalid field descriptor [{}] missing fieldname at index 0", content);

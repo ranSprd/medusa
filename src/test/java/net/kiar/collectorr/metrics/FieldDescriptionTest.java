@@ -36,7 +36,12 @@ public class FieldDescriptionTest {
         assertEquals("field1", fd2.getFieldName());
         assertEquals("name", fd2.getName());
         assertEquals(2, fd2.getFieldIndex());
-        
+    }
+    
+    @Test
+    public void testIgnoreField() {
+        assertTrue(FieldDescription.parseFieldDescriptor("-field").isEmpty());
+        assertTrue(FieldDescription.parseFieldDescriptor(" -field").isEmpty());
     }
     
 }

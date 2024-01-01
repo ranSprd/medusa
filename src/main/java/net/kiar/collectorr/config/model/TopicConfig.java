@@ -18,6 +18,10 @@ public class TopicConfig {
     /** definition of a metric and its mapping to the fields of the payload */
     private List<TopicConfigMetric> metrics;
     
+    /** default label list for all metrics of topic, if a sinlge metric has no label setting, 
+     * then this configuration is used */
+    private List<String> labels;
+    
 
     public TopicConfig() {
     }
@@ -65,6 +69,18 @@ public class TopicConfig {
      */
     public boolean hasNoMetrics() {
         return (metrics == null || metrics.isEmpty());
+    }
+
+    public List<String> getLabels() {
+        return labels;
+    }
+
+    public void setLabels(List<String> labels) {
+        this.labels = labels;
+    }
+    
+    public boolean hasConfiguredLabels() {
+        return this.labels != null && !this.labels.isEmpty();
     }
     
 }

@@ -115,7 +115,8 @@ public class TopicProcessor {
                     .collect(Collectors.toList());
             
             gauge.setName( metric.getName().getProcessed(placeholders));
-//            gauge.processName();
+        } else {
+            gauge.setName( metric.getName().getProcessed());
         }
         
         gauge.buildSignature();

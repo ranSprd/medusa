@@ -1,0 +1,10 @@
+generic:
+    name: "test-collectorr"
+    
+topics: 
+    
+- topic: /get_livedata_info
+#  metrics:
+#  - valueField: value
+##    name: "{phase}_voltage"
+#    name: ""

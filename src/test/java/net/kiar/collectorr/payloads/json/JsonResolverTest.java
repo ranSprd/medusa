@@ -76,7 +76,8 @@ public class JsonResolverTest {
         
         assertEquals("5.6", JsonResolver.extractPart("5.6 m/s", 0));
         assertEquals("m/s", JsonResolver.extractPart("5.6 m/s", 1));
-        assertEquals("5.6 m/s", JsonResolver.extractPart("5.6 m/s", 2));
+        assertEquals("", JsonResolver.extractPart("5.6 m/s", 2));
+        assertEquals("", JsonResolver.extractPart("5.6 m/s", -2));
     }
     
 }

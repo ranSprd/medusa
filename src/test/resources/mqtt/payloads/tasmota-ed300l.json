@@ -1,0 +1,12 @@
+{
+    "Time": "2024-01-01T21:17:01",
+    "Main": {
+        "current_consumption": 620,
+        "total_consumption": 15585.557,
+        "total_overload": 110.14,
+        "L1_consumption": 369,
+        "L2_consumption": 231,
+        "L3_consumption": 20
+    }
+}
+
