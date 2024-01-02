@@ -23,6 +23,7 @@ public class FieldDescription {
     private FieldType type = FieldType.PAYLOAD;
     
     private FieldMapping mappings;
+    private String fixedContent = null;
     
     public static FieldDescription topicField(int index, String name) {
         FieldDescription result = new FieldDescription(index, name, name);
@@ -57,9 +58,32 @@ public class FieldDescription {
             if (parts[0].isBlank()) {
                 log.warn("invalid field descriptor [{}] missing fieldname at index 0", content);
             } else {
-                result = new FieldDescription( FieldIndexDescriptor.parse(parts[0]));
+                // first check format key=value
+                if (parts[0].contains("=")) {
+                    String[] pair = parts[0].split("=");
+                    if (pair.length > 0) {
+                        String name = pair[0].trim();
+                        if (name.length() > 0) {
+                            result = new FieldDescription(name);
+                            if (pair.length > 1) {
+                                // happy case
+                                result.setFixedContent(pair[1].trim());
+                            }
+                        } else {
+                            // Can't extract an valid fieldname (maybe something like '=foo' found
+                            return Optional.empty();
+                        }
+                    } else {
+                        // another failure, same result, can't extract an fieldname
+                        return Optional.empty();
+                    }
+                    
+                } else {
+                    result = new FieldDescription( FieldIndexDescriptor.parse(parts[0]));
+                }
                 
                 if (parts.length > 1) {
+                    // here we know, that a name-section is present. Parse that part
                     FieldIndexDescriptor namePart = FieldIndexDescriptor.parse(parts[1]);
                     result.setName( namePart.getName());
                     if (result.getFieldIndex() < 0) {
@@ -112,6 +136,18 @@ public class FieldDescription {
 
     public String getName() {
         return name;
+    }
+
+    public String getFixedContent() {
+        return fixedContent;
+    }
+
+    public void setFixedContent(String fixedContent) {
+        this.fixedContent = fixedContent;
+    }
+    
+    public boolean hasFixedContent() {
+        return fixedContent != null && !fixedContent.isBlank();
     }
 
     public void setName(String name) {

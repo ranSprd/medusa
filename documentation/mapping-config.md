@@ -20,6 +20,23 @@ The next section is the **topic** part. It contains a list of all observed mqtt 
 
     topics:
     - topic: foo/bar/blub
+
+
+### labels
+
+Normally all string fields from a payload are interpreted as *label*.
+
+#### fixed content 
+
+    topics:
+    - topic: foo/bar/blub
+      metrics:
+      - valueField: value
+        labels: [label-1=fixed, label-2, label-3=overwritten]
+
+
+    topics:
+    - topic: foo/bar/blub
       labels: [-label1, label2]
       metrics:
       - valueField: value

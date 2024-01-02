@@ -38,6 +38,12 @@ public class DataProvider {
     }
 
     public Optional<PayloadDataNode> getData(FieldDescription field) {
+        
+        // some fields define fixed content
+        if (field.hasFixedContent()) {
+            return Optional.of( new PayloadDataNode(field.getName(), field.getFixedContent()));
+        }
+        
         Optional<PayloadDataNode> result = Optional.empty();
         switch (field.getType()) {
             case PAYLOAD ->

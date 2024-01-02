@@ -133,7 +133,7 @@ topics:
     @Test
     public void testRobustValueParsing() {
         String topicPath = "topic/test";
-        MappingsConfigLoader conf = MappingsConfigLoader.readContent( configContentForTest5);
+        MappingsConfigLoader conf = MappingsConfigLoader.readContent( configContentForTest6);
         
         TopicConfig topicToTest = conf.getTopicsToObserve().get(0);
         TopicCache topicCache = TopicCache.buildTopicPattern(topicToTest).get();
@@ -143,6 +143,35 @@ topics:
         assertEquals(1, result.size());
         
         PrometheusGauge gauge = result.get(0);
+
+        assertEquals(71, gauge.getValue());
+    }
+    
+    
+    private final String configContentForTest6 = """
+topics:
+- topic: topic/test
+  metrics:
+  - valueField: val
+    labels: [label-1=fixed, label-2, label-3=overwritten]
+                                                 """;
+    @Test
+    public void testFixedLabelContent() {
+        String topicPath = "topic/test";
+        MappingsConfigLoader conf = MappingsConfigLoader.readContent( configContentForTest6);
+        
+        TopicConfig topicToTest = conf.getTopicsToObserve().get(0);
+        TopicCache topicCache = TopicCache.buildTopicPattern(topicToTest).get();
+        
+        List<PrometheusGauge> result = topicCache.getTopicProcessor().consumeMessage("{\"val\": \"71%\", \"label-2\": \"payload\", \"label-3\": \"payload\"}", topicPath);
+        
+        assertEquals(1, result.size());
+        
+        PrometheusGauge gauge = result.get(0);
+        assertEquals(3, gauge.getNumberOfLabels());
+        assertEquals("fixed", gauge.getLabelValue("label-1"));
+        assertEquals("payload", gauge.getLabelValue("label-2"));
+        assertEquals("overwritten", gauge.getLabelValue("label-3"));
 
         assertEquals(71, gauge.getValue());
     }

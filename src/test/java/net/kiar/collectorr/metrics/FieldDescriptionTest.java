@@ -39,6 +39,27 @@ public class FieldDescriptionTest {
     }
     
     @Test
+    public void testLabelWithFixedContent() {
+        FieldDescription fd1 = FieldDescription.parseFieldDescriptor("field=foo").get();
+        assertEquals("field", fd1.getFieldName());
+        assertEquals("field", fd1.getName());
+        assertEquals(-1, fd1.getFieldIndex());
+        assertEquals("foo", fd1.getFixedContent());
+        assertTrue( fd1.hasFixedContent());
+    }
+    
+    @Test
+    public void testInvalidFixedLabelContent() {
+        FieldDescription fd1 = FieldDescription.parseFieldDescriptor("field=").get();
+        assertEquals("field", fd1.getFieldName());
+        assertEquals("field", fd1.getName());
+        assertEquals(-1, fd1.getFieldIndex());
+        assertFalse( fd1.hasFixedContent());
+        
+        assertTrue(FieldDescription.parseFieldDescriptor("=content|foo#2").isEmpty());
+    }
+    
+    @Test
     public void testIgnoreField() {
         assertTrue(FieldDescription.parseFieldDescriptor("-field").isEmpty());
         assertTrue(FieldDescription.parseFieldDescriptor(" -field").isEmpty());
