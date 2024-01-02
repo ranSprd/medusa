@@ -36,7 +36,7 @@ public enum TopicMetricsFactory {
         
         // start AUTOMATIC construction of metrics based on the given nodes
         if (topicConfig.hasNoMetrics()) {
-            return buildAutoMetric(payloadResolver, topicConfig, nameBuilder, labelBuilder);
+            return buildAutoMetric(payloadResolver, nameBuilder, labelBuilder);
         } 
         
         List<MetricDefinition> result = new ArrayList<>();
@@ -75,7 +75,7 @@ public enum TopicMetricsFactory {
         
     }
         
-    private List<MetricDefinition> buildAutoMetric(PayloadResolver payloadResolver, TopicConfig topicConfig, MetricNameBuilder nameBuilder, LabelBuilder labelBuilder) {
+    private List<MetricDefinition> buildAutoMetric(PayloadResolver payloadResolver, MetricNameBuilder nameBuilder, LabelBuilder labelBuilder) {
         if (payloadResolver.getValueNodes().isEmpty()) {
             log.warn("can't extract an payload. No value field found.");
             return List.of();
@@ -119,7 +119,7 @@ public enum TopicMetricsFactory {
                 if (fieldName == null || fieldName.isBlank()) {
                     return new PlaceholderString(namePrefix +"_" +UUID.randomUUID().toString());
                 }
-                return new PlaceholderString(namePrefix +"_" +fieldName);
+                return new PlaceholderString(namePrefix +"_" +fieldName.replaceAll("\\.", "_"));
             }
             return new PlaceholderString(preferedName);
         }
