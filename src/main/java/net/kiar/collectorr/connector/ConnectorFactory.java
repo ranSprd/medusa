@@ -115,6 +115,9 @@ public class ConnectorFactory {
         
         public void sendMessage(String topic, String message) {
             try {
+                if (!mqttClient.isConnected()) {
+                    mqttClient.reconnect();
+                }
 //                log.info("send message to broker");
                 MqttMessage msg = new MqttMessage(message.getBytes());
                 mqttClient.publish(topic, msg);
