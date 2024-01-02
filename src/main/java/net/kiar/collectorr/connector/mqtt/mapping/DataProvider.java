@@ -15,10 +15,13 @@
  */
 package net.kiar.collectorr.connector.mqtt.mapping;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import net.kiar.collectorr.metrics.FieldDescription;
 import static net.kiar.collectorr.metrics.FieldType.PAYLOAD;
 import static net.kiar.collectorr.metrics.FieldType.TOPIC;
+import net.kiar.collectorr.metrics.MetricDefinition;
 import net.kiar.collectorr.payloads.PayloadDataNode;
 import net.kiar.collectorr.payloads.PayloadResolver;
 import net.kiar.collectorr.payloads.json.TopicPathResolver;
@@ -28,15 +31,24 @@ import net.kiar.collectorr.payloads.json.TopicPathResolver;
  * @author ranSprd
  */
 public class DataProvider {
+    public static final String
+            VALUE_FIELD_NAME = "valueFieldName",
+            TOPIC_NAME = "topicName";
 
     private final PayloadResolver payloadResolver;
     private final TopicPathResolver topicResolver;
+    private Map<String, String> buildInPairs = new HashMap<>();
 
     public DataProvider(PayloadResolver payloadResolver, String topic, TopicStructure topicStructure) {
         this.payloadResolver = payloadResolver;
         this.topicResolver = new TopicPathResolver(topic, topicStructure);
     }
 
+    public void setBuildInData(MetricDefinition metricDefinition) {
+        buildInPairs.put(VALUE_FIELD_NAME, metricDefinition.getFieldOfValue().getFieldName().replaceAll("\\.", "_"));
+        buildInPairs.put(TOPIC_NAME, topicResolver.getTopicPath().replaceAll("/", "_"));
+    }
+    
     public Optional<PayloadDataNode> getData(FieldDescription field) {
         
         // some fields define fixed content
@@ -64,7 +76,7 @@ public class DataProvider {
         if (found.isPresent()) {
             return found.get().value();
         }
-        return fallbackValue;
+        return buildInPairs.getOrDefault(fieldName, fallbackValue);
     }
 
 }

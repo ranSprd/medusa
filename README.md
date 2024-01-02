@@ -114,6 +114,13 @@ Another option is to use the index of the topic segment. For instance '#5' for o
 
 This will produce the same metrics.
 
+#### build-in placeholders
+
+The following placeholders are available out of the box (camel case is important)
+
+ - **valueFieldName** : contains the fieldname of the value field (all . are replaced by _)
+ - **topicName** : the full topic of the incoming data (all / are replaced by _)
+
 ### partial data 
 
 Some payloads can contain mixed data in a single field. For instance, my weather station from ecowitt 

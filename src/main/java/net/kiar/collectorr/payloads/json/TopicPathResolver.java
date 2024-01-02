@@ -18,7 +18,7 @@ public class TopicPathResolver implements PayloadResolver {
     private final String topicPath;
     private final List<PayloadDataNode> data = new ArrayList<>();
 
-    public TopicPathResolver(String topicPath,  TopicStructure topicStructure) {
+    public TopicPathResolver(String topicPath, TopicStructure topicStructure) {
         this.topicPath = topicPath;
         if (topicPath != null) {
             int t = 0;
@@ -32,8 +32,10 @@ public class TopicPathResolver implements PayloadResolver {
             }
         }
     }
-    
-    
+
+    public String getTopicPath() {
+        return topicPath;
+    }
 
     @Override
     public List<PayloadDataNode> getValueNodes() {
