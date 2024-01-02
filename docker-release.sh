@@ -3,7 +3,7 @@
 ./mvnw package
 BUILD=$(cat target/classes/buildnumber)
 
-docker build -f src/main/docker/Dockerfile.jvm -t quarkus/medusa-jvm .
+docker build --no-cache -f src/main/docker/Dockerfile.jvm -t quarkus/medusa-jvm .
 
 SCRIPT_DIR="$(pwd)"
 echo "BUILD ID = $BUILD"
