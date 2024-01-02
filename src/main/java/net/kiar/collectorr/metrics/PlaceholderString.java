@@ -16,9 +16,9 @@
 package net.kiar.collectorr.metrics;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import net.kiar.collectorr.connector.mqtt.mapping.DataProvider;
 
 /**
  * This string can contain placeholders in form of {name}.
@@ -56,7 +56,7 @@ public class PlaceholderString {
                 prefix.append(c);
             }
         }
-        if (prefix != null && !prefix.isEmpty()) {
+        if (!prefix.isEmpty()) {
             parts.add( new PlaceholderData(prefix.toString(), null));
         }
     }
@@ -68,27 +68,24 @@ public class PlaceholderString {
                 .collect(Collectors.toList());
     }
     
-    public String getProcessed(String... placeholderValues) {
-        if (placeholderValues != null) {
-            return getProcessed( Arrays.asList(placeholderValues));
-        }
-        return getProcessed(List.of());
+    
+    public String getProcessed() {
+        // another alternative is to use another DataProvider which delivers ""
+        return getProcessed(null);
     }
     
-    public String getProcessed(List<String> placeholderValues) {
+    public String getProcessed(DataProvider dataProvider) {
         StringBuilder result = new StringBuilder();
-        for(int t = 0; t < parts.size(); t++) {
-            PlaceholderData dummy = parts.get(t);
+        for(PlaceholderData dummy : parts) {
             if (dummy.prefix != null) {
                 result.append(dummy.prefix);
             }
-            if (dummy.hasPlaceholderName()) {
-                if (placeholderValues.size() > t) {
-                    result.append(placeholderValues.get(t));
-                }
+            if (dummy.hasPlaceholderName() && dataProvider != null) {
+                result.append( dataProvider.resolve(dummy.placeholderName, ""));
             }
         }
         return result.toString();
+        
     }
     
     private static class PlaceholderData {

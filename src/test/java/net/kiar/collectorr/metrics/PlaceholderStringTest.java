@@ -16,9 +16,12 @@
 package net.kiar.collectorr.metrics;
 
 import java.util.List;
+import net.kiar.collectorr.connector.mqtt.mapping.DataProvider;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
+import static org.mockito.ArgumentMatchers.any;
+import org.mockito.Mockito;
 
 /**
  *
@@ -55,10 +58,13 @@ public class PlaceholderStringTest {
     
     
     @Test
-    public void testString() {
+    public void testReplaceString() {
+        DataProvider dataProvider = Mockito.mock(DataProvider.class);
+        Mockito.when(dataProvider.resolve(any(), any())).thenReturn("bar");
+        
         assertEquals("", new PlaceholderString("{foo}").getProcessed());
-        assertEquals("bar", new PlaceholderString("{foo}").getProcessed("bar"));
-        assertEquals("something", new PlaceholderString("something").getProcessed("bar"));
+        assertEquals("bar", new PlaceholderString("{foo}").getProcessed(dataProvider));
+        assertEquals("something", new PlaceholderString("something").getProcessed(dataProvider));
     }
     
 }

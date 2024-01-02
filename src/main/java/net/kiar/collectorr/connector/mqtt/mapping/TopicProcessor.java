@@ -109,15 +109,15 @@ public class TopicProcessor {
                 gauge.overwriteValueForLabel(targetMapping.targetFieldName(), targetMapping.targetValue());
             }
             
-            // last step: processing of name and description, because both can contain placeholders
-            List<String> placeholders = metric.getName().getPlaceholderNames().stream()
-                    .map( placeholderName -> dataProvider.resolve(placeholderName, ""))
-                    .collect(Collectors.toList());
-            
-            gauge.setName( metric.getName().getProcessed(placeholders));
-        } else {
-            gauge.setName( metric.getName().getProcessed());
+//            // last step: processing of name and description, because both can contain placeholders
+//            List<String> placeholders = metric.getName().getPlaceholderNames().stream()
+//                    .map( placeholderName -> dataProvider.resolve(placeholderName, ""))
+//                    .collect(Collectors.toList());
+//            
+//            gauge.setName( metric.getName().getProcessed(placeholders));
+//        } else {
         }
+        gauge.setName( metric.getName().getProcessed(dataProvider));
         
         gauge.buildSignature();
         return gauge;
