@@ -34,26 +34,31 @@ import org.slf4j.LoggerFactory;
 public class LabelBuilder {
     private static final Logger log = LoggerFactory.getLogger(LabelBuilder.class);
 
-    private final Map<String, FieldDescription> topicLabels;
+    private final Map<String, FieldDescription> labelsInTopic;
     private final TopicConfig topicConfig;
 
     public LabelBuilder(Map<String, FieldDescription> topicLabels, TopicConfig topicConfig) {
-        this.topicLabels = topicLabels;
+        this.labelsInTopic = topicLabels;
         this.topicConfig = topicConfig;
     }
     
-    
-    public void addAutoLabels(MetricDefinitionBuilder builder, PayloadResolver payloadResolver) {
+    /**
+     * add detected string fields from payload as label 
+     * 
+     * @param builder
+     * @param payloadResolver 
+     */
+    public void addAutoLabelsFromPayload(MetricDefinitionBuilder builder, PayloadResolver payloadResolver) {
         
         // 1st fallback is looking into the topic wide label settings and use these
         if (topicConfig.hasConfiguredLabels()) {
             topicConfig.getLabels().stream()
-                    .map(labelName -> toFieldDescription(labelName, topicLabels))
+                    .map(labelName -> toFieldDescription(labelName, labelsInTopic))
                     .filter(Objects::nonNull)
                     .forEach(fieldDesc -> builder.insertLabel(fieldDesc));
         } else {
             // no global label settings in topic config, try to generate 
-            topicLabels.values().stream()
+            labelsInTopic.values().stream()
                     .forEach(labelNode -> builder.topicLabel(labelNode));
             if (payloadResolver != null) {
                 payloadResolver.getLabelNodes().stream()
@@ -66,20 +71,13 @@ public class LabelBuilder {
     public void addLabels(TopicConfigMetric configuredMetric, MetricDefinitionBuilder builder, PayloadResolver payloadResolver) {
             if (configuredMetric.hasConfiguredLabels()) {
                 configuredMetric.getLabels().stream()
-                        .map(labelName -> toFieldDescription(labelName, topicLabels))
-                        .filter(Objects::nonNull)
-                        .forEach(fieldDesc -> builder.insertLabel(fieldDesc));
-            } else if (topicConfig.hasConfiguredLabels()) {
-                // 1st fallback - use global label settings from topic 
-                topicConfig.getLabels().stream()
-                        .map(labelName -> toFieldDescription(labelName, topicLabels))
+                        .map(labelName -> toFieldDescription(labelName, labelsInTopic))
                         .filter(Objects::nonNull)
                         .forEach(fieldDesc -> builder.insertLabel(fieldDesc));
             } else {
                 // put all known labels from topic, because other labels are not present
-                addAutoLabels(builder, payloadResolver);
+                addAutoLabelsFromPayload(builder, payloadResolver);
             }
-        
     }
     
     /**
@@ -105,8 +103,5 @@ public class LabelBuilder {
         }
         return null;
     }
-    
-    
-    
     
 }
