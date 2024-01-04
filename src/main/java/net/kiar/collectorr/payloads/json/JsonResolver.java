@@ -36,6 +36,23 @@ public class JsonResolver implements PayloadResolver {
         processNode(valueNodes, labelNodes, "", root);
     }
     
+    /**
+     * parse the given string payload and sort out values und labels
+     * @param payload
+     * @return 
+     */
+    public static JsonResolver consume(String payload) {
+        if (payload != null && !payload.isBlank()) {
+            try {
+                JsonNode root = mapper.readTree( payload); 
+                return new JsonResolver(root);
+            } catch (Exception e) {
+                log.error("Processing payload failed {} \n {}", payload, e.getMessage());
+            }
+        }
+        return new JsonResolver(null);
+    }
+
     private static void processNode(List<PayloadDataNode> values, List<PayloadDataNode> labels, String prefix, JsonNode node) {
         if (node == null) {
             return;
@@ -91,23 +108,6 @@ public class JsonResolver implements PayloadResolver {
     }
     
     
-    /**
-     * parse the given string payload and sort out values und labels
-     * @param payload
-     * @return 
-     */
-    public static JsonResolver consume(String payload) {
-        if (payload != null && !payload.isBlank()) {
-            try {
-                JsonNode root = mapper.readTree( payload); 
-                return new JsonResolver(root);
-            } catch (Exception e) {
-                log.error("Processing payload failed {} \n {}", payload, e.getMessage());
-            }
-        }
-        return new JsonResolver(null);
-    }
-
     @Override
     public List<PayloadDataNode> getValueNodes() {
         return valueNodes;
