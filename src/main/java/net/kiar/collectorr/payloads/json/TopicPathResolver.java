@@ -44,16 +44,10 @@ public class TopicPathResolver implements PayloadResolver {
 
     @Override
     public String getValueNamesAsString() {
+        // a topic should not contain any value for a metric....
         return "";
     }
 
-    @Override
-    public Optional<PayloadDataNode> findValueNode(FieldDescription nodeName) {
-        // a topic should not contain any value for a metric....
-        return Optional.empty();
-    }
-
-    @Override
     public List<PayloadDataNode> getLabelNodes() {
         return List.of();
     }
@@ -64,7 +58,7 @@ public class TopicPathResolver implements PayloadResolver {
     }
 
     @Override
-    public Optional<PayloadDataNode> findLabelNode(FieldDescription fieldDescription) {
+    public Optional<PayloadDataNode> findNode(FieldDescription fieldDescription) {
         if (fieldDescription.getFieldIndex() < data.size()) {
             if (fieldDescription.getFieldIndex() >= 0) {
                 return Optional.of( data.get( fieldDescription.getFieldIndex()));

@@ -80,7 +80,7 @@ public class TopicProcessor {
         if (!metric.isValid()) {
             return List.of();
         }
-        Optional<PayloadDataNode> valueField = payloadResolver.findValueNode(metric.getFieldOfValue());
+        Optional<PayloadDataNode> valueField = payloadResolver.findNode(metric.getFieldOfValue());
         if (valueField.isEmpty()) {
             return List.of();
         }

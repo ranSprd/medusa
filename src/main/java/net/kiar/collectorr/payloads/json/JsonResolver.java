@@ -65,15 +65,7 @@ public class JsonResolver implements PayloadResolver {
         
     }
 
-    private Optional<PayloadDataNode> findNode(List<PayloadDataNode> nodes, String nodeName) {
-        if (nodeName == null) {
-            return Optional.empty();
-        }
-        return nodes.stream()
-                .filter(node -> nodeName.equalsIgnoreCase(node.name()))
-                .findAny();
-    }
-    
+    @Override
     public Optional<PayloadDataNode> findNode(FieldDescription nodeDesc) {
         Optional<PayloadDataNode> node = findNode(nodeDesc.getFieldName());
         if (node.isPresent() && nodeDesc.getFieldIndex() >= 0) {
@@ -126,12 +118,8 @@ public class JsonResolver implements PayloadResolver {
         return valueNodes.stream().map(o -> o.name()).collect(Collectors.joining(","));        
     }
     
-    @Override
-    public Optional<PayloadDataNode> findValueNode(FieldDescription valueNodeDesc) {
-        return findNode(valueNodeDesc);
-    }
     
-    public List<PayloadDataNode> findValueNodes(FieldDescription valueNodeDesc) {
+    public List<PayloadDataNode> findNodes(FieldDescription valueNodeDesc) {
         
         return List.of();
     }
@@ -149,11 +137,6 @@ public class JsonResolver implements PayloadResolver {
     @Override
     public String getLabelNamesAsString() {
         return labelNodes.stream().map(o -> o.name()).collect(Collectors.joining(", "));        
-    }
-    
-    @Override
-    public Optional<PayloadDataNode> findLabelNode(FieldDescription fieldDescription) {
-        return findNode(fieldDescription);
     }
     
     public static String extractPart(String value, int index) {

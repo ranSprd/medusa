@@ -73,9 +73,9 @@ public class DataProvider {
         Optional<PayloadDataNode> result = Optional.empty();
         switch (field.getType()) {
             case PAYLOAD ->
-                result = payloadResolver.findLabelNode(field);
+                result = payloadResolver.findNode(field);
             case TOPIC ->
-                result = topicResolver.findLabelNode(field);
+                result = topicResolver.findNode(field);
         }
 
         return result;

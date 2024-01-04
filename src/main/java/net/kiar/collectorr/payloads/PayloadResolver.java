@@ -10,15 +10,15 @@ import net.kiar.collectorr.metrics.FieldDescription;
  */
 public interface PayloadResolver {
 
+    public Optional<PayloadDataNode> findNode(FieldDescription fieldDesc);
+    public Optional<PayloadDataNode> findNode(String nodeName);
+    
     /**
      * get all nodes classified as value (normally numeric data)
      * @return 
      */
     public List<PayloadDataNode> getValueNodes();
     public String getValueNamesAsString();
-    public Optional<PayloadDataNode> findValueNode(FieldDescription fieldDesc);
-
-    public Optional<PayloadDataNode> findNode(String nodeName);
     
     /**
      * all nodes classified as label (normally textual and boolean data)
@@ -26,6 +26,5 @@ public interface PayloadResolver {
      */
     public List<PayloadDataNode> getLabelNodes();
     public String getLabelNamesAsString();
-    public Optional<PayloadDataNode> findLabelNode(FieldDescription fieldDescription);
     
 }

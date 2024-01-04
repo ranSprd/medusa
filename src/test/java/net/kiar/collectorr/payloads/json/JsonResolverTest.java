@@ -47,7 +47,7 @@ public class JsonResolverTest {
                 Files.readString( Path.of("src/test/resources/mqtt/payloads/shellyMotion-status01.json")));
         assertNotNull(instance);
         assertEquals(4, instance.getValueNodes().size());
-        assertTrue(instance.findValueNode( new FieldDescription("tmp.value")).isPresent());
+        assertTrue(instance.findNode( new FieldDescription("tmp.value")).isPresent());
         assertTrue(instance.findNode("tmp.units").isPresent());
     }
     
