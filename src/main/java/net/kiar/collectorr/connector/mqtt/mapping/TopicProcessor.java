@@ -1,11 +1,11 @@
 package net.kiar.collectorr.connector.mqtt.mapping;
 
+import net.kiar.collectorr.payloads.DataProvider;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import net.kiar.collectorr.config.model.TopicConfig;
-import net.kiar.collectorr.metrics.BuildInLabels;
 import net.kiar.collectorr.metrics.FieldDescription;
 import net.kiar.collectorr.metrics.MetricDefinition;
 import net.kiar.collectorr.metrics.PrometheusGauge;
@@ -84,15 +84,14 @@ public class TopicProcessor {
         if (valueField.isEmpty()) {
             return List.of();
         }
+        DataProvider.DataProviderFactory dataFactory = DataProvider.getFactory(payloadResolver, new TopicPathResolver(topic, topicStructure));
         
         // we support only 1 type of metrics...
         PrometheusGauge gauge = new PrometheusGauge(metric);
         gauge.setValue( valueField.get().value());
         gauge.updateMillisTimestamp();
         
-        DataProvider dataProvider = new DataProvider(payloadResolver, 
-                new TopicPathResolver(topic, topicStructure),
-                BuildInLabels.getBuildInData(metric, topic));
+        DataProvider dataProvider = dataFactory.dataProvider(valueField.get());
         if (metric.hasLabels()) {
             List<FieldDescription.FieldMappingValue> foundMappings = new ArrayList<>();
             for(FieldDescription field : metric.getLabels()) {
@@ -114,8 +113,8 @@ public class TopicProcessor {
             
         }
         gauge.setName( metric.getName().getProcessed(dataProvider));
-        
         gauge.buildSignature();
+        
         return List.of(gauge);
     }
 

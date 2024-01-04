@@ -18,7 +18,7 @@ package net.kiar.collectorr.metrics;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import net.kiar.collectorr.connector.mqtt.mapping.DataProvider;
+import net.kiar.collectorr.payloads.DataProvider;
 
 /**
  * This string can contain placeholders in form of {name}.

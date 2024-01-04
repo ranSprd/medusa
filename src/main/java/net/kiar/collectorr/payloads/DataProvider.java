@@ -13,15 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.kiar.collectorr.connector.mqtt.mapping;
+package net.kiar.collectorr.payloads;
 
 import java.util.Optional;
 import net.kiar.collectorr.metrics.BuildInLabels;
 import net.kiar.collectorr.metrics.FieldDescription;
 import static net.kiar.collectorr.metrics.FieldType.PAYLOAD;
 import static net.kiar.collectorr.metrics.FieldType.TOPIC;
-import net.kiar.collectorr.payloads.PayloadDataNode;
-import net.kiar.collectorr.payloads.PayloadResolver;
 import net.kiar.collectorr.payloads.json.TopicPathResolver;
 
 /**
@@ -29,12 +27,36 @@ import net.kiar.collectorr.payloads.json.TopicPathResolver;
  * @author ranSprd
  */
 public class DataProvider {
+    
+    public static class DataProviderFactory {
+
+        private final PayloadResolver payloadResolver;
+        private final TopicPathResolver topicResolver;
+
+        private DataProviderFactory(PayloadResolver payloadResolver, TopicPathResolver topicResolver) {
+            this.payloadResolver = payloadResolver;
+            this.topicResolver = topicResolver;
+        }
+
+
+        public DataProvider dataProvider(PayloadDataNode valueField) {
+            return new DataProvider(payloadResolver, 
+                                    topicResolver,
+                         BuildInLabels.getBuildInData(valueField, topicResolver.getTopicPath()));
+        }
+
+    }
+    
+    public static DataProviderFactory getFactory(PayloadResolver payloadResolver, TopicPathResolver topicResolver) {
+        return new DataProviderFactory(payloadResolver, topicResolver);
+    }
+    
 
     private final PayloadResolver payloadResolver;
     private final TopicPathResolver topicResolver;
     private final BuildInLabels buildInLabels;
 
-    public DataProvider(PayloadResolver payloadResolver, TopicPathResolver topicResolver, BuildInLabels buildInLabels) {
+    private DataProvider(PayloadResolver payloadResolver, TopicPathResolver topicResolver, BuildInLabels buildInLabels) {
         this.payloadResolver = payloadResolver;
         this.topicResolver = topicResolver;
         this.buildInLabels = buildInLabels;

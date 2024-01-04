@@ -16,7 +16,7 @@
 package net.kiar.collectorr.metrics;
 
 import java.util.List;
-import net.kiar.collectorr.connector.mqtt.mapping.DataProvider;
+import net.kiar.collectorr.payloads.DataProvider;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;

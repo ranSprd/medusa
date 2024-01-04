@@ -3,7 +3,7 @@ package net.kiar.collectorr.metrics.builder;
 import java.util.List;
 import net.kiar.collectorr.config.MappingsConfigLoader;
 import net.kiar.collectorr.config.model.TopicConfig;
-import net.kiar.collectorr.connector.mqtt.mapping.DataProvider;
+import net.kiar.collectorr.payloads.DataProvider;
 import net.kiar.collectorr.connector.mqtt.mapping.TopicStructure;
 import net.kiar.collectorr.metrics.BuildInLabels;
 import net.kiar.collectorr.metrics.FieldType;

@@ -17,6 +17,7 @@ package net.kiar.collectorr.metrics;
 
 import java.util.HashMap;
 import java.util.Map;
+import net.kiar.collectorr.payloads.PayloadDataNode;
 
 /**
  *
@@ -32,9 +33,9 @@ public class BuildInLabels {
     private BuildInLabels() {
     }
     
-    public static BuildInLabels getBuildInData(MetricDefinition metricDefinition, String topicPath) {
+    public static BuildInLabels getBuildInData(PayloadDataNode valueField, String topicPath) {
         BuildInLabels result = new BuildInLabels();
-        result.buildInPairs.put(VALUE_FIELD_NAME, metricDefinition.getFieldOfValue().getFieldName().replaceAll("\\.", "_"));
+        result.buildInPairs.put(VALUE_FIELD_NAME, valueField.name().replaceAll("\\.", "_"));
         result.buildInPairs.put(TOPIC_NAME, topicPath.replaceAll("/", "_"));
         return result;
     }

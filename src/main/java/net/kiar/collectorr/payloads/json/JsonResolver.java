@@ -44,20 +44,20 @@ public class JsonResolver implements PayloadResolver {
         while(it.hasNext()) {
             Map.Entry<String, JsonNode> n = it.next();
             JsonNode valueNode = n.getValue();
-            String nodeName = prefix + n.getKey();
+            String nodeNameStr = prefix + n.getKey();
 //                if (valueNode.isNumber() || valueNode.isBoolean()) {
             if (valueNode.isNumber()) {
-                values.add( new PayloadDataNode(nodeName, valueNode.asText()));
+                values.add( new PayloadDataNode(nodeNameStr, valueNode.asText()));
             } else if (valueNode.isTextual() || valueNode.isBoolean()) {
-                labels.add( new PayloadDataNode(nodeName, valueNode.asText()));
+                labels.add( new PayloadDataNode(nodeNameStr, valueNode.asText()));
             } else if (valueNode.isObject()) {
-                processNode(values, labels, nodeName +".", valueNode);
+                processNode(values, labels, nodeNameStr +".", valueNode);
             } else if (valueNode.isArray()) {
                 Iterator<JsonNode> nodeIterator = valueNode.elements();
                 int counter = 0;
                 while (nodeIterator.hasNext()) {
                     JsonNode next = nodeIterator.next();                
-                    processNode(values, labels, nodeName +".#" +counter +".", next);
+                    processNode(values, labels, nodeNameStr +".#" +counter +".", next);
                     counter++;
                 }
             }
