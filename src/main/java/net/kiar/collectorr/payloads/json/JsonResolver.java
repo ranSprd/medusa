@@ -52,6 +52,14 @@ public class JsonResolver implements PayloadResolver {
                 labels.add( new PayloadDataNode(nodeName, valueNode.asText()));
             } else if (valueNode.isObject()) {
                 processNode(values, labels, nodeName +".", valueNode);
+            } else if (valueNode.isArray()) {
+                Iterator<JsonNode> nodeIterator = valueNode.elements();
+                int counter = 0;
+                while (nodeIterator.hasNext()) {
+                    JsonNode next = nodeIterator.next();                
+                    processNode(values, labels, nodeName +".#" +counter +".", next);
+                    counter++;
+                }
             }
         }
         
@@ -123,6 +131,10 @@ public class JsonResolver implements PayloadResolver {
         return findNode(valueNodeDesc);
     }
     
+    public List<PayloadDataNode> findValueNodes(FieldDescription valueNodeDesc) {
+        
+        return List.of();
+    }
     
 
     @Override

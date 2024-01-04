@@ -56,9 +56,9 @@ public class TopicProcessorTest {
         assertEquals(2, result.size());
         
         for(PrometheusGauge g : result) {
-            if (g.getMetricDefinition().getName().getProcessed().endsWith("cpuSpeed")) {
+            if (g.getName().endsWith("cpuSpeed")) {
                 assertEquals(80, g.getValue(), 0.01);
-            } else if (g.getMetricDefinition().getName().getProcessed().endsWith("freeheap")) {
+            } else if (g.getName().endsWith("freeheap")) {
                 assertEquals(45488, g.getValue(), 0.01);
             } else {
                 assertTrue(false, "unexpected case");

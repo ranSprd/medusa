@@ -62,15 +62,16 @@ public class LabelBuilder {
                     .forEach(labelNode -> builder.topicLabel(labelNode));
             if (payloadResolver != null) {
                 payloadResolver.getLabelNodes().stream()
-                        .forEach(labelNode -> builder.label(labelNode.name()));
+                        .map(labelNode -> labelNode.name().replaceAll("#[0-9]*\\.", "*."))
+                        .forEach(labelName -> builder.label(labelName));
             }
         }
 
     }
     
-    public void addLabels(TopicConfigMetric configuredMetric, MetricDefinitionBuilder builder, PayloadResolver payloadResolver) {
-            if (configuredMetric.hasConfiguredLabels()) {
-                configuredMetric.getLabels().stream()
+    public void addLabelsToMetric(TopicConfigMetric givenMetricConfig, MetricDefinitionBuilder builder, PayloadResolver payloadResolver) {
+            if (givenMetricConfig.hasConfiguredLabels()) {
+                givenMetricConfig.getLabels().stream()
                         .map(labelName -> toFieldDescription(labelName, labelsInTopic))
                         .filter(Objects::nonNull)
                         .forEach(fieldDesc -> builder.insertLabel(fieldDesc));

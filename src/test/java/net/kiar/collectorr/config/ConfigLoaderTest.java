@@ -63,7 +63,7 @@ topics:
         assertEquals(2, metrics.size());
         
         TopicConfigMetric d1 = metrics.stream()
-                .filter(m -> "abc".equals( m.getValueField()))
+                .filter(m -> "abc".equals( m.getValueFieldName()))
                 .findAny()
                 .get();
         assertNotNull(d1);

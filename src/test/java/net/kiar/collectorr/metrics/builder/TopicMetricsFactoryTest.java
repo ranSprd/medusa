@@ -3,13 +3,16 @@ package net.kiar.collectorr.metrics.builder;
 import java.util.List;
 import net.kiar.collectorr.config.MappingsConfigLoader;
 import net.kiar.collectorr.config.model.TopicConfig;
+import net.kiar.collectorr.connector.mqtt.mapping.DataProvider;
 import net.kiar.collectorr.connector.mqtt.mapping.TopicStructure;
+import net.kiar.collectorr.metrics.BuildInLabels;
 import net.kiar.collectorr.metrics.FieldType;
 import net.kiar.collectorr.metrics.MetricDefinition;
 import net.kiar.collectorr.payloads.PayloadResolver;
 import net.kiar.collectorr.payloads.json.JsonResolver;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
+import org.mockito.Mockito;
 
 /**
  *
@@ -62,7 +65,9 @@ topics:
         List<MetricDefinition> metrics = TopicMetricsFactory.INSTANCE.buildMetric(payloadResolver, topicPath, topicToTest, TopicStructure.build(topicPath));
         
         assertEquals(1, metrics.size());
-        assertTrue( metrics.get(0).getName().getProcessed().endsWith("temp"));
+        assertFalse( metrics.get(0).getName().getProcessed().isEmpty());
+        assertTrue( metrics.get(0).hasLabels());
+        assertEquals("temp", metrics.get(0).getFieldOfValue().getName());
     }
     
     
@@ -152,5 +157,16 @@ topics:
         assertTrue( def.getLabels().stream().anyMatch( l -> l.getType() == FieldType.TOPIC), "expected LabelType 'TOPIC' not found");
         assertTrue( def.getLabels().stream().anyMatch( l -> l.getType() == FieldType.PAYLOAD), "expected LabelType 'PAYLOAD' not found");
         
+    }
+    
+    @Test
+    public void testMetricNameContainsNoDots() {
+        TopicMetricsFactory.MetricNameBuilder nameBuilder = new TopicMetricsFactory.MetricNameBuilder("topic/to/test");
+        
+        DataProvider dataProvider = Mockito.mock(DataProvider.class);
+        Mockito.when(dataProvider.resolve( BuildInLabels.VALUE_FIELD_NAME, "")).thenReturn("FIELD-NAME");
+        
+        
+        assertEquals("topic_to_test_FIELD-NAME", nameBuilder.getDefaultName().getProcessed(dataProvider));
     }
 }

@@ -2,10 +2,10 @@ package net.kiar.collectorr.connector.mqtt.mapping;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import net.kiar.collectorr.config.model.TopicConfig;
+import net.kiar.collectorr.metrics.BuildInLabels;
 import net.kiar.collectorr.metrics.FieldDescription;
 import net.kiar.collectorr.metrics.MetricDefinition;
 import net.kiar.collectorr.metrics.PrometheusGauge;
@@ -13,6 +13,7 @@ import net.kiar.collectorr.metrics.builder.TopicMetricsFactory;
 import net.kiar.collectorr.payloads.PayloadDataNode;
 import net.kiar.collectorr.payloads.PayloadResolver;
 import net.kiar.collectorr.payloads.json.JsonResolver;
+import net.kiar.collectorr.payloads.json.TopicPathResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,8 +63,8 @@ public class TopicProcessor {
         
         // consume values
         return definedMetrics.stream()
-                .map( metric -> createValueEntryForMetric(metric, topic, payloadResolver))
-                .filter(Objects::nonNull)
+                .map( metric -> createValueEntriesForMetric(metric, topic, payloadResolver))
+                .flatMap(list -> list.stream())
                 .collect(Collectors.toList());
     }
 
@@ -75,13 +76,13 @@ public class TopicProcessor {
      * @param payloadResolver
      * @return 
      */
-    private PrometheusGauge createValueEntryForMetric(MetricDefinition metric, String topic, PayloadResolver payloadResolver) {
+    private List<PrometheusGauge> createValueEntriesForMetric(MetricDefinition metric, String topic, PayloadResolver payloadResolver) {
         if (!metric.isValid()) {
-            return null;
+            return List.of();
         }
         Optional<PayloadDataNode> valueField = payloadResolver.findValueNode(metric.getFieldOfValue());
         if (valueField.isEmpty()) {
-            return null;
+            return List.of();
         }
         
         // we support only 1 type of metrics...
@@ -89,7 +90,9 @@ public class TopicProcessor {
         gauge.setValue( valueField.get().value());
         gauge.updateMillisTimestamp();
         
-        DataProvider dataProvider = new DataProvider(payloadResolver, topic, topicStructure);
+        DataProvider dataProvider = new DataProvider(payloadResolver, 
+                new TopicPathResolver(topic, topicStructure),
+                BuildInLabels.getBuildInData(metric, topic));
         if (metric.hasLabels()) {
             List<FieldDescription.FieldMappingValue> foundMappings = new ArrayList<>();
             for(FieldDescription field : metric.getLabels()) {
@@ -113,7 +116,11 @@ public class TopicProcessor {
         gauge.setName( metric.getName().getProcessed(dataProvider));
         
         gauge.buildSignature();
-        return gauge;
+        return List.of(gauge);
+    }
+
+    public List<MetricDefinition> getDefinedMetrics() {
+        return definedMetrics;
     }
 
 }

@@ -1,5 +1,6 @@
 package net.kiar.collectorr.config.model;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import java.util.List;
 
 /**
@@ -8,8 +9,9 @@ import java.util.List;
  */
 public class TopicConfigMetric {
     
-    /** name of the valueField field in payload */
-    private String valueField;
+    /** name of the valueFieldName field in payload */
+    @JsonAlias({"valueField", "valuefieldname"})
+    private String valueFieldName;
     
     /**
      * name of the metric in prometheus. The default setting is the name of the 
@@ -34,12 +36,12 @@ public class TopicConfigMetric {
      * 
      * @return the name of the field
      */
-    public String getValueField() {
-        return valueField;
+    public String getValueFieldName() {
+        return valueFieldName;
     }
 
-    public void setValueField(String valueField) {
-        this.valueField = valueField;
+    public void setValueFieldName(String valueFieldName) {
+        this.valueFieldName = valueFieldName;
     }
 
     public String getName() {

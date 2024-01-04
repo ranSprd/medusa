@@ -9,6 +9,7 @@ import net.kiar.collectorr.config.model.TopicConfig;
 import net.kiar.collectorr.config.model.TopicConfigMappings;
 import net.kiar.collectorr.config.model.TopicConfigMetric;
 import net.kiar.collectorr.connector.mqtt.mapping.TopicStructure;
+import net.kiar.collectorr.metrics.BuildInLabels;
 import net.kiar.collectorr.metrics.FieldDescription;
 import net.kiar.collectorr.metrics.MetricDefinition;
 import net.kiar.collectorr.metrics.MetricDefinitionBuilder;
@@ -40,21 +41,21 @@ public enum TopicMetricsFactory {
         } 
         
         List<MetricDefinition> result = new ArrayList<>();
-        for(TopicConfigMetric configuredMetric : topicConfig.getMetrics()) {
+        for(TopicConfigMetric givenMetricConfig : topicConfig.getMetrics()) {
             MetricDefinitionBuilder builder = MetricDefinitionBuilder
-                    .metricFromFieldDescriptor(configuredMetric.getValueField())
-                    .name(nameBuilder.getName(configuredMetric.getName(), configuredMetric.getValueField()));
+                    .metricFromFieldDescriptor(givenMetricConfig.getValueFieldName())
+                    .name(nameBuilder.getName(givenMetricConfig.getName()));
 
-            labelBuilder.addLabels(configuredMetric, builder, payloadResolver);
+            labelBuilder.addLabelsToMetric(givenMetricConfig, builder, payloadResolver);
             
             // insert mappings - overwrite content or set new labels
             addMappings(topicConfig, builder);
             
             
-            if (configuredMetric.getDescription() == null || configuredMetric.getDescription().isBlank()) {
+            if (givenMetricConfig.getDescription() == null || givenMetricConfig.getDescription().isBlank()) {
                 builder.description("from " +topicConfig.getTopic());
             } else {
-                builder.description( configuredMetric.getDescription());
+                builder.description( givenMetricConfig.getDescription());
             }
 
             result.add( builder.get());
@@ -89,9 +90,9 @@ public enum TopicMetricsFactory {
     private MetricDefinition constructDefaultMetricForValueField(String valueFieldName, MetricNameBuilder nameBuilder, PayloadResolver payloadResolver, LabelBuilder labelBuilder) {
         MetricDefinitionBuilder builder = MetricDefinitionBuilder
                 .metricForField( valueFieldName)
-                .name(nameBuilder.getNameFromField(valueFieldName));
+                .name(nameBuilder.getDefaultName());
         
-        labelBuilder.addAutoLabels(builder, payloadResolver);
+        labelBuilder.addAutoLabelsFromPayload(builder, payloadResolver);
         
         return builder.get();
     }
@@ -110,16 +111,20 @@ public enum TopicMetricsFactory {
             }
         }
         
-        public PlaceholderString getNameFromField(String fieldName) {
-            return getName(null, fieldName);
+        public PlaceholderString getDefaultName() {
+            return new PlaceholderString(namePrefix +"_{" +BuildInLabels.VALUE_FIELD_NAME +"}");
         }
         
-        public PlaceholderString getName(String preferedName, String fieldName) {
+        /**
+         * create a name based on the given preferedName. If that given name is
+         * empty, then a default pattern for the name is used.
+         * 
+         * @param preferedName
+         * @return 
+         */
+        public PlaceholderString getName(String preferedName) {
             if (preferedName == null || preferedName.isBlank()) {
-                if (fieldName == null || fieldName.isBlank()) {
-                    return new PlaceholderString(namePrefix +"_" +UUID.randomUUID().toString());
-                }
-                return new PlaceholderString(namePrefix +"_" +fieldName.replaceAll("\\.", "_"));
+                return getDefaultName();
             }
             return new PlaceholderString(preferedName);
         }

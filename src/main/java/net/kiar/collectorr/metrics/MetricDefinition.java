@@ -42,7 +42,12 @@ public class MetricDefinition {
     }
     
     public void registerPayloadLabel(String fieldName, String labelName) {
-        labelNames.add( new FieldDescription(fieldName, labelName));
+        boolean alreadyInList = labelNames.stream()
+                    .filter(node -> node.getType() == FieldType.PAYLOAD)
+                    .anyMatch(node -> node.getFieldName().equalsIgnoreCase(fieldName));
+        if (!alreadyInList) {
+            labelNames.add( new FieldDescription(fieldName, labelName));
+        }
     }
     
     public void registerTopicLabel(int indexInTopic, String labelName) {
