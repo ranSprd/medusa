@@ -45,6 +45,10 @@ public class DataProvider {
                          BuildInLabels.getBuildInData(valueField, topicResolver.getTopicPath()));
         }
 
+        public Optional<PayloadDataNode> findNode(FieldDescription fieldDesc) {
+            return payloadResolver.findNode(fieldDesc);
+        }
+
     }
     
     public static DataProviderFactory getFactory(PayloadResolver payloadResolver, TopicPathResolver topicResolver) {

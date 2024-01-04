@@ -62,8 +62,9 @@ public class TopicProcessor {
         }
         
         // consume values
+        DataProvider.DataProviderFactory dataFactory = DataProvider.getFactory(payloadResolver, new TopicPathResolver(topic, topicStructure));
         return definedMetrics.stream()
-                .map( metric -> createValueEntriesForMetric(metric, topic, payloadResolver))
+                .map( metric -> createValueEntriesForMetric(metric, dataFactory))
                 .flatMap(list -> list.stream())
                 .collect(Collectors.toList());
     }
@@ -76,15 +77,14 @@ public class TopicProcessor {
      * @param payloadResolver
      * @return 
      */
-    private List<PrometheusGauge> createValueEntriesForMetric(MetricDefinition metric, String topic, PayloadResolver payloadResolver) {
+    private List<PrometheusGauge> createValueEntriesForMetric(MetricDefinition metric, DataProvider.DataProviderFactory dataFactory) {
         if (!metric.isValid()) {
             return List.of();
         }
-        Optional<PayloadDataNode> valueField = payloadResolver.findNode(metric.getFieldOfValue());
+        Optional<PayloadDataNode> valueField = dataFactory.findNode(metric.getFieldOfValue());
         if (valueField.isEmpty()) {
             return List.of();
         }
-        DataProvider.DataProviderFactory dataFactory = DataProvider.getFactory(payloadResolver, new TopicPathResolver(topic, topicStructure));
         
         // we support only 1 type of metrics...
         PrometheusGauge gauge = new PrometheusGauge(metric);
