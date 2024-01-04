@@ -71,7 +71,11 @@ public class MqttMessageConsumer implements MqttCallback {
 
     @Override
     public void deliveryComplete(IMqttDeliveryToken token) {
-        log.info("complete");
+        try {
+            log.info("complete {}", token.getMessage());
+        } catch (Exception e) {
+            log.warn(" MQTT complete processing error {}", e.getMessage());
+        }
     }
 
     public MqttTopicStats getStats() {
