@@ -157,10 +157,16 @@ public class PrometheusGauge {
     }
     
     public String toMetricString() {
+        return toMetricString(true);
+    }
+    
+    public String toMetricString(boolean withHeader) {
         StringBuilder builder = new StringBuilder();
         String validName = getValidMetricName(name);
-        builder.append("# HELP ").append(validName).append(" ").append(metricDefinition.getDescription()).append('\n');
-        builder.append("# TYPE ").append(validName).append(" gauge\n");
+        if (withHeader) {
+            builder.append("# HELP ").append(validName).append(" ").append(metricDefinition.getDescription()).append('\n');
+            builder.append("# TYPE ").append(validName).append(" gauge\n");
+        }
         builder.append(validName);
         if (!labels.isEmpty()) {
             builder.append("{");

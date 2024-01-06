@@ -2,7 +2,10 @@ package net.kiar.collectorr.repository;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 import net.kiar.collectorr.metrics.PrometheusGauge;
 
 /**
@@ -30,6 +33,13 @@ public enum MetricsRepo {
     
     public Collection<PrometheusGauge> data() {
         return data.values();
+    }
+    
+    public Map<String, List<PrometheusGauge>> sortedData() {
+        Map<String, List<PrometheusGauge>> grouped = data.values().stream()
+                .collect( Collectors.groupingBy( PrometheusGauge::getName, Collectors.toList() ));
+        
+        return new TreeMap<>( grouped);
     }
     
 }
