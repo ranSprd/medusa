@@ -26,7 +26,7 @@ public class MetricDefinitionBuilder {
     public static MetricDefinitionBuilder metricFromFieldDescriptor(String fieldDescriptor) {
         Optional<FieldDescription> fieldDescription = FieldDescription.parseFieldDescriptor(fieldDescriptor);
         if (fieldDescription.isPresent()) {
-            MetricDefinitionBuilder result = new MetricDefinitionBuilder(fieldDescription.get().getFieldName());
+            MetricDefinitionBuilder result = new MetricDefinitionBuilder(fieldDescription.get().getFieldName().getFullName());
             result.metric.setFieldOfValue(fieldDescription.get());
             return result;
         }
@@ -60,12 +60,12 @@ public class MetricDefinitionBuilder {
     
     // labelname = fieldname
     public MetricDefinitionBuilder label(String labelName) {
-        return label(labelName, labelName);
+        return label(labelName, null);
     }
     
     /** insert a new instance as topic label */
     public MetricDefinitionBuilder topicLabel(FieldDescription topicFieldDesc) {
-        return topicLabel(topicFieldDesc.getFieldIndex(), topicFieldDesc.getName());
+        return topicLabel(topicFieldDesc.getFieldIndex(), topicFieldDesc.getFieldName().getFullName());
     }
     
     public MetricDefinitionBuilder topicLabel(int index, String labelName) {
@@ -102,5 +102,9 @@ public class MetricDefinitionBuilder {
     
     public MetricDefinition get() {
         return metric;
+    }
+    
+    public String getFieldNameOfMetricValue() {
+        return metric.getFieldOfValue().getFieldName().getFullName();
     }
 }

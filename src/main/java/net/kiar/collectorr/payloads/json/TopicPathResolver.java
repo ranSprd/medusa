@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import net.kiar.collectorr.connector.mqtt.mapping.TopicStructure;
 import net.kiar.collectorr.metrics.FieldDescription;
+import net.kiar.collectorr.payloads.FieldName;
 import net.kiar.collectorr.payloads.PayloadDataNode;
 import net.kiar.collectorr.payloads.PayloadResolver;
 
@@ -26,7 +27,7 @@ public class TopicPathResolver implements PayloadResolver {
             for(String p : parts) {
                 if (p != null) {
                     String fieldName = topicStructure.getFieldNameOfSegment(t, true);
-                    data.add(new PayloadDataNode(fieldName, p));
+                    data.add(new PayloadDataNode( new FieldName(fieldName), fieldName, p));
                 }
                 t++;
             }
@@ -48,30 +49,36 @@ public class TopicPathResolver implements PayloadResolver {
         return "";
     }
 
-    public List<PayloadDataNode> getLabelNodes() {
+    @Override
+    public List<PayloadDataNode> findNodes(FieldDescription fieldDescription) {
+        if (fieldDescription.getFieldIndex() < data.size()) {
+            if (fieldDescription.getFieldIndex() >= 0) {
+                return List.of( data.get( fieldDescription.getFieldIndex()));
+            }
+        }
         return List.of();
     }
 
     @Override
     public String getLabelNamesAsString() {
-        return data.stream().map(o -> o.name()).collect(Collectors.joining(","));        
+        return data.stream().map(o -> o.getFieldName().getFullName()).collect(Collectors.joining(","));        
     }
 
-    @Override
-    public Optional<PayloadDataNode> findNode(FieldDescription fieldDescription) {
-        if (fieldDescription.getFieldIndex() < data.size()) {
-            if (fieldDescription.getFieldIndex() >= 0) {
-                return Optional.of( data.get( fieldDescription.getFieldIndex()));
-            }
-        }
-        return Optional.empty();
-    }
+//    @Override
+//    public Optional<PayloadDataNode> findNode(FieldDescription fieldDescription) {
+//        return Optional.empty();
+//    }
 
     @Override
     public Optional<PayloadDataNode> findNode(String nodeName) {
         return data.stream()
-                .filter(node -> nodeName.equals(node.name()))
+                .filter(node -> nodeName.equals(node.getFieldName().getFullName()))
                 .findAny();
+    }
+
+    @Override
+    public List<PayloadDataNode> getLabelNodes() {
+        return List.of();
     }
     
 }

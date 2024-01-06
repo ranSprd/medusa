@@ -14,6 +14,7 @@ import net.kiar.collectorr.metrics.FieldDescription;
 import net.kiar.collectorr.metrics.MetricDefinition;
 import net.kiar.collectorr.metrics.MetricDefinitionBuilder;
 import net.kiar.collectorr.metrics.PlaceholderString;
+import net.kiar.collectorr.payloads.FieldName;
 import net.kiar.collectorr.payloads.PayloadResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,15 +82,15 @@ public enum TopicMetricsFactory {
             log.warn("can't extract an payload. No value field found.");
             return List.of();
         } 
-            // construct metrics (definition)
+        // construct metrics (definition)
         return payloadResolver.getValueNodes().stream()
-                    .map(valueNode -> constructDefaultMetricForValueField(valueNode.name(), nameBuilder, payloadResolver, labelBuilder))
+                    .map(valueNode -> constructDefaultMetricForValueField(valueNode.getFieldName(), nameBuilder, payloadResolver, labelBuilder))
                     .collect(Collectors.toList());
     }
     
-    private MetricDefinition constructDefaultMetricForValueField(String valueFieldName, MetricNameBuilder nameBuilder, PayloadResolver payloadResolver, LabelBuilder labelBuilder) {
+    private MetricDefinition constructDefaultMetricForValueField(FieldName valueFieldName, MetricNameBuilder nameBuilder, PayloadResolver payloadResolver, LabelBuilder labelBuilder) {
         MetricDefinitionBuilder builder = MetricDefinitionBuilder
-                .metricForField( valueFieldName)
+                .metricForField( valueFieldName.getFullName())
                 .name(nameBuilder.getDefaultName());
         
         labelBuilder.addAutoLabelsFromPayload(builder, payloadResolver);

@@ -3,7 +3,9 @@ package net.kiar.collectorr.payloads.json;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import net.kiar.collectorr.metrics.FieldDescription;
+import net.kiar.collectorr.payloads.PayloadDataNode;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -47,7 +49,7 @@ public class JsonResolverTest {
                 Files.readString( Path.of("src/test/resources/mqtt/payloads/shellyMotion-status01.json")));
         assertNotNull(instance);
         assertEquals(4, instance.getValueNodes().size());
-        assertTrue(instance.findNode( new FieldDescription("tmp.value")).isPresent());
+        assertEquals(1, instance.findNodes( new FieldDescription("tmp.value")).size());
         assertTrue(instance.findNode("tmp.units").isPresent());
     }
     
@@ -80,4 +82,12 @@ public class JsonResolverTest {
         assertEquals("", JsonResolver.extractPart("5.6 m/s", -2));
     }
     
+    
+    @Test
+    public void testFindNodes() {
+        JsonResolver resolver = JsonResolver.consume("{ \"foo\": [{ \"item\" : \"1\"}, { \"item\" : \"2\", \"other\" : \"2\"}], \"item\" : \"3\" }");
+        List<PayloadDataNode> result = resolver.findNodes( new FieldDescription("foo.*.item"));
+        
+        assertEquals(2, result.size());
+    }
 }

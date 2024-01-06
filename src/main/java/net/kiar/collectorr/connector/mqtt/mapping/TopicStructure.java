@@ -132,7 +132,7 @@ public class TopicStructure {
         return segments.stream()
                 .filter(segment -> segment.hasField())
                 .map(segment -> FieldDescription.topicField(segment.getSegementIndex(), segment.getFieldName()))
-                .collect( Collectors.toUnmodifiableMap(keyMapper -> keyMapper.getFieldName(), value -> value));
+                .collect( Collectors.toUnmodifiableMap(keyMapper -> keyMapper.getFieldName().getFullName(), value -> value));
     }
 
 

@@ -62,7 +62,9 @@ public class LabelBuilder {
                     .forEach(labelNode -> builder.topicLabel(labelNode));
             if (payloadResolver != null) {
                 payloadResolver.getLabelNodes().stream()
-                        .map(labelNode -> labelNode.name().replaceAll("#[0-9]*\\.", "*."))
+                        .map(labelNode -> labelNode.getFieldName().getFullName().replaceAll("#[0-9]*\\.", "*."))
+                        // don't add as label if the field is defined as value
+                        .filter(labelName -> !labelName.equalsIgnoreCase( builder.getFieldNameOfMetricValue()))
                         .forEach(labelName -> builder.label(labelName));
             }
         }
@@ -93,7 +95,7 @@ public class LabelBuilder {
         if (parsed.isPresent()) {
             // fix the label type if the name is present in the topic list
             FieldDescription result = parsed.get();
-            FieldDescription topicLabelDef = topicLabels.get(result.getFieldName());
+            FieldDescription topicLabelDef = topicLabels.get(result.getFieldName().getFullName());
             if (topicLabelDef != null) {
                 result.setType(FieldType.TOPIC);
                 result.setFieldIndex( topicLabelDef.getFieldIndex());

@@ -81,17 +81,20 @@ public class TopicProcessor {
         if (!metric.isValid()) {
             return List.of();
         }
-        Optional<PayloadDataNode> valueField = dataFactory.findNode(metric.getFieldOfValue());
-        if (valueField.isEmpty()) {
-            return List.of();
-        }
         
+        return dataFactory.dataProvider(metric).stream()
+                    .map(dataProvider -> createMetricEntryForValue(dataProvider))
+                    .collect(Collectors.toList());
+    }
+
+    private PrometheusGauge createMetricEntryForValue(DataProvider dataProvider) {
         // we support only 1 type of metrics...
+        final MetricDefinition metric = dataProvider.getMetric();
         PrometheusGauge gauge = new PrometheusGauge(metric);
-        gauge.setValue( valueField.get().value());
+        gauge.setValue( dataProvider.getFieldOfValueData().value());
         gauge.updateMillisTimestamp();
+//        System.out.println("Metric: " +dataProvider.getFieldOfValue().getName());
         
-        DataProvider dataProvider = dataFactory.dataProvider(valueField.get());
         if (metric.hasLabels()) {
             List<FieldDescription.FieldMappingValue> foundMappings = new ArrayList<>();
             for(FieldDescription field : metric.getLabels()) {
@@ -99,7 +102,12 @@ public class TopicProcessor {
                 Optional<PayloadDataNode> input = dataProvider.getData(field);
                 if (input.isPresent()) {
                     String fieldValue = input.get().value();
-                    gauge.addValueForLabel(field.getName(), fieldValue);
+                    //@todo name or real field name
+                    if (field.hasName()) {
+                        gauge.addValueForLabel(field.getName(), fieldValue);
+                    } else {
+                        gauge.addValueForLabel(input.get().getFieldName().getFullName(), fieldValue);
+                    }
                     field.resolveMapping(fieldValue)
                             .ifPresent(target -> foundMappings.add(target));
                 }
@@ -114,8 +122,7 @@ public class TopicProcessor {
         }
         gauge.setName( metric.getName().getProcessed(dataProvider));
         gauge.buildSignature();
-        
-        return List.of(gauge);
+        return gauge;
     }
 
     public List<MetricDefinition> getDefinedMetrics() {

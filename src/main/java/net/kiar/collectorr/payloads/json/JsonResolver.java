@@ -7,8 +7,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import net.kiar.collectorr.metrics.FieldDescription;
+import net.kiar.collectorr.payloads.FieldName;
 import net.kiar.collectorr.payloads.PayloadDataNode;
 import net.kiar.collectorr.payloads.PayloadResolver;
 import org.slf4j.Logger;
@@ -64,9 +66,9 @@ public class JsonResolver implements PayloadResolver {
             String nodeNameStr = prefix + n.getKey();
 //                if (valueNode.isNumber() || valueNode.isBoolean()) {
             if (valueNode.isNumber()) {
-                values.add( new PayloadDataNode(nodeNameStr, valueNode.asText()));
+                values.add( new PayloadDataNode( new FieldName(nodeNameStr), nodeNameStr, valueNode.asText()));
             } else if (valueNode.isTextual() || valueNode.isBoolean()) {
-                labels.add( new PayloadDataNode(nodeNameStr, valueNode.asText()));
+                labels.add( new PayloadDataNode(new FieldName(nodeNameStr), nodeNameStr, valueNode.asText()));
             } else if (valueNode.isObject()) {
                 processNode(values, labels, nodeNameStr +".", valueNode);
             } else if (valueNode.isArray()) {
@@ -82,16 +84,17 @@ public class JsonResolver implements PayloadResolver {
         
     }
 
-    @Override
-    public Optional<PayloadDataNode> findNode(FieldDescription nodeDesc) {
-        Optional<PayloadDataNode> node = findNode(nodeDesc.getFieldName());
-        if (node.isPresent() && nodeDesc.getFieldIndex() >= 0) {
-            // create a new Payloadnode which contains only a part of the full payload
-            return Optional.of( new PayloadDataNode( nodeDesc.getFieldName(), 
-                                                    extractPart(node.get().value(), nodeDesc.getFieldIndex())));
-        }
-        return node;
-    }
+//    @Override
+//    @Deprecated
+//    public Optional<PayloadDataNode> findNode(FieldDescription nodeDesc) {
+//        Optional<PayloadDataNode> node = findNode(nodeDesc.getFieldName());
+//        if (node.isPresent() && nodeDesc.getFieldIndex() >= 0) {
+//            // create a new Payloadnode which contains only a part of the full payload
+//            return Optional.of( new PayloadDataNode( nodeDesc.getFieldName(), 
+//                                                    extractPart(node.get().value(), nodeDesc.getFieldIndex())));
+//        }
+//        return node;
+//    }
     
     @Override
     public Optional<PayloadDataNode> findNode(String nodeName) {
@@ -99,13 +102,41 @@ public class JsonResolver implements PayloadResolver {
             return Optional.empty();
         }
         return valueNodes.stream()
-                .filter(node -> nodeName.equalsIgnoreCase(node.name()))
+                .filter(node -> nodeName.equalsIgnoreCase(node.getFieldName().getFullName()))
                 .findAny()
                 .or( () -> labelNodes.stream()
-                        .filter(node -> nodeName.equalsIgnoreCase(node.name()))
+                        .filter(node -> nodeName.equalsIgnoreCase(node.getFieldName().getFullName()))
                         .findAny()
                 );
     }
+    
+    @Override
+    public List<PayloadDataNode> findNodes(FieldDescription valueNodeDesc) {
+        String str = valueNodeDesc.getFieldName().getFullName().replaceAll("\\.\\*\\.", "\\\\.#[0-9]*\\\\.");
+        Pattern pattern = Pattern.compile(str);
+        
+        List<PayloadDataNode> result = valueNodes.stream()
+                .filter(node -> pattern.matcher( node.getFieldName().getFullName()).matches())
+                .map(node -> extractContent(node, valueNodeDesc))
+                .collect(Collectors.toList());
+        if (result.isEmpty()) {
+            return labelNodes.stream()
+                    .filter(node -> pattern.matcher( node.getFieldName().getFullName()).matches())
+                    .map(node -> extractContent(node, valueNodeDesc))
+                    .collect(Collectors.toList());
+        }
+        return result;
+    }
+    
+    private static PayloadDataNode extractContent(PayloadDataNode node, FieldDescription nodeDesc) {
+        if (nodeDesc.getFieldIndex() >= 0) {
+            return new PayloadDataNode(node.getFieldName(), nodeDesc.getName(), extractPart(node.value(), nodeDesc.getFieldIndex()));
+        }
+        return node;
+        // no partial data from value 
+//        return new PayloadDataNode(node.fieldName(), nodeDesc.getName(), node.value());
+    }
+    
     
     
     @Override
@@ -115,14 +146,9 @@ public class JsonResolver implements PayloadResolver {
     
     @Override
     public String getValueNamesAsString() {
-        return valueNodes.stream().map(o -> o.name()).collect(Collectors.joining(","));        
+        return valueNodes.stream().map(o -> o.getFieldName().getFullName()).collect(Collectors.joining(","));        
     }
     
-    
-    public List<PayloadDataNode> findNodes(FieldDescription valueNodeDesc) {
-        
-        return List.of();
-    }
     
 
     @Override
@@ -136,7 +162,7 @@ public class JsonResolver implements PayloadResolver {
      */
     @Override
     public String getLabelNamesAsString() {
-        return labelNodes.stream().map(o -> o.name()).collect(Collectors.joining(", "));        
+        return labelNodes.stream().map(o -> o.getFieldName().getFullName()).collect(Collectors.joining(", "));        
     }
     
     public static String extractPart(String value, int index) {

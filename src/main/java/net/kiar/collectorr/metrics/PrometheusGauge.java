@@ -28,6 +28,7 @@ public class PrometheusGauge {
 
     public PrometheusGauge(MetricDefinition def) {
         this.metricDefinition = def;
+        this.name = def.getName().getProcessed();
     }
 
     public MetricDefinition getMetricDefinition() {
@@ -64,7 +65,21 @@ public class PrometheusGauge {
         this.name = name;
     }
     
-    
+    /**
+     * Metric names may contain ASCII letters, digits, underscores, and colons. It must match the regex [a-zA-Z_:][a-zA-Z0-9_:]*.
+     * @param input  
+     */
+    public static String getValidMetricName(String input) {
+        return  input.replaceAll("#", ":");
+    }
+    /**
+     * Labels may contain ASCII letters, numbers, as well as underscores. They must match the regex [a-zA-Z_][a-zA-Z0-9_]*
+     * @param input
+     * @return 
+     */
+    public static String getValidLabelName(String input) {
+        return  input.replaceAll("#", "");
+    }
 
     public long getMillisTimestamp() {
         return millisTimestamp;
@@ -143,9 +158,10 @@ public class PrometheusGauge {
     
     public String toMetricString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("# HELP ").append(name).append(" ").append(metricDefinition.getDescription()).append('\n');
-        builder.append("# TYPE ").append(name).append(" gauge\n");
-        builder.append(name);
+        String validName = getValidMetricName(name);
+        builder.append("# HELP ").append(validName).append(" ").append(metricDefinition.getDescription()).append('\n');
+        builder.append("# TYPE ").append(validName).append(" gauge\n");
+        builder.append(validName);
         if (!labels.isEmpty()) {
             builder.append("{");
             boolean addComma = false;
@@ -154,7 +170,7 @@ public class PrometheusGauge {
                     builder.append(",");
                 }
                 
-                builder.append(metricDefinition.resolveLabelName(labelValue.key)).append("=\"").append(labelValue.value).append("\"");
+                builder.append(getValidLabelName(metricDefinition.resolveLabelName(labelValue.key))).append("=\"").append(labelValue.value).append("\"");
                 addComma = true;
             }
             builder.append("}");

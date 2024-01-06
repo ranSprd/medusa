@@ -10,7 +10,15 @@ import net.kiar.collectorr.metrics.FieldDescription;
  */
 public interface PayloadResolver {
 
-    public Optional<PayloadDataNode> findNode(FieldDescription fieldDesc);
+    
+    public List<PayloadDataNode> findNodes(FieldDescription valueNodeDesc);
+    
+    /** value is not filtered as in findNodes (means something like val#1 from metric definition will not work) 
+     * @param nodeName name of the field in source
+     * @return raw unprocessed value
+     * 
+     * @deprecated - should use findNodes instead
+     */
     public Optional<PayloadDataNode> findNode(String nodeName);
     
     /**

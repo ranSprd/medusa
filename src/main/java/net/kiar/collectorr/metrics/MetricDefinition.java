@@ -44,14 +44,14 @@ public class MetricDefinition {
     public void registerPayloadLabel(String fieldName, String labelName) {
         boolean alreadyInList = labelNames.stream()
                     .filter(node -> node.getType() == FieldType.PAYLOAD)
-                    .anyMatch(node -> node.getFieldName().equalsIgnoreCase(fieldName));
+                    .anyMatch(node -> node.getFieldName().getFullName().equalsIgnoreCase(fieldName));
         if (!alreadyInList) {
             labelNames.add( new FieldDescription(fieldName, labelName));
         }
     }
     
-    public void registerTopicLabel(int indexInTopic, String labelName) {
-        labelNames.add( FieldDescription.topicField(indexInTopic, labelName));
+    public void registerTopicLabel(int indexInTopic, String labelFieldName) {
+        labelNames.add( FieldDescription.topicField(indexInTopic, labelFieldName));
     }
 
     public List<FieldDescription> getLabels() {
@@ -64,14 +64,14 @@ public class MetricDefinition {
     
     public Optional<FieldDescription> findLabel(String fieldName) {
         return labelNames.stream()
-                    .filter(desc -> fieldName.equalsIgnoreCase( desc.getFieldName()))
+                    .filter(desc -> fieldName.equalsIgnoreCase( desc.getFieldName().getFullName()))
                     .findAny();
     }
     
     public String resolveLabelName(String fieldName) {
         Optional<FieldDescription> fieldDesc = findLabel(fieldName);
         if (fieldDesc.isPresent()) {
-            return fieldDesc.get().getName();
+            return fieldDesc.get().getFieldName().getFullName();
         }
         return fieldName;
     }

@@ -27,22 +27,23 @@ public class TopicProcessorTest {
         assertNotNull(result);
         assertFalse(result.isEmpty());
         
-        PrometheusGauge first = result.get(0);
+        PrometheusGauge gauge = result.get(0);
         
-        MetricDefinition def = first.getMetricDefinition();
+        MetricDefinition def = gauge.getMetricDefinition();
         assertNotNull(def);
         assertNotNull(def.getLabels());
         assertEquals(1, def.getLabels().size());
+        assertEquals("temp", def.getFieldOfValue().getFieldName().getFullName());
 
-        FieldDescription labelDef = def.getLabels().get(0);
-        assertNotNull(labelDef);
-        assertEquals("unit", labelDef.getFieldName());
+        FieldDescription labelFieldDesc = def.getLabels().get(0);
+        assertNotNull(labelFieldDesc);
+        assertEquals("unit", labelFieldDesc.getFieldName().getFullName());
         
-        assertEquals(12.0, first.getValue());
-        assertTrue(first.getMillisTimestamp() >= startTime);
+        assertEquals(12.0, gauge.getValue());
+        assertTrue(gauge.getMillisTimestamp() >= startTime);
         
-        assertTrue(first.hasLabels());
-        assertEquals(def.getLabels().size(), first.getNumberOfLabels());
+        assertTrue(gauge.hasLabels());
+        assertEquals(def.getLabels().size(), gauge.getNumberOfLabels());
     }
     
     

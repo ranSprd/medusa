@@ -47,7 +47,7 @@ topics:
                 .findAny()
                 .get();
         
-        assertEquals("abc", testMetric.getFieldOfValue().getFieldName());
+        assertEquals("abc", testMetric.getFieldOfValue().getFieldName().getFullName());
         assertTrue(testMetric.hasLabels());
     }
     
@@ -67,23 +67,24 @@ topics:
         assertEquals(1, metrics.size());
         assertFalse( metrics.get(0).getName().getProcessed().isEmpty());
         assertTrue( metrics.get(0).hasLabels());
-        assertEquals("temp", metrics.get(0).getFieldOfValue().getName());
+        assertEquals("temp", metrics.get(0).getFieldOfValue().getFieldName().getFullName());
+        assertFalse(metrics.get(0).getFieldOfValue().hasName());
     }
     
     
-//    private final String configContentForTest2 = """
-//topics:
-//- topic: topic/to/test
-//  metrics:
-//  - name: testMetric
-//    valueField: outdoor
-//""";
+    private final String configContentForTest2 = """
+topics:
+- topic: topic/to/test
+  metrics:
+  - name: testMetric
+    valueField: outdoor
+""";
     
-//    @Test
+    @Test
     // Labels sind nicht in der config definiert - 
     public void testMetricFromBoolean() {
         String topicPath = "topic/to/test";
-        MappingsConfigLoader conf = MappingsConfigLoader.readContent( configContentForTest1);
+        MappingsConfigLoader conf = MappingsConfigLoader.readContent( configContentForTest2);
         
         TopicConfig topicToTest = conf.findTopic(topicPath).get();
 //        TopicConfig topicToTest = new TopicConfig();
@@ -97,7 +98,9 @@ topics:
         List<MetricDefinition> metrics = TopicMetricsFactory.INSTANCE.buildMetric(payloadResolver, topicPath, topicToTest, TopicStructure.build(topicPath));
         
         assertEquals(1, metrics.size());
-        assertTrue( metrics.get(0).getName().getProcessed().endsWith("temp"));
+        assertNotNull( metrics.get(0).getName());
+        assertEquals(1, metrics.get(0).getLabels().size());
+        assertTrue(metrics.get(0).findLabel("place").isPresent());
     }
     
     
@@ -124,9 +127,9 @@ topics:
         MetricDefinition def = metrics.get(0);
         assertEquals(2, def.getLabels().size());
         
-        assertTrue( def.getLabels().stream().anyMatch(l -> l.getName().equals("label-1")), "expected Label 'label-1' not found");
-        assertTrue( def.getLabels().stream().anyMatch(l -> l.getName().equals("label-2")), "expected Label 'label-2' not found");
-        assertTrue( def.getLabels().stream().allMatch( l -> l.getType() == FieldType.TOPIC), "expected LabelType 'TOPIC' not found");
+        assertTrue( def.getLabels().stream().anyMatch(label -> label.getFieldName().getFullName().equals("label-1")), "expected Label 'label-1' not found");
+        assertTrue( def.getLabels().stream().anyMatch(label -> label.getFieldName().getFullName().equals("label-2")), "expected Label 'label-2' not found");
+        assertTrue( def.getLabels().stream().allMatch(label -> label.getType() == FieldType.TOPIC), "expected LabelType 'TOPIC' not found");
         
     }
     
@@ -157,6 +160,40 @@ topics:
         assertTrue( def.getLabels().stream().anyMatch( l -> l.getType() == FieldType.TOPIC), "expected LabelType 'TOPIC' not found");
         assertTrue( def.getLabels().stream().anyMatch( l -> l.getType() == FieldType.PAYLOAD), "expected LabelType 'PAYLOAD' not found");
         
+    }
+    
+    private final String configContentForTest5 = """
+topics:
+- topic: topic/to/test
+  metrics:
+  - name: testMetric
+    valueField: strField
+""";
+    @Test
+    public void testValueFieldIsNotALabel() {
+        String topicPath = "topic/to/test";
+        MappingsConfigLoader conf = MappingsConfigLoader.readContent( configContentForTest5);
+        
+        TopicConfig topicToTest = conf.findTopic(topicPath).get();
+        
+        String jsonPayload = """ 
+                             { "strField" : "12", "outdoor" : true, "place" : "roof" } 
+        """;
+        
+        PayloadResolver payloadResolver = JsonResolver.consume(jsonPayload);
+        
+        
+        List<MetricDefinition> metrics = TopicMetricsFactory.INSTANCE.buildMetric(payloadResolver, topicPath, topicToTest, TopicStructure.build("topic/{label-1}"));
+        
+        assertNotNull(metrics);
+        assertEquals(1, metrics.size());
+        
+        MetricDefinition def = metrics.get(0);
+        assertEquals(3, def.getLabels().size());
+        
+        assertTrue( def.getLabels().stream().anyMatch( label -> label.getFieldName().getFullName().equalsIgnoreCase("outdoor")) );
+        assertTrue( def.getLabels().stream().anyMatch( label -> label.getFieldName().getFullName().equalsIgnoreCase("place")) );
+        assertTrue( def.getLabels().stream().anyMatch( label -> label.getFieldName().getFullName().equalsIgnoreCase("label-1")) );
     }
     
     @Test

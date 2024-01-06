@@ -89,5 +89,6 @@
       "abs": "991.5 hPa",
       "rel": "991.5 hPa"
     }
-  ]
+  ],
+  "device" : "ecowitt"
 }

@@ -1,6 +1,7 @@
 package net.kiar.collectorr.metrics;
 
 import java.util.Optional;
+import net.kiar.collectorr.payloads.FieldName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +18,7 @@ public class FieldDescription {
     
     public static final String DESCRIPTOR_DELIMITER = "\\|";
     
-    private final String fieldName;
+    private final FieldName fieldName;
     private int fieldIndex = -1;
     private String name;
     private FieldType type = FieldType.PAYLOAD;
@@ -25,8 +26,8 @@ public class FieldDescription {
     private FieldMapping mappings;
     private String fixedContent = null;
     
-    public static FieldDescription topicField(int index, String name) {
-        FieldDescription result = new FieldDescription(index, name, name);
+    public static FieldDescription topicField(int index, String fieldName) {
+        FieldDescription result = new FieldDescription(index, fieldName, null);
         result.setType(FieldType.TOPIC);
         return result;
     }
@@ -62,9 +63,9 @@ public class FieldDescription {
                 if (parts[0].contains("=")) {
                     String[] pair = parts[0].split("=");
                     if (pair.length > 0) {
-                        String name = pair[0].trim();
-                        if (name.length() > 0) {
-                            result = new FieldDescription(name);
+                        String fieldName = pair[0].trim();
+                        if (fieldName.length() > 0) {
+                            result = new FieldDescription(fieldName);
                             if (pair.length > 1) {
                                 // happy case
                                 result.setFixedContent(pair[1].trim());
@@ -85,7 +86,7 @@ public class FieldDescription {
                 if (parts.length > 1) {
                     // here we know, that a name-section is present. Parse that part
                     FieldIndexDescriptor namePart = FieldIndexDescriptor.parse(parts[1]);
-                    result.setName( namePart.getName());
+                    result.name = namePart.getName();
                     if (result.getFieldIndex() < 0) {
                         // maybe the name part contains an index (field|name#1), so we add this info
                         result.setFieldIndex(namePart.getIndex());
@@ -104,38 +105,38 @@ public class FieldDescription {
     }
     
     public FieldDescription(String fieldName) {
-        this.fieldName = fieldName;
-        this.name = fieldName;
-        this.fieldIndex = -1;
+        this(fieldName, null);
     }
 
     public FieldDescription(String fieldName, String name) {
-        this.fieldName = fieldName;
-        this.name = name;
-        this.fieldIndex = -1;
+        this(-1, fieldName, name);
     }
 
     public FieldDescription(int fieldIndex, String fieldName, String name) {
-        this.fieldName = fieldName;
+        this.fieldName = new FieldName(fieldName);
         this.name = name;
         this.fieldIndex = fieldIndex;
     }
     
     public boolean isInValid() {
         if (type == FieldType.PAYLOAD) {
-            return (fieldName == null || fieldName.isBlank());
+            return (fieldName == null || fieldName.getFullName().isBlank());
         }
         
         // case Type = TOPIC
         return true;
     }
 
-    public String getFieldName() {
+    public FieldName getFieldName() {
         return fieldName;
     }
 
     public String getName() {
         return name;
+    }
+    
+    public boolean hasName() {
+        return (name != null && !name.isBlank());
     }
 
     public String getFixedContent() {
@@ -148,10 +149,6 @@ public class FieldDescription {
     
     public boolean hasFixedContent() {
         return fixedContent != null && !fixedContent.isBlank();
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public FieldType getType() {

@@ -15,11 +15,14 @@
  */
 package net.kiar.collectorr.payloads;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import net.kiar.collectorr.metrics.BuildInLabels;
 import net.kiar.collectorr.metrics.FieldDescription;
 import static net.kiar.collectorr.metrics.FieldType.PAYLOAD;
 import static net.kiar.collectorr.metrics.FieldType.TOPIC;
+import net.kiar.collectorr.metrics.MetricDefinition;
 import net.kiar.collectorr.payloads.json.TopicPathResolver;
 
 /**
@@ -39,14 +42,15 @@ public class DataProvider {
         }
 
 
-        public DataProvider dataProvider(PayloadDataNode valueField) {
-            return new DataProvider(payloadResolver, 
-                                    topicResolver,
-                         BuildInLabels.getBuildInData(valueField, topicResolver.getTopicPath()));
-        }
-
-        public Optional<PayloadDataNode> findNode(FieldDescription fieldDesc) {
-            return payloadResolver.findNode(fieldDesc);
+        public List<DataProvider> dataProvider(MetricDefinition metric) {
+            
+            return payloadResolver.findNodes(metric.getFieldOfValue()).stream()
+                        .map(valueInPayload -> new DataProvider(
+                                        valueInPayload,
+                                                    payloadResolver, 
+                                                    topicResolver,
+                                                    metric))
+                        .collect(Collectors.toList());
         }
 
     }
@@ -56,30 +60,48 @@ public class DataProvider {
     }
     
 
+    private final PayloadDataNode fieldOfValueData;
     private final PayloadResolver payloadResolver;
     private final TopicPathResolver topicResolver;
     private final BuildInLabels buildInLabels;
+    private final MetricDefinition metric;
 
-    private DataProvider(PayloadResolver payloadResolver, TopicPathResolver topicResolver, BuildInLabels buildInLabels) {
+    private DataProvider(PayloadDataNode valueFieldData, PayloadResolver payloadResolver, TopicPathResolver topicResolver, MetricDefinition metric) {
+        this.fieldOfValueData = valueFieldData;
         this.payloadResolver = payloadResolver;
         this.topicResolver = topicResolver;
-        this.buildInLabels = buildInLabels;
+        this.buildInLabels = BuildInLabels.getBuildInData(valueFieldData, topicResolver.getTopicPath());
+        this.metric = metric;
     }
 
+    /** value for metric = source field */
+    public PayloadDataNode getFieldOfValueData() {
+        return fieldOfValueData;
+    }
+
+    public MetricDefinition getMetric() {
+        return metric;
+    }
+
+    public FieldDescription getFieldOfValue() {
+        return metric.getFieldOfValue();
+    }
     
+    
+
     public Optional<PayloadDataNode> getData(FieldDescription field) {
         
         // some fields define fixed content
         if (field.hasFixedContent()) {
-            return Optional.of( new PayloadDataNode(field.getName(), field.getFixedContent()));
+            return Optional.of( new PayloadDataNode(field.getFieldName(), field.getName(), field.getFixedContent()));
         }
         
         Optional<PayloadDataNode> result = Optional.empty();
         switch (field.getType()) {
-            case PAYLOAD ->
-                result = payloadResolver.findNode(field);
+            case PAYLOAD -> 
+                result = filter(payloadResolver.findNodes(field));
             case TOPIC ->
-                result = topicResolver.findNode(field);
+                result = filter(topicResolver.findNodes(field));
         }
 
         return result;
@@ -95,6 +117,25 @@ public class DataProvider {
             return found.get().value();
         }
         return buildInLabels.find(fieldName, fallbackValue);
+    }
+    
+    private Optional<PayloadDataNode> filter(List<PayloadDataNode> payloadNodes) {
+        if (payloadNodes.isEmpty()) {
+            return Optional.empty();
+//        } else if (payloadNodes.size() == 1) {
+//            PayloadDataNode singleNode = payloadNodes.get(0);
+////            if (singleNode.name().)
+//            return Optional.of( payloadNodes.get(0));
+        }
+        
+        String prefix = this.fieldOfValueData.getFieldName().getPrefix();
+        return payloadNodes.stream()
+                // either the field is part of an array, then the prefix should match or the field is not an array, then it should be used
+                .filter(node -> (node.getFieldName().getPrefix().equalsIgnoreCase( prefix)) || !node.getFieldName().isArrayItem())
+                .findAny();
+
+//        return Optional.empty();
+        
     }
 
 }
