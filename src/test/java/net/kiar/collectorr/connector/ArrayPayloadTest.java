@@ -19,11 +19,16 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Optional;
 import net.kiar.collectorr.config.MappingsConfigLoader;
 import net.kiar.collectorr.config.model.TopicConfig;
 import net.kiar.collectorr.connector.mqtt.mapping.TopicCache;
+import net.kiar.collectorr.metrics.MetricDefinition;
 import net.kiar.collectorr.metrics.PrometheusGauge;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -35,12 +40,12 @@ public class ArrayPayloadTest {
 topics:
 - topic: /get_livedata_info
   metrics:
-  - valueField: common_list.val
+  - valueField: common_list.*.val
       
 """;
     
 
-//    @Test
+    @Test
     public void testMetricWithLabels() throws IOException {
         String topicPath = "/get_livedata_info";
 //        MappingsConfigLoader conf = MappingsConfigLoader.readFromFile("src/test/resources/http/ecowitt-mappings.yaml");
@@ -52,9 +57,25 @@ topics:
         String message = Files.readString( Paths.get("src/test/resources/http/payloads/ecowitt.json"));
         
         List<PrometheusGauge> result = topicCache.getTopicProcessor().consumeMessage(message, topicPath);
-        
-        System.out.println("metrics generated " +result.size());
         assertNotNull(result);
+        assertEquals(12, result.size());
+        
+        Optional<PrometheusGauge> anyGauge = result.stream()
+                .filter(gauge -> gauge.getName().endsWith("#0_val"))
+                .findAny();
+        assertTrue(anyGauge.isPresent());
+        assertEquals(anyGauge.get().getNumberOfLabels(), 3);
+        assertEquals( "0x02", anyGauge.get().getLabelValue("common_list.#0.id"));
+        assertEquals( "C", anyGauge.get().getLabelValue("common_list.#0.unit"));
+        assertEquals( "ecowitt", anyGauge.get().getLabelValue("device"));
+                
+        
+        List<MetricDefinition> foundMetrics = topicCache.getTopicProcessor().getDefinedMetrics();
+        assertEquals(1, foundMetrics.size());
+        System.out.println( result.get(0).toMetricString());
+        
+        MetricDefinition metric = foundMetrics.get(0);
+        assertEquals(11, metric.getLabels().size());
         
     }
     
