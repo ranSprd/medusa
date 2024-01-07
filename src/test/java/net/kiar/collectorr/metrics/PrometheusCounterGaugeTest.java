@@ -46,22 +46,23 @@ public class PrometheusCounterGaugeTest {
     }
     
     
-//    @Test
-//    public void testLabelsAndNamesAreValid() {
-//        
-//        String label1 = "label.#1.content";
-//        MetricDefinition def = MetricDefinitionBuilder.metricForField("value")
-//                .name( new PlaceholderString("example.Metric"))
-//                .label(label1)
-//                .get();
-//        
-//        PrometheusCounterGauge gauge = new PrometheusCounterGauge(def);
-//        gauge.addValueForLabel(label1, "values can contain #.");
-//        
-//        String prometheusText = gauge.toMetricString();
-//        System.out.println( prometheusText);
-//        
-//        assertTrue(prometheusText.contains("# TYPE example_Metric gauge"), "replacement of forbidden characters expected"); 
-//    }
-//    
+    @Test
+    public void testLabelsAndNamesAreValid() {
+        
+        String label1 = "label.#1.content";
+        MetricDefinition def = MetricDefinitionBuilder.metricForField("value")
+                .name( new PlaceholderString("example.Metric"))
+                .label(label1)
+                .get();
+        
+        PrometheusCounterGauge gauge = new PrometheusCounterGauge(def);
+        gauge.addValueForLabel(label1, "values can contain #.");
+        
+        String prometheusText = gauge.toMetricString();
+        System.out.println( prometheusText);
+        
+        assertTrue(prometheusText.contains("# TYPE example_Metric gauge"), "replacement of forbidden characters expected"); 
+        assertTrue(prometheusText.contains("label_1_content="), "replacement of forbidden characters expected"); 
+    }
+    
 }

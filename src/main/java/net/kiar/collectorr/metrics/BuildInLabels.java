@@ -35,7 +35,7 @@ public class BuildInLabels {
     
     public static BuildInLabels getBuildInData(PayloadDataNode valueField, String topicPath) {
         BuildInLabels result = new BuildInLabels();
-        result.buildInPairs.put(VALUE_FIELD_NAME, valueField.getFieldName().getFullName().replaceAll("\\.", "_"));
+        result.buildInPairs.put(VALUE_FIELD_NAME, valueField.getFieldName().getFullName());
         result.buildInPairs.put(TOPIC_NAME, topicPath.replaceAll("/", "_"));
         return result;
     }

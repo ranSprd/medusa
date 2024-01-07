@@ -61,7 +61,7 @@ topics:
         assertEquals(12, result.size());
         
         Optional<PrometheusCounterGauge> anyGauge = result.stream()
-                .filter(gauge -> gauge.getName().endsWith("#0_val"))
+                .filter(gauge -> gauge.getName().endsWith("list.#0.val"))
                 .findAny();
         assertTrue(anyGauge.isPresent());
         assertEquals(anyGauge.get().getNumberOfLabels(), 3);

@@ -82,7 +82,8 @@ public class PrometheusCounterGauge {
      * @return 
      */
     public static String getValidMetricName(String input) {
-        return  input.replaceAll("#", ":");
+        return  input.replaceAll("#", ":")
+                     .replaceAll("\\.", "_");
     }
     /**
      * Labels may contain ASCII letters, numbers, as well as underscores. They must match the regex [a-zA-Z_][a-zA-Z0-9_]*
@@ -90,7 +91,8 @@ public class PrometheusCounterGauge {
      * @return 
      */
     public static String getValidLabelName(String input) {
-        return  input.replaceAll("#", "");
+        return  input.replaceAll("#", "")
+                     .replaceAll("\\.", "_");
     }
 
     public long getMillisTimestamp() {
