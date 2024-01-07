@@ -45,7 +45,8 @@ public enum TopicMetricsFactory {
         for(TopicConfigMetric givenMetricConfig : topicConfig.getMetrics()) {
             MetricDefinitionBuilder builder = MetricDefinitionBuilder
                     .metricFromFieldDescriptor(givenMetricConfig.getValueFieldName())
-                    .name(nameBuilder.getName(givenMetricConfig.getName()));
+                    .name(nameBuilder.getName(givenMetricConfig.getName()))
+                    .metricType(givenMetricConfig.getMetricType());
 
             labelBuilder.addLabelsToMetric(givenMetricConfig, builder, payloadResolver);
             

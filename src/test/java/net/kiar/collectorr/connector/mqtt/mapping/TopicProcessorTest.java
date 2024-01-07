@@ -5,7 +5,7 @@ import net.kiar.collectorr.config.MappingsConfigLoader;
 import net.kiar.collectorr.config.model.TopicConfig;
 import net.kiar.collectorr.metrics.FieldDescription;
 import net.kiar.collectorr.metrics.MetricDefinition;
-import net.kiar.collectorr.metrics.PrometheusGauge;
+import net.kiar.collectorr.metrics.PrometheusCounterGauge;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -23,11 +23,11 @@ public class TopicProcessorTest {
         TopicConfig topicConfig = new TopicConfig();
         TopicProcessor p = new TopicProcessor(topicConfig, TopicStructure.build("#"));
         
-        List<PrometheusGauge> result = p.consumeMessage("{ \"temp\" : 12.0, \"unit\" : \"celcius\" }", "sensors/room1/a5226");
+        List<PrometheusCounterGauge> result = p.consumeMessage("{ \"temp\" : 12.0, \"unit\" : \"celcius\" }", "sensors/room1/a5226");
         assertNotNull(result);
         assertFalse(result.isEmpty());
         
-        PrometheusGauge gauge = result.get(0);
+        PrometheusCounterGauge gauge = result.get(0);
         
         MetricDefinition def = gauge.getMetricDefinition();
         assertNotNull(def);
@@ -52,11 +52,11 @@ public class TopicProcessorTest {
         TopicConfig topicConfig = new TopicConfig();
         TopicProcessor p = new TopicProcessor(topicConfig, TopicStructure.build("#"));
         
-        List<PrometheusGauge> result = p.consumeMessage(" { \"freeheap\" : 45488, \"cpuSpeed\" : 80}", "/home/heizung/ESP8266-1074379");
+        List<PrometheusCounterGauge> result = p.consumeMessage(" { \"freeheap\" : 45488, \"cpuSpeed\" : 80}", "/home/heizung/ESP8266-1074379");
         
         assertEquals(2, result.size());
         
-        for(PrometheusGauge g : result) {
+        for(PrometheusCounterGauge g : result) {
             if (g.getName().endsWith("cpuSpeed")) {
                 assertEquals(80, g.getValue(), 0.01);
             } else if (g.getName().endsWith("freeheap")) {
@@ -85,12 +85,12 @@ topics:
         TopicConfig topicToTest = conf.getTopicsToObserve().get(0);
         TopicCache topicCache = TopicCache.buildTopicPattern(topicToTest).get();
         
-        List<PrometheusGauge> result = topicCache.getTopicProcessor().consumeMessage(" { \"freeheap\" : 45488, \"foo\" : \"label-3-content\" }", topicPath);
+        List<PrometheusCounterGauge> result = topicCache.getTopicProcessor().consumeMessage(" { \"freeheap\" : 45488, \"foo\" : \"label-3-content\" }", topicPath);
         
         assertEquals(1, result.size());
         
         assertEquals(3, result.get(0).getNumberOfLabels(), "3 labels for metric are expected");
-        PrometheusGauge gauge = result.get(0);
+        PrometheusCounterGauge gauge = result.get(0);
         assertEquals(3, gauge.getNumberOfLabels());
         assertEquals("heizung", gauge.getLabelValue("label-1"));
         assertEquals("ESP8266-1074379", gauge.getLabelValue("label-2"));
@@ -113,11 +113,11 @@ topics:
         TopicConfig topicToTest = conf.getTopicsToObserve().get(0);
         TopicCache topicCache = TopicCache.buildTopicPattern(topicToTest).get();
         
-        List<PrometheusGauge> result = topicCache.getTopicProcessor().consumeMessage("{\"id\": \"0x13\",\"val\": \"350.1 mm\",\"battery\": \"0\"}", topicPath);
+        List<PrometheusCounterGauge> result = topicCache.getTopicProcessor().consumeMessage("{\"id\": \"0x13\",\"val\": \"350.1 mm\",\"battery\": \"0\"}", topicPath);
         
         assertEquals(1, result.size());
         
-        PrometheusGauge gauge = result.get(0);
+        PrometheusCounterGauge gauge = result.get(0);
         assertEquals(1, gauge.getNumberOfLabels(), "one label (unit) for metric is expected");
         assertEquals("mm", gauge.getLabelValue("unit"));
         assertEquals(350.1, gauge.getValue());
@@ -139,11 +139,11 @@ topics:
         TopicConfig topicToTest = conf.getTopicsToObserve().get(0);
         TopicCache topicCache = TopicCache.buildTopicPattern(topicToTest).get();
         
-        List<PrometheusGauge> result = topicCache.getTopicProcessor().consumeMessage("{\"val\": \"71%\"}", topicPath);
+        List<PrometheusCounterGauge> result = topicCache.getTopicProcessor().consumeMessage("{\"val\": \"71%\"}", topicPath);
         
         assertEquals(1, result.size());
         
-        PrometheusGauge gauge = result.get(0);
+        PrometheusCounterGauge gauge = result.get(0);
 
         assertEquals(71, gauge.getValue());
     }
@@ -164,11 +164,11 @@ topics:
         TopicConfig topicToTest = conf.getTopicsToObserve().get(0);
         TopicCache topicCache = TopicCache.buildTopicPattern(topicToTest).get();
         
-        List<PrometheusGauge> result = topicCache.getTopicProcessor().consumeMessage("{\"val\": \"71%\", \"label-2\": \"payload\", \"label-3\": \"payload\"}", topicPath);
+        List<PrometheusCounterGauge> result = topicCache.getTopicProcessor().consumeMessage("{\"val\": \"71%\", \"label-2\": \"payload\", \"label-3\": \"payload\"}", topicPath);
         
         assertEquals(1, result.size());
         
-        PrometheusGauge gauge = result.get(0);
+        PrometheusCounterGauge gauge = result.get(0);
         assertEquals(3, gauge.getNumberOfLabels());
         assertEquals("fixed", gauge.getLabelValue("label-1"));
         assertEquals("payload", gauge.getLabelValue("label-2"));

@@ -24,7 +24,7 @@ import net.kiar.collectorr.config.MappingsConfigLoader;
 import net.kiar.collectorr.config.model.TopicConfig;
 import net.kiar.collectorr.connector.mqtt.mapping.TopicCache;
 import net.kiar.collectorr.metrics.MetricDefinition;
-import net.kiar.collectorr.metrics.PrometheusGauge;
+import net.kiar.collectorr.metrics.PrometheusCounterGauge;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -56,11 +56,11 @@ topics:
         
         String message = Files.readString( Paths.get("src/test/resources/http/payloads/ecowitt.json"));
         
-        List<PrometheusGauge> result = topicCache.getTopicProcessor().consumeMessage(message, topicPath);
+        List<PrometheusCounterGauge> result = topicCache.getTopicProcessor().consumeMessage(message, topicPath);
         assertNotNull(result);
         assertEquals(12, result.size());
         
-        Optional<PrometheusGauge> anyGauge = result.stream()
+        Optional<PrometheusCounterGauge> anyGauge = result.stream()
                 .filter(gauge -> gauge.getName().endsWith("#0_val"))
                 .findAny();
         assertTrue(anyGauge.isPresent());

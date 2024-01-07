@@ -47,7 +47,14 @@ public class MetricDefinitionBuilder {
         return this;
     }
     
-    /** insert the given instance */
+    public MetricDefinitionBuilder metricType(String metricType) {
+        metric.setMetricType(MetricType.resolve(metricType));
+        return this;
+    }
+    
+    /** insert the given instance
+     * @param fieldDescription
+     * @return  */
     public MetricDefinitionBuilder insertLabel(FieldDescription fieldDescription) {
         metric.getLabels().add(fieldDescription);
         return this;

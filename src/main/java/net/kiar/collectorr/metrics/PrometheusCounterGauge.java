@@ -11,8 +11,8 @@ import org.slf4j.LoggerFactory;
  *
  * @author ranSprd
  */
-public class PrometheusGauge {
-    private static final Logger log = LoggerFactory.getLogger(PrometheusGauge.class);
+public class PrometheusCounterGauge {
+    private static final Logger log = LoggerFactory.getLogger(PrometheusCounterGauge.class);
 
     private final MetricDefinition metricDefinition;
     
@@ -24,11 +24,13 @@ public class PrometheusGauge {
     private final List<LabelValue> labels = new ArrayList<>();
     
     private String signature;
+    private MetricType metricType = MetricType.GAUGE;
     
 
-    public PrometheusGauge(MetricDefinition def) {
+    public PrometheusCounterGauge(MetricDefinition def) {
         this.metricDefinition = def;
         this.name = def.getName().getProcessed();
+        setMetricType(def.getMetricType());
     }
 
     public MetricDefinition getMetricDefinition() {
@@ -47,11 +49,20 @@ public class PrometheusGauge {
     public void setValue(double value) {
         this.value = value;
     }
+
+    public MetricType getMetricType() {
+        return metricType;
+    }
+
+    public final void setMetricType(MetricType metricType) {
+        if (metricType != null) {
+            this.metricType = metricType;
+        }
+    }
     
     /**
      * set the value. The logic tries to get the first numerical value from that string
      * @param stringValue
-     * @return false if the given string can't be parsed as a double
      */
     public void setValue(String stringValue) {
         setValue( DoubleParser.parse(stringValue));
@@ -68,6 +79,7 @@ public class PrometheusGauge {
     /**
      * Metric names may contain ASCII letters, digits, underscores, and colons. It must match the regex [a-zA-Z_:][a-zA-Z0-9_:]*.
      * @param input  
+     * @return 
      */
     public static String getValidMetricName(String input) {
         return  input.replaceAll("#", ":");
@@ -165,7 +177,7 @@ public class PrometheusGauge {
         String validName = getValidMetricName(name);
         if (withHeader) {
             builder.append("# HELP ").append(validName).append(" ").append(metricDefinition.getDescription()).append('\n');
-            builder.append("# TYPE ").append(validName).append(" gauge\n");
+            builder.append("# TYPE ").append(validName).append(" ").append(metricType.getName()).append("\n");
         }
         builder.append(validName);
         if (!labels.isEmpty()) {

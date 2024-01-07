@@ -29,11 +29,15 @@ public class PlaceholderString {
     
     
     private List<PlaceholderData> parts = new ArrayList<>();
+    private final String raw;
     
     public PlaceholderString(String input) {
         
         if (input == null) {
+            raw = "";
             return;
+        } else {
+            raw = input;
         }
         
         boolean inPlaceholder = false;
@@ -50,8 +54,8 @@ public class PlaceholderString {
                     placeholderName.append(c);
                 }
             } else if (c == '{') {
-                inPlaceholder = true;
                 placeholderName = new StringBuilder();
+                inPlaceholder = true;
             } else {
                 prefix.append(c);
             }
@@ -67,8 +71,15 @@ public class PlaceholderString {
                 .map(ph -> ph.placeholderName)
                 .collect(Collectors.toList());
     }
-    
-    
+
+    /**
+     * returns the complete unprocessed input as given at construction time
+     * @return 
+     */
+    public String getRaw() {
+        return raw;
+    }
+   
     public String getProcessed() {
         // another alternative is to use another DataProvider which delivers ""
         return getProcessed(null);

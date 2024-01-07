@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 import net.kiar.collectorr.config.model.TopicConfig;
 import net.kiar.collectorr.metrics.FieldDescription;
 import net.kiar.collectorr.metrics.MetricDefinition;
-import net.kiar.collectorr.metrics.PrometheusGauge;
+import net.kiar.collectorr.metrics.PrometheusCounterGauge;
 import net.kiar.collectorr.metrics.builder.TopicMetricsFactory;
 import net.kiar.collectorr.payloads.PayloadDataNode;
 import net.kiar.collectorr.payloads.PayloadResolver;
@@ -44,7 +44,7 @@ public class TopicProcessor {
      * 
      * @return a list of metrics (including labels and samples)
      */
-    public List<PrometheusGauge> consumeMessage(String messagePayload, String topic) {
+    public List<PrometheusCounterGauge> consumeMessage(String messagePayload, String topic) {
         PayloadResolver payloadResolver = JsonResolver.consume(messagePayload);
 
         if (invalid) {
@@ -77,7 +77,7 @@ public class TopicProcessor {
      * @param payloadResolver
      * @return 
      */
-    private List<PrometheusGauge> createValueEntriesForMetric(MetricDefinition metric, DataProvider.DataProviderFactory dataFactory) {
+    private List<PrometheusCounterGauge> createValueEntriesForMetric(MetricDefinition metric, DataProvider.DataProviderFactory dataFactory) {
         if (!metric.isValid()) {
             return List.of();
         }
@@ -87,10 +87,10 @@ public class TopicProcessor {
                     .collect(Collectors.toList());
     }
 
-    private PrometheusGauge createMetricEntryForValue(DataProvider dataProvider) {
+    private PrometheusCounterGauge createMetricEntryForValue(DataProvider dataProvider) {
         // we support only 1 type of metrics...
         final MetricDefinition metric = dataProvider.getMetric();
-        PrometheusGauge gauge = new PrometheusGauge(metric);
+        PrometheusCounterGauge gauge = new PrometheusCounterGauge(metric);
         gauge.setValue( dataProvider.getFieldOfValueData().value());
         gauge.updateMillisTimestamp();
 //        System.out.println("Metric: " +dataProvider.getFieldOfValue().getName());

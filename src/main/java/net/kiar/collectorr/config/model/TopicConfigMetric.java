@@ -14,6 +14,15 @@ public class TopicConfigMetric {
     private String valueFieldName;
     
     /**
+     * 2 types are implemented
+     * counter: 
+     * gauge:
+     * 
+     */
+    @JsonAlias({"type"})
+    private String metricType = "gauge";
+    
+    /**
      * name of the metric in prometheus. The default setting is the name of the 
      * mqtt field (set in value). Normally it is not necessary to set it, it is here
      * to overwrite this logic.
@@ -43,6 +52,15 @@ public class TopicConfigMetric {
     public void setValueFieldName(String valueFieldName) {
         this.valueFieldName = valueFieldName;
     }
+
+    public String getMetricType() {
+        return metricType;
+    }
+
+    public void setMetricType(String metricType) {
+        this.metricType = metricType;
+    }
+    
 
     public String getName() {
         return name;

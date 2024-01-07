@@ -18,6 +18,20 @@ The main types of changes used in this file are:
 
 ## [Unreleased]
 
+## 0.1.1 SNAPSHOT
+
+### Added
+
+- payload can contain arrays, each entry is converted into a metric
+- add support for counter metric type
+
+### Breaking changes
+
+- combine topic and topic pattern in configuration 
+
+## 0.1.0 SNAPSHOT 
+2023-12-10 (Date of Last Commit)
+
 ### Added
 
 - Initial *proof of concept* version. It consists of a small web-api which delivers collected
@@ -26,9 +40,3 @@ The main types of changes used in this file are:
 - support of prometheus gauge type 
 - statistics about unprocessed incoming messages
 
-## 0.1.0 SNAPSHOT 
-2023-12-10 (Date of Last Commit)
-
-### Breaking changes
-
-### Additional changes

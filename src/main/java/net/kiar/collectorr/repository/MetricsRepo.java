@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
-import net.kiar.collectorr.metrics.PrometheusGauge;
+import net.kiar.collectorr.metrics.PrometheusCounterGauge;
 
 /**
  *
@@ -17,27 +17,27 @@ public enum MetricsRepo {
     
     // @todo
     // replace the hashmap and replace by a sorted list
-    private final Map<String, PrometheusGauge> data = new HashMap<>();
+    private final Map<String, PrometheusCounterGauge> data = new HashMap<>();
     
-    public void add(PrometheusGauge gauge) {
+    public void add(PrometheusCounterGauge gauge) {
         if (gauge != null) {
             data.put(gauge.getSignature(), gauge);
         }
     }
 
-    public void add(Collection<PrometheusGauge> updatedMetrics) {
-        for(PrometheusGauge gauge : updatedMetrics) {
+    public void add(Collection<PrometheusCounterGauge> updatedMetrics) {
+        for(PrometheusCounterGauge gauge : updatedMetrics) {
             data.put(gauge.getSignature(), gauge);
         }
     }
     
-    public Collection<PrometheusGauge> data() {
+    public Collection<PrometheusCounterGauge> data() {
         return data.values();
     }
     
-    public Map<String, List<PrometheusGauge>> sortedData() {
-        Map<String, List<PrometheusGauge>> grouped = data.values().stream()
-                .collect( Collectors.groupingBy( PrometheusGauge::getName, Collectors.toList() ));
+    public Map<String, List<PrometheusCounterGauge>> sortedData() {
+        Map<String, List<PrometheusCounterGauge>> grouped = data.values().stream()
+                .collect(Collectors.groupingBy(PrometheusCounterGauge::getName, Collectors.toList() ));
         
         return new TreeMap<>( grouped);
     }

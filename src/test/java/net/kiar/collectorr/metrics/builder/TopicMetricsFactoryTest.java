@@ -1,6 +1,7 @@
 package net.kiar.collectorr.metrics.builder;
 
 import java.util.List;
+import java.util.Optional;
 import net.kiar.collectorr.config.MappingsConfigLoader;
 import net.kiar.collectorr.config.model.TopicConfig;
 import net.kiar.collectorr.payloads.DataProvider;
@@ -8,6 +9,7 @@ import net.kiar.collectorr.connector.mqtt.mapping.TopicStructure;
 import net.kiar.collectorr.metrics.BuildInLabels;
 import net.kiar.collectorr.metrics.FieldType;
 import net.kiar.collectorr.metrics.MetricDefinition;
+import net.kiar.collectorr.metrics.MetricType;
 import net.kiar.collectorr.payloads.PayloadResolver;
 import net.kiar.collectorr.payloads.json.JsonResolver;
 import org.junit.jupiter.api.Test;
@@ -162,7 +164,7 @@ topics:
         
     }
     
-    private final String configContentForTest5 = """
+    private final String configWithLabelFieldAsValue = """
 topics:
 - topic: topic/to/test
   metrics:
@@ -172,7 +174,7 @@ topics:
     @Test
     public void testValueFieldIsNotALabel() {
         String topicPath = "topic/to/test";
-        MappingsConfigLoader conf = MappingsConfigLoader.readContent( configContentForTest5);
+        MappingsConfigLoader conf = MappingsConfigLoader.readContent( configWithLabelFieldAsValue);
         
         TopicConfig topicToTest = conf.findTopic(topicPath).get();
         
@@ -196,6 +198,28 @@ topics:
         assertTrue( def.getLabels().stream().anyMatch( label -> label.getFieldName().getFullName().equalsIgnoreCase("label-1")) );
     }
     
+    private final String configWithCounter = """
+topics:
+- topic: topic/to/test
+  metrics:
+  - name: Metric1
+    type:   CounteR
+""";
+
+    @Test
+    public void testCounterMetric() {
+        String topicPath = "topic/to/test";
+        MappingsConfigLoader conf = MappingsConfigLoader.readContent( configWithCounter);
+        
+        TopicConfig topicToTest = conf.findTopic(topicPath).get();
+        
+        List<MetricDefinition> metrics = TopicMetricsFactory.INSTANCE.buildMetric(null, topicPath, topicToTest, TopicStructure.build(topicPath));
+        assertFalse(metrics.isEmpty());
+        
+        MetricDefinition metric1 = find("Metric1", metrics).get();
+        assertEquals(MetricType.COUNTER, metric1.getMetricType());
+    }
+    
     @Test
     public void testMetricNameContainsNoDots() {
         TopicMetricsFactory.MetricNameBuilder nameBuilder = new TopicMetricsFactory.MetricNameBuilder("topic/to/test");
@@ -205,5 +229,13 @@ topics:
         
         
         assertEquals("topic_to_test_FIELD-NAME", nameBuilder.getDefaultName().getProcessed(dataProvider));
+    }
+    
+    
+    private Optional<MetricDefinition> find(String metricName, List<MetricDefinition> list) {
+        if (list == null || list.isEmpty()) {
+            return Optional.empty();
+        }
+        return list.stream().filter(item -> item.getName().getRaw().equals(metricName)).findAny();
     }
 }

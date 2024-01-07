@@ -3,7 +3,7 @@ package net.kiar.collectorr.connector.mqtt.consumer;
 import java.util.List;
 import java.util.Optional;
 import net.kiar.collectorr.config.MappingsConfigLoader;
-import net.kiar.collectorr.metrics.PrometheusGauge;
+import net.kiar.collectorr.metrics.PrometheusCounterGauge;
 import net.kiar.collectorr.connector.mqtt.mapping.TopicMatcher;
 import net.kiar.collectorr.connector.mqtt.mapping.TopicProcessor;
 import net.kiar.collectorr.repository.MetricsRepo;
@@ -51,7 +51,7 @@ public class MqttMessageConsumer implements MqttCallback {
                         + "\n\tMessage: " + payload
     //                    + "\n\tQoS:     " + message.getQos()
                         + "\n");
-                List<PrometheusGauge> results = processor.get().consumeMessage(payload, topic);
+                List<PrometheusCounterGauge> results = processor.get().consumeMessage(payload, topic);
                 MetricsRepo.INSTANCE.add( results);
                 stats.registerProcessed(topic, results);
 

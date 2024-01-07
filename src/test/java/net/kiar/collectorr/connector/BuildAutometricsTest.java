@@ -22,7 +22,7 @@ import java.util.List;
 import net.kiar.collectorr.config.MappingsConfigLoader;
 import net.kiar.collectorr.config.model.TopicConfig;
 import net.kiar.collectorr.connector.mqtt.mapping.TopicCache;
-import net.kiar.collectorr.metrics.PrometheusGauge;
+import net.kiar.collectorr.metrics.PrometheusCounterGauge;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -51,11 +51,11 @@ topics:
         
         String message = Files.readString( Paths.get("src/test/resources/mqtt/payloads/tasmota-ed300l.json"));
         
-        List<PrometheusGauge> result = topicCache.getTopicProcessor().consumeMessage(message, topicPath);
+        List<PrometheusCounterGauge> result = topicCache.getTopicProcessor().consumeMessage(message, topicPath);
         
         System.out.println("metrics generated " +result.size());
         assertNotNull(result);
-        for(PrometheusGauge m : result) {
+        for(PrometheusCounterGauge m : result) {
             assertNotNull(m.getName());
             assertFalse(m.getName().isBlank());
             assertEquals(0, m.getNumberOfLabels());

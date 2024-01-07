@@ -3,7 +3,7 @@ package net.kiar.collectorr.repository;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import net.kiar.collectorr.metrics.PrometheusGauge;
+import net.kiar.collectorr.metrics.PrometheusCounterGauge;
 import net.kiar.collectorr.payloads.PayloadResolver;
 import net.kiar.collectorr.payloads.json.JsonResolver;
 
@@ -33,7 +33,7 @@ public class MqttTopicStats {
         return unknownData;
     }
     
-    public void registerProcessed(String topic, List<PrometheusGauge> results) {
+    public void registerProcessed(String topic, List<PrometheusCounterGauge> results) {
 //        UnknownTopicStatistic stat = unknownData.computeIfAbsent(Integer.toHexString(topic.hashCode()), x -> new UnknownTopicStatistic(topic, payload));
 //        stat.incReceivedCount();
     }
@@ -44,7 +44,7 @@ public class MqttTopicStats {
         private int processedCount = 0;
         private final String topic;
 
-        public ProcessedTopicStatistic(String topic, List<PrometheusGauge> results) {
+        public ProcessedTopicStatistic(String topic, List<PrometheusCounterGauge> results) {
             this.topic = topic;
         }
         

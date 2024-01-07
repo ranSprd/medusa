@@ -12,6 +12,7 @@ public class MetricDefinition {
 
     private PlaceholderString name;
     private String description = "";
+    private MetricType metricType = MetricType.GAUGE;
  
     private FieldDescription fieldOfValue;
     private final List<FieldDescription> labelNames = new ArrayList<>();
@@ -27,6 +28,14 @@ public class MetricDefinition {
             return false;
         }
         return true;
+    }
+
+    public MetricType getMetricType() {
+        return metricType;
+    }
+
+    public void setMetricType(MetricType metricType) {
+        this.metricType = metricType;
     }
 
     public void setFieldOfValue(String fieldName) {
