@@ -16,6 +16,7 @@
 package net.kiar.collectorr.payloads;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -32,6 +33,26 @@ public class FieldNameTest {
         
         assertEquals("common_list.#2.", new FieldName("common_list.#2.id").getPrefix());
         assertEquals("common_list.*.", new FieldName("common_list.*.id").getPrefix());
+    }
+    
+    @Test
+    public void testPrefixExtraction() {
+        assertEquals("", new FieldName(null).getPrefix());
+        assertEquals(".", new FieldName(".").getPrefix());
+        assertEquals("foo.bar.", new FieldName("foo.bar.field").getPrefix());
+        assertEquals("common_list.*.", new FieldName("common_list.*.val").getPrefix());
+        assertEquals("common_list.#1.", new FieldName("common_list.#1.id").getPrefix());
+    }
+    
+    @Test
+    public void testSamePrefix() {
+        FieldName fieldInPayload = new FieldName("common_list.#2.id");
+        FieldName valueField = new FieldName("common_list.*.val");
+        
+        System.out.println("label " +fieldInPayload.getPrefix());
+        System.out.println("value " +valueField.getPrefix());
+        
+        assertTrue( valueField.isSamePrefix(fieldInPayload));
     }
     
 }

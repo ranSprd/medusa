@@ -23,6 +23,7 @@ import net.kiar.collectorr.config.model.TopicConfigMetric;
 import net.kiar.collectorr.metrics.FieldDescription;
 import net.kiar.collectorr.metrics.FieldType;
 import net.kiar.collectorr.metrics.MetricDefinitionBuilder;
+import net.kiar.collectorr.payloads.FieldName;
 import net.kiar.collectorr.payloads.PayloadResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,13 +63,22 @@ public class LabelBuilder {
                     .forEach(labelNode -> builder.topicLabel(labelNode));
             if (payloadResolver != null) {
                 payloadResolver.getLabelNodes().stream()
+                        .filter(labelNode -> isSimpleOrHasSameArrayPrefix( labelNode.getFieldName(), builder.getFieldOfMetricValue()))
                         .map(labelNode -> labelNode.getFieldName().getFullName().replaceAll("#[0-9]*\\.", "*."))
                         // don't add as label if the field is defined as value
                         .filter(labelName -> !labelName.equalsIgnoreCase( builder.getFieldNameOfMetricValue()))
                         .forEach(labelName -> builder.label(labelName));
             }
         }
-
+    }
+    
+    private boolean isSimpleOrHasSameArrayPrefix(FieldName fieldName, FieldDescription valueField) {
+        if (fieldName.isArrayItem() && !valueField.getFieldName().isUnique()) {
+//            return fieldName.getPrefix().equals( valueField.getFieldName().getPrefix());
+//            return valueField.getFieldName().match( fieldName.getFullName());
+            return valueField.getFieldName().isSamePrefix(fieldName);
+        }
+        return true;
     }
     
     public void addLabelsToMetric(TopicConfigMetric givenMetricConfig, MetricDefinitionBuilder builder, PayloadResolver payloadResolver) {

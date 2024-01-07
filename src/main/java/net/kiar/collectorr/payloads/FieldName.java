@@ -19,7 +19,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- *
+ * @todo this class contains a lot of string operations, this could be optimized
+ * 
  * @author ranSprd
  */
 public class FieldName {
@@ -29,32 +30,33 @@ public class FieldName {
     
     private final String fullName;
     
-    private Pattern searchPattern;
     private String prefix = "";
 
     public FieldName(String rawName) {
-        this.fullName = rawName;
-        if (rawName.contains("*")) {
+        this.fullName = rawName == null? "" : rawName;
+        if (this.fullName.contains("*")) {
             unique = false;
             
-            String str = rawName.replaceAll("\\.\\*\\.", "\\\\.#[0-9]*\\\\.");
-            searchPattern = Pattern.compile(str);
-            
-            int index = rawName.lastIndexOf(".*.");
+            int index = this.fullName.lastIndexOf(".*.");
             if (index > -1) {
-                prefix = rawName.substring(0, index+3);
+                prefix = this.fullName.substring(0, index+3);
             }
-        } else if (rawName.contains(".#")) {
+        } else if (this.fullName.contains(".#")) {
             unique = true;
             Pattern iP = Pattern.compile("\\.#[0-9]*\\.");
-            Matcher matcher = iP.matcher(rawName);
+            Matcher matcher = iP.matcher(this.fullName);
 
             if (matcher.find()) {
                 arrayItem = true;
                 int index = matcher.end(0);
                 if (index > -1) {
-                    prefix = rawName.substring(0, index);
+                    prefix = this.fullName.substring(0, index);
                 }
+            }
+        } else if (this.fullName.contains(".")) {
+            int index = this.fullName.lastIndexOf(".");
+            if (index > -1) {
+                prefix = this.fullName.substring(0, index+1);
             }
         }
     }
@@ -71,14 +73,14 @@ public class FieldName {
         return arrayItem;
     }
     
-    public boolean match(String name) {
-        if (unique) {
-            return fullName.equalsIgnoreCase(name);
-        }
+    
+    public boolean isSamePrefix(FieldName other) {
+        String str = prefix.replaceAll("\\.\\*\\.", "\\\\.#[0-9]*\\\\.");
+        Pattern searchPattern = Pattern.compile(str);
         
-        return searchPattern.matcher(name).matches();
+        return searchPattern.matcher( other.prefix).matches();
     }
-
+    
     public String getFullName() {
         return fullName;
     }

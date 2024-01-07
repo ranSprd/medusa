@@ -114,4 +114,10 @@ public class MetricDefinitionBuilder {
     public String getFieldNameOfMetricValue() {
         return metric.getFieldOfValue().getFieldName().getFullName();
     }
+
+    public FieldDescription getFieldOfMetricValue() {
+        return metric.getFieldOfValue();
+    }
+    
+    
 }
