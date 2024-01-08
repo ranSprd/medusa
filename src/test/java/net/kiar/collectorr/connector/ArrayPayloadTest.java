@@ -87,7 +87,7 @@ topics:
 - topic: /get_livedata_info
   metrics:
   - valueField: common_list.*.val
-    labels: [common_list.*.id]                                            
+    labels: [common_list.*.id, common_list.*.unit|unit]                                            
 """;
     @Test
     public void testWithLabelSettings() throws IOException {
@@ -99,8 +99,9 @@ topics:
         assertTrue(anyGauge.isPresent());
 //        System.out.println( anyGauge.get().toMetricString());
 
-        assertEquals(anyGauge.get().getNumberOfLabels(), 1);
+        assertEquals(anyGauge.get().getNumberOfLabels(), 2);
         assertEquals( "0x02", anyGauge.get().getLabelValue("common_list.#0.id"));
+        assertEquals( "C", anyGauge.get().getLabelValue("unit"));
     }
     
     
@@ -122,7 +123,7 @@ topics:
   metrics:
   - name: "weather_{detailedName}"
     valueField: common_list.*.val
-    labels: [common_list.*.id, detailedName]                                            
+    labels: [common_list.*.id|id, detailedName]                                            
 """;
     @Test
     public void testInsertedMappings() throws IOException {
@@ -136,6 +137,6 @@ topics:
 
         assertEquals(2, anyGauge.get().getNumberOfLabels());
         assertEquals("weather_temperature", anyGauge.get().getName());
-        assertEquals( "0x02", anyGauge.get().getLabelValue("common_list.#0.id"));
+        assertEquals( "0x02", anyGauge.get().getLabelValue("id"));
     }
 }
