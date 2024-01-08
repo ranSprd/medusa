@@ -96,7 +96,6 @@ public class TopicProcessor {
 //        System.out.println("Metric: " +dataProvider.getFieldOfValue().getName());
         
         if (metric.hasLabels()) {
-            List<FieldDescription.FieldMappingValue> foundMappings = new ArrayList<>();
             for(FieldDescription field : metric.getLabels()) {
                 
                 Optional<PayloadDataNode> input = dataProvider.getData(field);
@@ -109,13 +108,13 @@ public class TopicProcessor {
                         gauge.addValueForLabel(input.get().getFieldName().getFullName(), fieldValue);
                     }
                     field.resolveMapping(fieldValue)
-                            .ifPresent(target -> foundMappings.add(target));
+                            .ifPresent(target -> dataProvider.registerMapping(target));
                 }
             }
             
             // after regular label handling we process the mapping logic now
             // this allows overwriting or adding values
-            for(FieldDescription.FieldMappingValue targetMapping : foundMappings) {
+            for(FieldDescription.FieldMappingValue targetMapping : dataProvider.getUsedMappings()) {
                 gauge.overwriteValueForLabel(targetMapping.targetFieldName(), targetMapping.targetValue());
             }
             

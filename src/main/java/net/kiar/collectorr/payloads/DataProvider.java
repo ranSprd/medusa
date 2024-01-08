@@ -15,6 +15,7 @@
  */
 package net.kiar.collectorr.payloads;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -65,6 +66,9 @@ public class DataProvider {
     private final TopicPathResolver topicResolver;
     private final BuildInLabels buildInLabels;
     private final MetricDefinition metric;
+    
+    private final List<FieldDescription.FieldMappingValue> usedMappings = new ArrayList<>();
+
 
     private DataProvider(PayloadDataNode valueFieldData, PayloadResolver payloadResolver, TopicPathResolver topicResolver, MetricDefinition metric) {
         this.fieldOfValueData = valueFieldData;
@@ -87,7 +91,13 @@ public class DataProvider {
         return metric.getFieldOfValue();
     }
     
-    
+    public void registerMapping(FieldDescription.FieldMappingValue mappingValue) {
+        usedMappings.add(mappingValue);
+    }
+
+    public List<FieldDescription.FieldMappingValue> getUsedMappings() {
+        return usedMappings;
+    }
 
     public Optional<PayloadDataNode> getData(FieldDescription field) {
         
@@ -108,6 +118,14 @@ public class DataProvider {
     }
     
     public String resolve(String fieldName, String fallbackValue) {
+        Optional<String> mappedValue = usedMappings.stream()
+                .filter(mapping -> mapping.targetFieldName().equalsIgnoreCase(fieldName))
+                .map(mapping -> mapping.targetValue())
+                .findAny();
+        if (mappedValue.isPresent()) {
+            return mappedValue.get();
+        }
+        
         Optional<PayloadDataNode> found = payloadResolver.findNode(fieldName);
         if (found.isPresent()) {
             return found.get().value();

@@ -102,4 +102,40 @@ topics:
         assertEquals(anyGauge.get().getNumberOfLabels(), 1);
         assertEquals( "0x02", anyGauge.get().getLabelValue("common_list.#0.id"));
     }
+    
+    
+    
+    private final String configWithMapping = """
+topics:
+- topic: /get_livedata_info
+  mappings:
+  - label:
+    source: common_list.*.id
+    target: detailedName
+    map:
+       0x02 : temperature
+       0x01 : unknown
+       0x07 : humidity
+       0x15 : solar
+                                             
+                                             
+  metrics:
+  - name: "weather_{detailedName}"
+    valueField: common_list.*.val
+    labels: [common_list.*.id, detailedName]                                            
+""";
+    @Test
+    public void testInsertedMappings() throws IOException {
+    
+        Result result = build(configWithMapping);
+        Optional<PrometheusCounterGauge> anyGauge = result.metrics.stream()
+                .filter(gauge -> gauge.getMetricDefinition().getFieldOfValue().getFieldName().getFullName().endsWith("*.val"))
+                .findAny();
+        assertTrue(anyGauge.isPresent());
+        System.out.println( anyGauge.get().toMetricString());
+
+        assertEquals(2, anyGauge.get().getNumberOfLabels());
+        assertEquals("weather_temperature", anyGauge.get().getName());
+        assertEquals( "0x02", anyGauge.get().getLabelValue("common_list.#0.id"));
+    }
 }
