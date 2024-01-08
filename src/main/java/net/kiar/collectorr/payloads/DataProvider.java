@@ -103,7 +103,7 @@ public class DataProvider {
         
         // some fields define fixed content
         if (field.hasFixedContent()) {
-            return Optional.of( new PayloadDataNode(field.getFieldName(), field.getName(), field.getFixedContent()));
+            return Optional.of( new PayloadDataNode(field.getFieldName(), field.getFixedContent()));
         }
         
         Optional<PayloadDataNode> result = Optional.empty();
@@ -146,10 +146,10 @@ public class DataProvider {
 //            return Optional.of( payloadNodes.get(0));
         }
         
-        String prefix = this.fieldOfValueData.getFieldName().getPrefix();
+        String prefix = this.fieldOfValueData.fieldName().getPrefix();
         return payloadNodes.stream()
                 // either the field is part of an array, then the prefix should match or the field is not an array, then it should be used
-                .filter(node -> (node.getFieldName().getPrefix().equalsIgnoreCase( prefix)) || !node.getFieldName().isArrayItem())
+                .filter(node -> (node.fieldName().getPrefix().equalsIgnoreCase( prefix)) || !node.fieldName().isArrayItem())
                 .findAny();
 
 //        return Optional.empty();

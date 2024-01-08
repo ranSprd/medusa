@@ -63,8 +63,8 @@ public class LabelBuilder {
                     .forEach(labelNode -> builder.topicLabel(labelNode));
             if (payloadResolver != null) {
                 payloadResolver.getLabelNodes().stream()
-                        .filter(labelNode -> isSimpleOrHasSameArrayPrefix( labelNode.getFieldName(), builder.getFieldOfMetricValue()))
-                        .map(labelNode -> labelNode.getFieldName().getFullName().replaceAll("#[0-9]*\\.", "*."))
+                        .filter(labelNode -> isSimpleOrHasSameArrayPrefix( labelNode.fieldName(), builder.getFieldOfMetricValue()))
+                        .map(labelNode -> labelNode.fieldName().getFullName().replaceAll("#[0-9]*\\.", "*."))
                         // don't add as label if the field is defined as value
                         .filter(labelName -> !labelName.equalsIgnoreCase( builder.getFieldNameOfMetricValue()))
                         .forEach(labelName -> builder.label(labelName));
@@ -74,8 +74,8 @@ public class LabelBuilder {
     
     private boolean isSimpleOrHasSameArrayPrefix(FieldName fieldName, FieldDescription valueField) {
         if (fieldName.isArrayItem() && !valueField.getFieldName().isUnique()) {
-//            return fieldName.getPrefix().equals( valueField.getFieldName().getPrefix());
-//            return valueField.getFieldName().match( fieldName.getFullName());
+//            return fieldName.getPrefix().equals( valueField.fieldName().getPrefix());
+//            return valueField.fieldName().match( fieldName.getFullName());
             return valueField.getFieldName().isSamePrefix(fieldName);
         }
         return true;

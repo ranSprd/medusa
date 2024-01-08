@@ -27,7 +27,7 @@ public class TopicPathResolver implements PayloadResolver {
             for(String p : parts) {
                 if (p != null) {
                     String fieldName = topicStructure.getFieldNameOfSegment(t, true);
-                    data.add(new PayloadDataNode( new FieldName(fieldName), fieldName, p));
+                    data.add(new PayloadDataNode( new FieldName(fieldName), p));
                 }
                 t++;
             }
@@ -61,7 +61,7 @@ public class TopicPathResolver implements PayloadResolver {
 
     @Override
     public String getLabelNamesAsString() {
-        return data.stream().map(o -> o.getFieldName().getFullName()).collect(Collectors.joining(","));        
+        return data.stream().map(o -> o.fieldName().getFullName()).collect(Collectors.joining(","));        
     }
 
 //    @Override
@@ -72,7 +72,7 @@ public class TopicPathResolver implements PayloadResolver {
     @Override
     public Optional<PayloadDataNode> findNode(String nodeName) {
         return data.stream()
-                .filter(node -> nodeName.equals(node.getFieldName().getFullName()))
+                .filter(node -> nodeName.equals(node.fieldName().getFullName()))
                 .findAny();
     }
 

@@ -17,7 +17,6 @@ public interface PayloadResolver {
      * @param nodeName name of the field in source
      * @return raw unprocessed value
      * 
-     * @deprecated - should use findNodes instead
      */
     public Optional<PayloadDataNode> findNode(String nodeName);
     

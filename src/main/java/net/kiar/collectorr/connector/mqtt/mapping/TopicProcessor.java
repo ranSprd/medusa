@@ -101,11 +101,10 @@ public class TopicProcessor {
                 Optional<PayloadDataNode> input = dataProvider.getData(field);
                 if (input.isPresent()) {
                     String fieldValue = input.get().value();
-                    //@todo name or real field name
                     if (field.hasName()) {
                         gauge.addValueForLabel(field.getName(), fieldValue);
                     } else {
-                        gauge.addValueForLabel(input.get().getFieldName().getFullName(), fieldValue);
+                        gauge.addValueForLabel(input.get().fieldName().getFullName(), fieldValue);
                     }
                     field.resolveMapping(fieldValue)
                             .ifPresent(target -> dataProvider.registerMapping(target));

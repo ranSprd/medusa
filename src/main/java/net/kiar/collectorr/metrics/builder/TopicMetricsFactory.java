@@ -85,7 +85,7 @@ public enum TopicMetricsFactory {
         } 
         // construct metrics (definition)
         return payloadResolver.getValueNodes().stream()
-                    .map(valueNode -> constructDefaultMetricForValueField(valueNode.getFieldName(), nameBuilder, payloadResolver, labelBuilder))
+                    .map(valueNode -> constructDefaultMetricForValueField(valueNode.fieldName(), nameBuilder, payloadResolver, labelBuilder))
                     .collect(Collectors.toList());
     }
     
