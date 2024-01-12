@@ -138,5 +138,6 @@ topics:
         assertEquals(2, anyGauge.get().getNumberOfLabels());
         assertEquals("weather_temperature", anyGauge.get().getName());
         assertEquals( "0x02", anyGauge.get().getLabelValue("id"));
+        assertEquals( "temperature", anyGauge.get().getLabelValue("detailedName"));
     }
 }

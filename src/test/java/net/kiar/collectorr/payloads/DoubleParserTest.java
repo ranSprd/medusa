@@ -45,6 +45,7 @@ public class DoubleParserTest {
         assertEquals(1.2, DoubleParser.parse("1.2 5.6"));
         assertEquals(1.3e10, DoubleParser.parse("1.3e10#"));
         assertEquals(10., DoubleParser.parse("10.#"));
+        assertEquals(10., DoubleParser.parse("foo=10.#"));
     }
     
 }
