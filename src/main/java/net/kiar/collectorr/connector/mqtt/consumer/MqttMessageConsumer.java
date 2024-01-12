@@ -47,10 +47,10 @@ public class MqttMessageConsumer implements MqttCallback {
 
             if (processor.isPresent()) {
 //                String time = new Timestamp(System.currentTimeMillis()).toString();
-                log.info("\n\tTopic:   " + topic
-                        + "\n\tMessage: " + payload
+//                log.info("\n\tTopic:   " + topic
+//                        + "\n\tMessage: " + payload
     //                    + "\n\tQoS:     " + message.getQos()
-                        + "\n");
+//                        + "\n");
                 List<PrometheusCounterGauge> results = processor.get().consumeMessage(payload, topic);
                 MetricsRepo.INSTANCE.add( results);
                 stats.registerProcessed(topic, results);

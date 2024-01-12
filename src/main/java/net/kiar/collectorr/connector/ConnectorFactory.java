@@ -56,7 +56,7 @@ public class ConnectorFactory {
                     .map(connectorConfig -> new ConnectorHandler(connectorConfig))
                     .map(connector -> connector.startIncomingMessageConsumer())
                     .map(connector -> connector.initializeCron(scheduler))
-                    .collect(Collectors.toMap(p -> p.conncetorName, p -> p)) );
+                    .collect(Collectors.toMap(p -> p.connectorName, p -> p)) );
         } else {
             log.warn("Can't read config from file [{}]. No MQTT Connectors started.", connectorsConfigFile);
         }
@@ -91,7 +91,7 @@ public class ConnectorFactory {
         
         private boolean failed = false;
         
-        private String conncetorName;
+        private String connectorName;
         
         private final MqttConnectorConfig mqttConnectorConfig;
         private MappingsConfigLoader mappingConf;
@@ -104,7 +104,7 @@ public class ConnectorFactory {
         }
         
         public ConnectorSummaryStatistics getStatsSnapshot() {
-            ConnectorSummaryStatistics summary = new ConnectorSummaryStatistics(conncetorName);
+            ConnectorSummaryStatistics summary = new ConnectorSummaryStatistics(connectorName);
 
             summary.setUnprocessed(
                     consumer.getStats().getUnknowTopicsStatistics().size()
@@ -122,37 +122,37 @@ public class ConnectorFactory {
                 MqttMessage msg = new MqttMessage(message.getBytes());
                 mqttClient.publish(topic, msg);
             } catch (Exception e) {
-                log.warn(" {} - sending heartbeat failed", conncetorName, e.getMessage());
+                log.warn(" {} - sending heartbeat failed", connectorName, e.getMessage());
             }
         }
         
         public ConnectorHandler startIncomingMessageConsumer() {
             log.info("Initialize MQTT Connector {}...", mqttConnectorConfig.getName());
             
-            conncetorName = mqttConnectorConfig.getName();
-            if (conncetorName == null || conncetorName.isBlank()) {
-                conncetorName = "MQTT_" +UUID.randomUUID();
-                log.info("MQTT connector name invalid, generated name is {}", conncetorName);
+            connectorName = mqttConnectorConfig.getName();
+            if (connectorName == null || connectorName.isBlank()) {
+                connectorName = "MQTT_" +UUID.randomUUID();
+                log.info("MQTT connector name invalid, generated name is {}", connectorName);
             }
 
             String mqttHost = mqttConnectorConfig.getUrl();
             if (mqttHost == null || mqttHost.isBlank()) {
                 log.error(" {} - no MQTT broker url configured. Can't establish connection.", 
-                        conncetorName);
+                        connectorName);
                 failed = true;
                 return this;
             }
 
             String mappingFile = mqttConnectorConfig.getMappingConfigFile();
             if (mappingFile == null || mappingFile.isBlank()) {
-                log.warn(" {} - no configuration file for mapping 'topic to metric' defined. No topics will be observed.", conncetorName);
+                log.warn(" {} - no configuration file for mapping 'topic to metric' defined. No topics will be observed.", connectorName);
             }
     //        ConfigLoader conf = ConfigLoader.readFromFile("src/test/resources/example-config01.yaml");
             mappingConf = MappingsConfigLoader.readFromFile(mappingFile);
-            RuntimeData.registerConfig(conncetorName, mappingConf);
+            RuntimeData.registerConfig(connectorName, mappingConf);
 
             log.info(" {} - file [{}] with mqtt procssing config read, found {} configured topics", 
-                    conncetorName, mappingFile, mappingConf.getNumberOfTopics());
+                    connectorName, mappingFile, mappingConf.getNumberOfTopics());
 
             try {
                 // Create an Mqtt client
@@ -163,15 +163,16 @@ public class ConnectorFactory {
                 // explicitly MqttClient will use the MqttDefaultFilePersistence by default
                 // We can use null or MemoryPersistence as 3rd parameter
                 mqttClient = new MqttClient(mqttHost, 
-                        "MQTT_Prometheus_Mapper_" + conncetorName +"_"+ UUID.randomUUID().toString().substring(0, 8), null);
+                        "MQTT_Prometheus_Mapper_" + connectorName +"_"+ UUID.randomUUID().toString().substring(0, 8), null);
                 MqttConnectOptions connOpts = new MqttConnectOptions();
                 connOpts.setCleanSession(true);
                 connOpts.setAutomaticReconnect(true);
 
                 // Connect the client
-                log.info("{} - Connecting to MQTT Broker at {}", conncetorName, mqttHost);
+                log.info("{} - Connecting to MQTT Broker at {}", connectorName, mqttHost);
                 mqttClient.connect(connOpts);
-                log.info(" {} - Connected to broker with version {}", conncetorName, connOpts.getMqttVersion());
+                log.info(" {} - Connected to broker with version {}", connectorName, connOpts.getMqttVersion());
+                log.info("keep alive is set to {} s", connOpts.getKeepAliveInterval());
 
                 // Topic filter the client will subscribe to
                 String subTopic = mqttConnectorConfig.getRootTopic();
@@ -184,12 +185,12 @@ public class ConnectorFactory {
                 mqttClient.setCallback(consumer);
 
                 // Subscribe client to the topic filter and a QoS level of 0
-                log.info(" {} - Subscribing client to topic: {}", conncetorName, subTopic);
+                log.info(" {} - Subscribing client to topic: {}", connectorName, subTopic);
                 mqttClient.subscribe(subTopic, 0);
     //
             } catch (MqttException me) {
                 failed = true;
-                log.error("{} Exception:   " , conncetorName, me);
+                log.error("{} Exception:   " , connectorName, me);
                 log.error("Reason Code: {}", me.getReasonCode());
                 log.error("Message:     {}", me.getMessage());
                 if (me.getCause() != null) {
@@ -206,14 +207,14 @@ public class ConnectorFactory {
             
             MqttHeartbeatConfig heartbeat = mqttConnectorConfig.getHeartbeat();
             if (heartbeat != null && heartbeat.isValid()) {
-                log.info(" {} - found cron expression [{}]", conncetorName, heartbeat.getCron());
+                log.info(" {} - found cron expression [{}]", connectorName, heartbeat.getCron());
                 log.info(" {} - fire a heartbeat {}", 
-                        conncetorName, makeHumanReadable(heartbeat.getCron()));
+                        connectorName, makeHumanReadable(heartbeat.getCron()));
                 final String message = (heartbeat.getMessage()==null)?"":heartbeat.getMessage();
-                scheduler.newJob(conncetorName +"_heartbeat")
+                scheduler.newJob(connectorName +"_heartbeat")
                             .setCron(heartbeat.getCron())
                             .setTask(executionContext -> { 
-                                log.debug(" {} - send heartbeat", conncetorName );
+                                log.debug(" {} - send heartbeat", connectorName );
                                 sendMessage(heartbeat.getTopic(), message);
                             })
                             .schedule();                
