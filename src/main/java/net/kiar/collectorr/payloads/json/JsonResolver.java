@@ -1,5 +1,6 @@
 package net.kiar.collectorr.payloads.json;
 
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
@@ -24,6 +25,9 @@ public class JsonResolver implements PayloadResolver {
     private static final Logger log = LoggerFactory.getLogger(JsonResolver.class);
     
     private static final ObjectMapper mapper = new ObjectMapper();
+    static {
+        mapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
+    }
 
 //    private final JsonNode root;
     private final List<PayloadDataNode> valueNodes;
