@@ -7,6 +7,15 @@ quarkus:
   http:
     port: 8081
     
+  micrometer:
+    export:
+      json:
+        # Enable json metrics
+        enabled: true 
+        path: metrics/json
+      prometheus:
+        path: metrics/prometheus    
+        
 application:
   version: ${pom.version}
   build: ${buildNumber}    

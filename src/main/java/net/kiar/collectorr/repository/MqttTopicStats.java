@@ -1,8 +1,11 @@
 package net.kiar.collectorr.repository;
 
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Metrics;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 import net.kiar.collectorr.metrics.PrometheusCounterGauge;
 import net.kiar.collectorr.payloads.PayloadResolver;
 import net.kiar.collectorr.payloads.json.JsonResolver;
@@ -13,7 +16,24 @@ import net.kiar.collectorr.payloads.json.JsonResolver;
  */
 public class MqttTopicStats {
     
+    private MeterRegistry registry = Metrics.globalRegistry;    
+    
     private final Map<String, UnknownTopicStatistic> unknownData = new ConcurrentHashMap<>();
+    
+    private long lastProcessed = System.currentTimeMillis();
+    private AtomicLong gauge;
+
+    public MqttTopicStats() {
+        
+        gauge = registry.gauge("updated_metrics", new AtomicLong(0));        
+//        Gauge.builder("jvm.threads.peak", threadBean, ThreadMXBean::getPeakThreadCount) 
+//    .baseUnit(BaseUnits.THREADS) // optional 
+//    .description("The peak live thread count...") // optional 
+//    .tags("key", "value") // optional 
+//    .register(registry);         
+    }
+    
+    
     
     /** 
      * 
@@ -34,8 +54,10 @@ public class MqttTopicStats {
     }
     
     public void registerProcessed(String topic, List<PrometheusCounterGauge> results) {
-//        UnknownTopicStatistic stat = unknownData.computeIfAbsent(Integer.toHexString(topic.hashCode()), x -> new UnknownTopicStatistic(topic, payload));
-//        stat.incReceivedCount();
+        if (results != null && !results.isEmpty()) {
+            lastProcessed = System.currentTimeMillis();
+            gauge.set( gauge.get() + results.size());
+        }
     }
     
     

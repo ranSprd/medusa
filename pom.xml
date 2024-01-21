@@ -95,7 +95,11 @@
         <groupId>io.quarkus</groupId>
         <!--<artifactId>quarkus-quartz</artifactId>-->
         <artifactId>quarkus-scheduler</artifactId>
-    </dependency>    
+    </dependency> 
+    <dependency>
+        <groupId>io.quarkus</groupId>
+        <artifactId>quarkus-micrometer-registry-prometheus</artifactId>
+    </dependency>       
     <dependency>
         <groupId>net.redhogs.cronparser</groupId>
         <artifactId>cron-parser-core</artifactId>
