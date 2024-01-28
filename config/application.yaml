@@ -7,6 +7,16 @@ quarkus:
   http:
     port: 8085
 
+  micrometer:
+    export:
+      json:
+        # Enable json metrics
+        enabled: true 
+        path: metrics/json
+      prometheus:
+        path: metrics/prometheus    
+    
+
 #
 # enable the internal scheduler which is used for heartbeats    
 #
