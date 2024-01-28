@@ -6,8 +6,10 @@ topics:
 - topic: "/home/heizung/buderus-123456/heatSources/actualCHPower"
 - topic: topic/to/test
   mappings:
-  - source: deviceId
-    target: deviceName
+    deviceId:
+      abc:
+        deviceName: ESP
+        namePrefix: heating
     
   metrics:
   - valueField: abc

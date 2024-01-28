@@ -2,6 +2,8 @@ package net.kiar.collectorr.metrics;
 
 import java.util.Map;
 import java.util.Optional;
+import net.kiar.collectorr.config.model.FieldValueMap;
+import net.kiar.collectorr.config.model.RootFieldMap;
 
 /**
  *
@@ -89,23 +91,28 @@ public class MetricDefinitionBuilder {
         return this;
     }
     
-    public MetricDefinitionBuilder insertMappings(String source, String target, Map<String, String> valueMappings) {
-        if (valueMappings == null || valueMappings.isEmpty()) {
+    public MetricDefinitionBuilder insertMappings(RootFieldMap mappings) {
+        if (mappings == null || mappings.isEmpty()) {
             return this;
         }
-        Optional<FieldDescription> sourceLabel = metric.findLabel(source);
-        if (sourceLabel.isEmpty()) {
-            return this;
-        }
-        Optional<FieldDescription> targetLabel = metric.findLabel(target);
-        if (targetLabel.isPresent()) {
-            FieldMapping fieldMapping = new FieldMapping(target);
-            fieldMapping.setMapping(valueMappings);
-            sourceLabel.get().setMappings(fieldMapping);
-        }
-            
+        
+        // register for each source field targetField/value pairs based on sourceField value
+        mappings.entrySet().stream()
+                .forEach(entry -> registerMappingsForField(entry.getKey(), entry.getValue()));
         return this;
     }
+    
+    private void registerMappingsForField(String sourceFieldName, FieldValueMap fieldValues) {
+        Optional<FieldDescription> sourceLabelField = metric.findLabel(sourceFieldName);
+        if (!sourceLabelField.isEmpty()) {
+            for(Map.Entry<String, Map<String, String>> entry : fieldValues.entrySet()) {
+                String sourceValue = entry.getKey();
+                sourceLabelField.get().getFieldValueMappings().registerMappings(sourceValue, entry.getValue());
+            }
+        }
+    }
+    
+    
     
     public MetricDefinition get() {
         return metric;

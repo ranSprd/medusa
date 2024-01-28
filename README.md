@@ -167,4 +167,13 @@ The input
 will produce a metric with value 26.61 and a label unit=W/m2.
 
 
-### mapping configuration
+## service metrics
+
+The service collects and publishes own runtime metrics under
+    http://localhost:8085/q/metrics/prometheus
+
+In addition to standard JVM and operational metrics, the following metrics are also recorded.
+
+- **updated_metrics** number of all metrics collected and updated from configured consumers (rest/mqtt) since start. 
+                      Each update of a metric is counted.
+

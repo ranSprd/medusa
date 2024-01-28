@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import net.kiar.collectorr.config.model.TopicConfig;
 import net.kiar.collectorr.metrics.FieldDescription;
+import net.kiar.collectorr.metrics.FieldValueMappings;
 import net.kiar.collectorr.metrics.MetricDefinition;
 import net.kiar.collectorr.metrics.PrometheusCounterGauge;
 import net.kiar.collectorr.metrics.builder.TopicMetricsFactory;
@@ -106,14 +107,13 @@ public class TopicProcessor {
                     } else {
                         gauge.addValueForLabel(input.get().fieldName().getFullName(), fieldValue);
                     }
-                    field.resolveMapping(fieldValue)
-                            .ifPresent(target -> dataProvider.registerMapping(target));
+                    dataProvider.registerMappings( field.resolveMappingsForSource(fieldValue));
                 }
             }
             
             // after regular label handling we process the mapping logic now
             // this allows overwriting or adding values
-            for(FieldDescription.FieldMappingValue targetMapping : dataProvider.getUsedMappings()) {
+            for(FieldValueMappings.FieldMappingContent targetMapping : dataProvider.getUsedMappings()) {
                 gauge.overwriteValueForLabel(targetMapping.targetFieldName(), targetMapping.targetValue());
             }
             

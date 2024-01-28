@@ -18,6 +18,10 @@ The main types of changes used in this file are:
 
 ## [Unreleased]
 
+### Breaking changes
+
+- set/overwrite label fields based on a value (mappings)
+
 ## 0.1.1 SNAPSHOT
 
 ### Added

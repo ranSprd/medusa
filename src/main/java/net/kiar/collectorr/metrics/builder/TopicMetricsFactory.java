@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import net.kiar.collectorr.config.model.TopicConfig;
-import net.kiar.collectorr.config.model.TopicConfigMappings;
 import net.kiar.collectorr.config.model.TopicConfigMetric;
 import net.kiar.collectorr.connector.mqtt.mapping.TopicStructure;
 import net.kiar.collectorr.metrics.BuildInLabels;
@@ -65,17 +64,12 @@ public enum TopicMetricsFactory {
         return result;
     }
     
-    
+
+    @Deprecated
     private void addMappings(TopicConfig topicConfig, MetricDefinitionBuilder builder) {
-        
-        if (!topicConfig.hasMappings()) {
-            return;
+        if (topicConfig.hasValueMappings()) {
+            builder.insertMappings( topicConfig.getValueMappings());
         }
-        
-        for(TopicConfigMappings mapping : topicConfig.getMappings()) {
-            builder.insertMappings(mapping.getSource(), mapping.getTarget(), mapping.getMap());
-        }
-        
     }
         
     private List<MetricDefinition> buildAutoMetric(PayloadResolver payloadResolver, MetricNameBuilder nameBuilder, LabelBuilder labelBuilder) {

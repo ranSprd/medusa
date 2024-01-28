@@ -23,6 +23,7 @@ import net.kiar.collectorr.metrics.BuildInLabels;
 import net.kiar.collectorr.metrics.FieldDescription;
 import static net.kiar.collectorr.metrics.FieldType.PAYLOAD;
 import static net.kiar.collectorr.metrics.FieldType.TOPIC;
+import net.kiar.collectorr.metrics.FieldValueMappings;
 import net.kiar.collectorr.metrics.MetricDefinition;
 import net.kiar.collectorr.payloads.json.TopicPathResolver;
 
@@ -67,7 +68,7 @@ public class DataProvider {
     private final BuildInLabels buildInLabels;
     private final MetricDefinition metric;
     
-    private final List<FieldDescription.FieldMappingValue> usedMappings = new ArrayList<>();
+    private final List<FieldValueMappings.FieldMappingContent> usedMappings = new ArrayList<>();
 
 
     private DataProvider(PayloadDataNode valueFieldData, PayloadResolver payloadResolver, TopicPathResolver topicResolver, MetricDefinition metric) {
@@ -91,11 +92,17 @@ public class DataProvider {
         return metric.getFieldOfValue();
     }
     
-    public void registerMapping(FieldDescription.FieldMappingValue mappingValue) {
+    public void registerMapping(FieldValueMappings.FieldMappingContent mappingValue) {
         usedMappings.add(mappingValue);
     }
 
-    public List<FieldDescription.FieldMappingValue> getUsedMappings() {
+    public void registerMappings(List<FieldValueMappings.FieldMappingContent> mappingValues) {
+        if (mappingValues != null && !mappingValues.isEmpty()) {
+            usedMappings.addAll(mappingValues);
+        }
+    }
+
+    public List<FieldValueMappings.FieldMappingContent> getUsedMappings() {
         return usedMappings;
     }
 

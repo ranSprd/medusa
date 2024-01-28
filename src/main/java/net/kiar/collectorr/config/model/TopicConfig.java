@@ -1,5 +1,6 @@
 package net.kiar.collectorr.config.model;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import java.util.List;
 
 /**
@@ -11,9 +12,10 @@ public class TopicConfig {
     /** The path or topic name, it can contain wildcards and placeholders for fields  */
     private String topic;
     
-    /** value mappings of labels. This allows adding new labels, 
+    /** value mappings mostly for labels. This allows adding new labels, 
      * e.g. a human readable name based on a sensor-id */
-    private List<TopicConfigMappings> mappings;
+    @JsonAlias({"mappings"})
+    private RootFieldMap valueMappings;
     
     /** definition of a metric and its mapping to the fields of the payload */
     private List<TopicConfigMetric> metrics;
@@ -43,16 +45,16 @@ public class TopicConfig {
         this.topic = topic;
     }
 
-    public List<TopicConfigMappings> getMappings() {
-        return mappings;
+    public RootFieldMap getValueMappings() {
+        return valueMappings;
     }
 
-    public void setMappings(List<TopicConfigMappings> mappings) {
-        this.mappings = mappings;
+    public void setValueMappings(RootFieldMap valueMappings) {
+        this.valueMappings = valueMappings;
     }
-    
-    public boolean hasMappings() {
-        return (mappings != null && !mappings.isEmpty());
+
+    public boolean hasValueMappings() {
+        return (valueMappings != null && !valueMappings.isEmpty());
     }
     
     public List<TopicConfigMetric> getMetrics() {

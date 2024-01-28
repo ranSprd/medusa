@@ -1,6 +1,8 @@
 package net.kiar.collectorr.metrics;
 
+import java.util.List;
 import java.util.Optional;
+import net.kiar.collectorr.metrics.FieldValueMappings.FieldMappingContent;
 import net.kiar.collectorr.payloads.FieldName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +25,8 @@ public class FieldDescription {
     private String name;
     private FieldType type = FieldType.PAYLOAD;
     
-    private FieldMapping mappings;
+    private FieldValueMappings fieldValueMappings;
+    
     private String fixedContent = null;
     
     public static FieldDescription topicField(int index, String fieldName) {
@@ -147,6 +150,7 @@ public class FieldDescription {
         this.fixedContent = fixedContent;
     }
     
+    /** true if the value/content of the field is configured and not read from any payload */
     public boolean hasFixedContent() {
         return fixedContent != null && !fixedContent.isBlank();
     }
@@ -167,30 +171,26 @@ public class FieldDescription {
         this.fieldIndex = fieldIndex;
     }
 
-    /** return the full mapping data. That menas the target field and the whole
-     *  mappings (if content x then return y).
-     */
-    public FieldMapping getMappings() {
-        return mappings;
+    public FieldValueMappings getFieldValueMappings() {
+        if (this.fieldValueMappings == null) {
+            fieldValueMappings = new FieldValueMappings();
+        }
+        return fieldValueMappings;
     }
 
-    public void setMappings(FieldMapping mappings) {
-        this.mappings = mappings;
-    }
     
     /**
-     * lookup in mapping data and return the target data if a mapping exists 
-     * for the given source value.
+     * Resolve all mappings (targetField and value) for the given content of the 
+     * source field.
      * 
      * @param sourceValueContent
-     * @return 
+     * @return a list of fields and values
      */
-    public Optional<FieldMappingValue> resolveMapping(String sourceValueContent) {
-        if (sourceValueContent == null || mappings == null) {
-            return Optional.empty();
+    public List<FieldMappingContent> resolveMappingsForSource(String sourceValueContent) {
+        if (sourceValueContent == null || fieldValueMappings == null) {
+            return List.of();
         }
-        return mappings.findMappingValueFor(sourceValueContent)
-                       .map(targetValue -> new FieldMappingValue(mappings.getTargetFieldName(), targetValue));
+        return fieldValueMappings.findMappingsForValue(sourceValueContent);
     }
     
     public static record FieldMappingValue(String targetFieldName, String targetValue) {};

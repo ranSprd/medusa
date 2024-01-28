@@ -122,6 +122,7 @@ public class ConnectorFactory {
                 MqttMessage msg = new MqttMessage(message.getBytes());
                 mqttClient.publish(topic, msg);
             } catch (Exception e) {
+                // @todo add metric
                 log.warn(" {} - sending heartbeat failed", connectorName, e.getMessage());
             }
         }

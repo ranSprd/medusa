@@ -110,16 +110,16 @@ topics:
 topics:
 - topic: /get_livedata_info
   mappings:
-  - label:
-    source: common_list.*.id
-    target: detailedName
-    map:
-       0x02 : temperature
-       0x01 : unknown
-       0x07 : humidity
-       0x15 : solar
-                                             
-                                             
+    common_list.*.id:
+      0x02:
+        detailedName: temperature
+      0x01:
+        detailedName: unknown
+      0x07:
+        detailedName: humidity
+      0x15:
+        detailedName: solar
+                                                                                          
   metrics:
   - name: "weather_{detailedName}"
     valueField: common_list.*.val
