@@ -50,7 +50,7 @@ public enum TopicMetricsFactory {
             labelBuilder.addLabelsToMetric(givenMetricConfig, builder, payloadResolver);
             
             // insert mappings - overwrite content or set new labels
-            addMappings(topicConfig, builder);
+            addMappings(topicConfig, builder, labelBuilder);
             
             
             if (givenMetricConfig.getDescription() == null || givenMetricConfig.getDescription().isBlank()) {
@@ -64,11 +64,9 @@ public enum TopicMetricsFactory {
         return result;
     }
     
-
-    @Deprecated
-    private void addMappings(TopicConfig topicConfig, MetricDefinitionBuilder builder) {
+    private void addMappings(TopicConfig topicConfig, MetricDefinitionBuilder builder, LabelBuilder labelBuilder) {
         if (topicConfig.hasValueMappings()) {
-            builder.insertMappings( topicConfig.getValueMappings());
+            builder.insertMappings( topicConfig.getValueMappings(), (x) -> labelBuilder.sourceField(x));
         }
     }
         

@@ -23,15 +23,18 @@ public class FieldDescription {
     private final FieldName fieldName;
     private int fieldIndex = -1;
     private String name;
-    private FieldType type = FieldType.PAYLOAD;
+    private FieldSourceType type = FieldSourceType.PAYLOAD;
     
     private FieldValueMappings fieldValueMappings;
     
     private String fixedContent = null;
     
+    private boolean included = false;
+    private boolean mapped = false;
+    
     public static FieldDescription topicField(int index, String fieldName) {
         FieldDescription result = new FieldDescription(index, fieldName, null);
-        result.setType(FieldType.TOPIC);
+        result.setType(FieldSourceType.TOPIC);
         return result;
     }
     /**
@@ -122,7 +125,7 @@ public class FieldDescription {
     }
     
     public boolean isInValid() {
-        if (type == FieldType.PAYLOAD) {
+        if (type == FieldSourceType.PAYLOAD) {
             return (fieldName == null || fieldName.getFullName().isBlank());
         }
         
@@ -155,11 +158,30 @@ public class FieldDescription {
         return fixedContent != null && !fixedContent.isBlank();
     }
 
-    public FieldType getType() {
+    public boolean isIncluded() {
+        return included;
+    }
+
+    public void setIncluded(boolean included) {
+        this.included = included;
+    }
+
+    /** if true then this field is referenced in value mapping section of configuration 
+     * @return 
+     */
+    public boolean isMapped() {
+        return mapped;
+    }
+
+    public void setMapped(boolean mapped) {
+        this.mapped = mapped;
+    }
+    
+    public FieldSourceType getType() {
         return type;
     }
 
-    public void setType(FieldType type) {
+    public void setType(FieldSourceType type) {
         this.type = type;
     }
 

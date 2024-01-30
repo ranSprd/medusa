@@ -7,7 +7,7 @@ import net.kiar.collectorr.config.model.TopicConfig;
 import net.kiar.collectorr.payloads.DataProvider;
 import net.kiar.collectorr.connector.mqtt.mapping.TopicStructure;
 import net.kiar.collectorr.metrics.BuildInLabels;
-import net.kiar.collectorr.metrics.FieldType;
+import net.kiar.collectorr.metrics.FieldSourceType;
 import net.kiar.collectorr.metrics.MetricDefinition;
 import net.kiar.collectorr.metrics.MetricType;
 import net.kiar.collectorr.payloads.PayloadResolver;
@@ -131,7 +131,7 @@ topics:
         
         assertTrue( def.getLabels().stream().anyMatch(label -> label.getFieldName().getFullName().equals("label-1")), "expected Label 'label-1' not found");
         assertTrue( def.getLabels().stream().anyMatch(label -> label.getFieldName().getFullName().equals("label-2")), "expected Label 'label-2' not found");
-        assertTrue( def.getLabels().stream().allMatch(label -> label.getType() == FieldType.TOPIC), "expected LabelType 'TOPIC' not found");
+        assertTrue(def.getLabels().stream().allMatch(label -> label.getType() == FieldSourceType.TOPIC), "expected LabelType 'TOPIC' not found");
         
     }
     
@@ -159,8 +159,8 @@ topics:
         MetricDefinition def = metrics.get(0);
         assertEquals(3, def.getLabels().size());
         
-        assertTrue( def.getLabels().stream().anyMatch( l -> l.getType() == FieldType.TOPIC), "expected LabelType 'TOPIC' not found");
-        assertTrue( def.getLabels().stream().anyMatch( l -> l.getType() == FieldType.PAYLOAD), "expected LabelType 'PAYLOAD' not found");
+        assertTrue(def.getLabels().stream().anyMatch(l -> l.getType() == FieldSourceType.TOPIC), "expected LabelType 'TOPIC' not found");
+        assertTrue(def.getLabels().stream().anyMatch(l -> l.getType() == FieldSourceType.PAYLOAD), "expected LabelType 'PAYLOAD' not found");
         
     }
     

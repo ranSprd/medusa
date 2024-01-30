@@ -21,8 +21,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import net.kiar.collectorr.metrics.BuildInLabels;
 import net.kiar.collectorr.metrics.FieldDescription;
-import static net.kiar.collectorr.metrics.FieldType.PAYLOAD;
-import static net.kiar.collectorr.metrics.FieldType.TOPIC;
+import static net.kiar.collectorr.metrics.FieldSourceType.PAYLOAD;
+import static net.kiar.collectorr.metrics.FieldSourceType.TOPIC;
 import net.kiar.collectorr.metrics.FieldValueMappings;
 import net.kiar.collectorr.metrics.MetricDefinition;
 import net.kiar.collectorr.payloads.json.TopicPathResolver;
@@ -92,10 +92,6 @@ public class DataProvider {
         return metric.getFieldOfValue();
     }
     
-    public void registerMapping(FieldValueMappings.FieldMappingContent mappingValue) {
-        usedMappings.add(mappingValue);
-    }
-
     public void registerMappings(List<FieldValueMappings.FieldMappingContent> mappingValues) {
         if (mappingValues != null && !mappingValues.isEmpty()) {
             usedMappings.addAll(mappingValues);
@@ -106,7 +102,7 @@ public class DataProvider {
         return usedMappings;
     }
 
-    public Optional<PayloadDataNode> getData(FieldDescription field) {
+    public Optional<PayloadDataNode> getDataForField(FieldDescription field) {
         
         // some fields define fixed content
         if (field.hasFixedContent()) {

@@ -3,12 +3,16 @@ package net.kiar.collectorr.metrics;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author ranSprd
  */
 public class MetricDefinition {
+    private static final Logger log = LoggerFactory.getLogger(MetricDefinition.class);
 
     private PlaceholderString name;
     private String description = "";
@@ -50,19 +54,29 @@ public class MetricDefinition {
         return fieldOfValue;
     }
     
-    public void registerPayloadLabel(String fieldName, String labelName) {
-        boolean alreadyInList = labelNames.stream()
-                    .filter(node -> node.getType() == FieldType.PAYLOAD)
-                    .anyMatch(node -> node.getFieldName().getFullName().equalsIgnoreCase(fieldName));
-        if (!alreadyInList) {
-            labelNames.add( new FieldDescription(fieldName, labelName));
+//    public void registerPayloadLabel(String fieldName, String labelName) {
+//        boolean alreadyInList = labelNames.stream()
+//                    .filter(node -> node.getType() == FieldSourceType.PAYLOAD)
+//                    .anyMatch(node -> node.getFieldName().getFullName().equalsIgnoreCase(fieldName));
+//        if (!alreadyInList) {
+//            labelNames.add( new FieldDescription(fieldName, labelName));
+//        }
+//    }
+    
+    public void registerLabel(FieldDescription fieldDescription) {
+        Optional<FieldDescription> alreadyInList = labelNames.stream()
+                .filter(node -> node.getFieldName().getFullName().equalsIgnoreCase( fieldDescription.getFieldName().getFullName()))
+                .findAny();
+        if (alreadyInList.isPresent()) {
+            if (alreadyInList.get().getType() != fieldDescription.getType()) {
+                log.warn("found field {} sevaral times with different types [{}, {}] which can lead to unpredictable behavior",
+                        fieldDescription.getFieldName().getFullName(), alreadyInList.get().getType(), fieldDescription.getType());
+            }
+        } else {
+            labelNames.add( fieldDescription);
         }
     }
     
-    public void registerTopicLabel(int indexInTopic, String labelFieldName) {
-        labelNames.add( FieldDescription.topicField(indexInTopic, labelFieldName));
-    }
-
     public List<FieldDescription> getLabels() {
         return labelNames;
     }
@@ -75,6 +89,18 @@ public class MetricDefinition {
         return labelNames.stream()
                     .filter(desc -> fieldName.equalsIgnoreCase( desc.getFieldName().getFullName()))
                     .findAny();
+    }
+    
+    public Optional<FieldDescription> findLabel(String fieldName, Function<String, FieldDescription> fieldCreator) {
+        Optional<FieldDescription> result = findLabel(fieldName);
+        if (result.isEmpty()) {
+            FieldDescription field = fieldCreator.apply(fieldName);
+            if (field != null) {
+                labelNames.add(field);
+                result = Optional.of(field);
+            }
+        }
+        return result;
     }
     
     public String resolveLabelName(String fieldName) {

@@ -2,6 +2,7 @@ package net.kiar.collectorr.metrics;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 import net.kiar.collectorr.config.model.FieldValueMap;
 import net.kiar.collectorr.config.model.RootFieldMap;
 
@@ -58,27 +59,19 @@ public class MetricDefinitionBuilder {
      * @param fieldDescription
      * @return  */
     public MetricDefinitionBuilder insertLabel(FieldDescription fieldDescription) {
-        metric.getLabels().add(fieldDescription);
+        metric.registerLabel(fieldDescription);
         return this;
     }
     
-    public MetricDefinitionBuilder label(String labelFieldName, String labelName) {
-        metric.registerPayloadLabel(labelFieldName, labelName);
-        return this;
-    }
-    
-    // labelname = fieldname
-    public MetricDefinitionBuilder label(String labelName) {
-        return label(labelName, null);
-    }
-    
-    /** insert a new instance as topic label */
-    public MetricDefinitionBuilder topicLabel(FieldDescription topicFieldDesc) {
-        return topicLabel(topicFieldDesc.getFieldIndex(), topicFieldDesc.getFieldName().getFullName());
-    }
-    
-    public MetricDefinitionBuilder topicLabel(int index, String labelName) {
-        metric.registerTopicLabel(index, labelName);
+    /** insert a label which should present as label
+     * 
+     * @param labelName
+     * @return 
+     */
+    public MetricDefinitionBuilder includedLabel(String labelName) {
+        FieldDescription fieldDescription = new FieldDescription(labelName);
+        fieldDescription.setIncluded(true);
+        metric.registerLabel(fieldDescription);
         return this;
     }
     
@@ -91,20 +84,20 @@ public class MetricDefinitionBuilder {
         return this;
     }
     
-    public MetricDefinitionBuilder insertMappings(RootFieldMap mappings) {
+    public MetricDefinitionBuilder insertMappings(RootFieldMap mappings, Function<String, FieldDescription> fieldCreator) {
         if (mappings == null || mappings.isEmpty()) {
             return this;
         }
         
         // register for each source field targetField/value pairs based on sourceField value
         mappings.entrySet().stream()
-                .forEach(entry -> registerMappingsForField(entry.getKey(), entry.getValue()));
+                .forEach(entry -> registerMappingsForField(entry.getKey(), entry.getValue(), fieldCreator));
         return this;
     }
     
-    private void registerMappingsForField(String sourceFieldName, FieldValueMap fieldValues) {
-        Optional<FieldDescription> sourceLabelField = metric.findLabel(sourceFieldName);
-        if (!sourceLabelField.isEmpty()) {
+    private void registerMappingsForField(String sourceFieldName, FieldValueMap fieldValues, Function<String, FieldDescription> fieldCreator) {
+        Optional<FieldDescription> sourceLabelField = metric.findLabel(sourceFieldName, fieldCreator);
+        if (sourceLabelField.isPresent()) {
             for(Map.Entry<String, Map<String, String>> entry : fieldValues.entrySet()) {
                 String sourceValue = entry.getKey();
                 sourceLabelField.get().getFieldValueMappings().registerMappings(sourceValue, entry.getValue());

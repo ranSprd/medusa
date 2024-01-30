@@ -99,13 +99,15 @@ public class TopicProcessor {
         if (metric.hasLabels()) {
             for(FieldDescription field : metric.getLabels()) {
                 
-                Optional<PayloadDataNode> input = dataProvider.getData(field);
+                Optional<PayloadDataNode> input = dataProvider.getDataForField(field);
                 if (input.isPresent()) {
                     String fieldValue = input.get().value();
-                    if (field.hasName()) {
-                        gauge.addValueForLabel(field.getName(), fieldValue);
-                    } else {
-                        gauge.addValueForLabel(input.get().fieldName().getFullName(), fieldValue);
+                    if (field.isIncluded()) {
+                        if (field.hasName()) {
+                            gauge.addValueForLabel(field.getName(), fieldValue);
+                        } else {
+                            gauge.addValueForLabel(input.get().fieldName().getFullName(), fieldValue);
+                        }
                     }
                     dataProvider.registerMappings( field.resolveMappingsForSource(fieldValue));
                 }
@@ -114,9 +116,11 @@ public class TopicProcessor {
             // after regular label handling we process the mapping logic now
             // this allows overwriting or adding values
             for(FieldValueMappings.FieldMappingContent targetMapping : dataProvider.getUsedMappings()) {
-                gauge.overwriteValueForLabel(targetMapping.targetFieldName(), targetMapping.targetValue());
+                Optional<FieldDescription> targetField = dataProvider.getMetric().findLabel( targetMapping.targetFieldName());
+                if (targetField.isPresent() && targetField.get().isIncluded()) {
+                    gauge.overwriteValueForLabel(targetMapping.targetFieldName(), targetMapping.targetValue());
+                }
             }
-            
         }
         gauge.setName( metric.getName().getProcessed(dataProvider));
         gauge.buildSignature();

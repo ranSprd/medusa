@@ -16,7 +16,7 @@ public class PrometheusCounterGaugeTest {
     public void testOnlyMetricDefinitionGiven() {
         MetricDefinition def = MetricDefinitionBuilder.metricForField("value")
                 .name( new PlaceholderString("exampleMetric"))
-                .label("label1")
+                .includedLabel("label1")
                 .get();
         
         PrometheusCounterGauge gauge = new PrometheusCounterGauge(def);
@@ -52,7 +52,7 @@ public class PrometheusCounterGaugeTest {
         String label1 = "label.#1.content";
         MetricDefinition def = MetricDefinitionBuilder.metricForField("value")
                 .name( new PlaceholderString("example.Metric"))
-                .label(label1)
+                .includedLabel(label1)
                 .get();
         
         PrometheusCounterGauge gauge = new PrometheusCounterGauge(def);

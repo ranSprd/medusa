@@ -4,9 +4,8 @@ package net.kiar.collectorr.metrics;
  *
  * @author ranSprd
  */
-public enum FieldType {
+public enum FieldSourceType {
 
     PAYLOAD,
-//    PAYLOAD_ARRAY,  // not implemented yet
     TOPIC
 }

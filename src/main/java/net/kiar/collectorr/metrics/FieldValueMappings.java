@@ -21,13 +21,17 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *
+ * FieldValueMappins allow to overwrite or set (new) labels with a pre-defined content 
+ * based on a value of a source field. This means, if you have a field 'id' so you 
+ * can introduce a new label 'name' which can contain a more humand friendly
+ * description based on the 'id' field.
+ * 
  * @author ranSprd
  * @todo find another name
  */
 public class FieldValueMappings {
 
-    private Map<String, List<FieldMappingContent>> targetFieldValues = new HashMap<>(); 
+    private final Map<String, List<FieldMappingContent>> targetFieldValues = new HashMap<>(); 
     
     
     /**
