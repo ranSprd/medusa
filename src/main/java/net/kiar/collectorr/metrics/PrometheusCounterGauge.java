@@ -1,6 +1,7 @@
 package net.kiar.collectorr.metrics;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import net.kiar.collectorr.payloads.DoubleParser;
@@ -185,6 +186,7 @@ public class PrometheusCounterGauge {
         if (!labels.isEmpty()) {
             builder.append("{");
             boolean addComma = false;
+            Collections.sort(labels, (a, b) -> a.key.compareTo(b.key));
             for(LabelValue labelValue : labels) {
                 if (addComma) {
                     builder.append(",");
