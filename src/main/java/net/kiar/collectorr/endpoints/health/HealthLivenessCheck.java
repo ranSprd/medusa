@@ -39,7 +39,7 @@ public class HealthLivenessCheck implements HealthCheck {
         
         List<HealthState> states = ConnectorFactory.data.overAllHealtStates();
         builder.status( states.stream().allMatch(state -> state.isHealthy()));
-        states.forEach(state -> builder.withData(state.getName(), state.getName()));
+        states.forEach(state -> builder.withData(state.getName(), state.isHealthy()));
         
         return builder.build();
 //                .
