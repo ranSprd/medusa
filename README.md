@@ -31,6 +31,8 @@ are available:
 - Quarkus application start page http://localhost:8085/
 - Quarkus application devloper page 
 - Swagger UI http://localhost:8085/q/swagger-ui/
+- Health endpoint http://localhost:8085/q/health
+- Service metrics http://localhost:8085/q/metrics/prometheus
 
 ### How to start
 

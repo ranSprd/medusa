@@ -21,6 +21,8 @@ The main types of changes used in this file are:
 ### Breaking changes
 
 - set/overwrite label fields based on a value (mappings)
+- health check
+- self service metrics 
 
 ## 0.1.1 SNAPSHOT
 

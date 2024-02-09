@@ -2,8 +2,7 @@
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
-  
-  <groupId>net.kiar</groupId>
+  <groupId>io.github.ranSprd</groupId>
   <artifactId>medusa</artifactId>
   <version>0.1.1-SNAPSHOT</version>
   
@@ -15,10 +14,10 @@
   </licenses>
   
   <scm>
-      <connection>scm:git:git@github.com</connection>
-      <developerConnection>scm:git:git@github.com</developerConnection>
-      <url>https://github.com/${project.scm.tag}</url>
-      <tag>master</tag>
+      <connection>scm:git:git@github.com:ranSprd/medusa.git</connection>
+      <developerConnection>scm:git:git@github.com:ranSprd/medusa.git</developerConnection>
+      <url>https://github.com/ranSprd/medusa/tags/${project.scm.tag}</url>
+      <tag>main</tag>
   </scm>
   
   
