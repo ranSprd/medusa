@@ -1,0 +1,13 @@
+{
+   "motion":true,
+   "timestamp":1702227767,
+   "active":true,
+   "vibration":false,
+   "lux":0,
+   "bat":73,
+   "tmp":{
+      "value":24.8,
+      "units":"C",
+      "is_valid":true
+   }
+}

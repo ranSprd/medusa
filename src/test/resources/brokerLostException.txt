@@ -1,0 +1,35 @@
+2024-01-02 01:52:55,006 SEVERE [org.ecl.pah.cli.mqt.int.ClientState] (MQTT Ping: MQTT_Prometheus_Mapper_victron_ce22965a) MQTT_Prometheus_Mapper_victron_ce22965a: Timed out as no activity, keepAlive=60,000 lastOutboundActivity=1,704,160,375,002 lastInboundActivity=1,704,160,201,307 time=1,704,160,375,002 lastPing=1,704,160,315,003
+
+2024-01-02 01:52:55,017 WARN  [net.kia.col.con.ConnectorFactory] (executor-thread-7)  victron - sending heartbeat failed
+
+2024-01-02 01:52:55,017 WARN  [net.kia.col.con.ConnectorFactory] (executor-thread-2)  victron - sending heartbeat failed
+
+2024-01-02 01:52:55,017 WARN  [net.kia.col.con.ConnectorFactory] (executor-thread-8)  victron - sending heartbeat failed
+
+2024-01-02 01:52:55,017 WARN  [net.kia.col.con.ConnectorFactory] (executor-thread-5)  victron - sending heartbeat failed
+
+2024-01-02 01:52:55,017 WARN  [net.kia.col.con.mqt.con.MqttMessageConsumer] (MQTT Ping: MQTT_Prometheus_Mapper_victron_ce22965a) Connection to MQTT broker lost! Timed out waiting for a response from the server: Timed out waiting for a response from the server (32000)
+
+	at org.eclipse.paho.client.mqttv3.internal.ExceptionHelper.createMqttException(ExceptionHelper.java:31)
+
+	at org.eclipse.paho.client.mqttv3.internal.ClientState.checkForActivity(ClientState.java:661)
+
+	at org.eclipse.paho.client.mqttv3.internal.ClientComms.checkForActivity(ClientComms.java:732)
+
+	at org.eclipse.paho.client.mqttv3.internal.ClientComms.checkForActivity(ClientComms.java:718)
+
+	at org.eclipse.paho.client.mqttv3.TimerPingSender$PingTask.run(TimerPingSender.java:77)
+
+	at java.base/java.util.TimerThread.mainLoop(Timer.java:566)
+
+	at java.base/java.util.TimerThread.run(Timer.java:516)
+
+2024-01-02 01:52:55,018 WARN  [net.kia.col.con.ConnectorFactory] (executor-thread-6)  victron - sending heartbeat failed
+
+2024-01-02 01:53:00,002 WARN  [net.kia.col.con.ConnectorFactory] (executor-thread-6)  victron - sending heartbeat failed
+
+2024-01-02 01:53:55,002 WARN  [net.kia.col.con.ConnectorFactory] (executor-thread-6)  victron - sending heartbeat failed
+
+2024-01-02 01:54:00,002 WARN  [net.kia.col.con.ConnectorFactory] (executor-thread-6)  victron - sending heartbeat failed
+
+

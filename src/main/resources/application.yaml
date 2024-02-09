@@ -1,0 +1,27 @@
+# For configuration property names that use quotes, do not split the string inside the quotes
+quarkus:
+  log:
+    category:
+      "io.quarkus.category":
+        level: INFO
+  http:
+    port: 8081
+    
+  micrometer:
+    export:
+      json:
+        # Enable json metrics
+        enabled: true 
+        path: metrics/json
+      prometheus:
+        path: metrics/prometheus    
+        
+application:
+  version: ${pom.version}
+  build: ${buildNumber}    
+  
+mqtt:
+  broker:
+    url: tcp://192.168.1.1:1883
+    config: src/test/resources/example-config01.yaml
+

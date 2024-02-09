@@ -1,0 +1,30 @@
+# gestartet wird mit Pfaden
+generic:
+    name: "mqtt-prometheus-transformer"
+    
+topics: 
+- topic: "/home/heizung/buderus-123456/heatSources/actualCHPower"
+- topic: topic/to/test
+  mappings:
+    deviceId:
+      abc:
+        deviceName: ESP
+        namePrefix: heating
+    
+  metrics:
+  - valueField: abc
+    labels: [ort, deviceId, deviceName, value|tempurature]
+  - name:
+    valueField: x
+
+- topic: /home/{ort}/buderus-{device}/system/sensors/temperatures/outdoor_t1
+- topic: /home/heizung/victron-12345/N/c0619ab40398/grid/30/Ac/L1/Current
+- topic: /home/heizung/victron-12345/N/c0619ab40398/grid/30/Ac/L2/Current
+
+- topic: shellyplus2pm-b48a0a22aafc/online
+- topic: shellyplus2pm-b48a0a22aafc/events
+- topic: shellyplus2pm-b48a0a22aafc/events/rpc
+- topic: /home/heizung/temperatures/283F1848F6153C3B
+- topic: /home/kitchen/temperatures/2896ED96F0013C97
+- topic: /home/heizung/ESP8266-1074379
+- topic: /home/weather/ecowitt

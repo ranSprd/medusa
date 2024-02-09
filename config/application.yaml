@@ -1,0 +1,31 @@
+# For configuration property names that use quotes, do not split the string inside the quotes
+quarkus:
+  log:
+    category:
+      "io.quarkus.category":
+        level: WARN
+  http:
+    port: 8085
+
+  micrometer:
+    export:
+      json:
+        # Enable json metrics
+        enabled: true 
+        path: metrics/json
+      prometheus:
+        path: metrics/prometheus    
+    
+
+#
+# enable the internal scheduler which is used for heartbeats    
+#
+  scheduler:
+    start-mode: forced    
+#
+# configuration file of our connectors
+#
+connector:
+  config:
+    file: config/connectors.yaml
+    
