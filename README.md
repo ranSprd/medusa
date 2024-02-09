@@ -184,6 +184,7 @@ example config with 5 minutes (5 *60 *1000) threashold:
           url: tcp://192.168.1.2:1883
           mapping-file: config/topic-mappings.yaml
 
+The health is reported under quarkus standard endpoint http://localhost:8085/q/health
 
 ## service metrics
 
