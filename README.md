@@ -6,14 +6,15 @@ messages and convert they in a prometheus compatible metric format.
 ## Features
 
 - transform MQTT message into Prometheus metrics
-- automatic mode detects metrics in messages without manual configuration
+- connections to multiple mqtt brokers possible
+- automatic mode which detects metrics in incoming messages without manual configuration
 
 ## How it works
 
-After startup the application connects to the configured MQTT broker in your system 
-and subscripes to all available topics. In the background it collects all incoming
-messages. For the configured topics it tries to extract metrics, all other metrics 
-will be unprocessed and collected as 'unknow' topics.
+After startup the application connects to the configured MQTT broker(s) in your system 
+and subscripes to all topics. In the background it collects all incoming
+messages. For these topics which are configured, meduase tries to extract metrics, all other metrics 
+will be marked as unprocessed and collected as 'unknow' topics.
 
 The web-server part of this application provides a prometheus endpoint. You can 
 configure your running prometheus to read all metrics from there.  
