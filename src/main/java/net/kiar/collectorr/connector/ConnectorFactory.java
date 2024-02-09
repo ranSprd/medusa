@@ -16,7 +16,9 @@ import net.kiar.collectorr.config.MappingsConfigLoader;
 import net.kiar.collectorr.config.RuntimeData;
 import net.kiar.collectorr.config.model.connectors.MqttConnectorConfig;
 import net.kiar.collectorr.config.model.connectors.MqttHeartbeatConfig;
+import net.kiar.collectorr.connector.mqtt.consumer.HealthThresholds;
 import net.kiar.collectorr.connector.mqtt.consumer.MqttMessageConsumer;
+import net.kiar.collectorr.model.HealthState;
 import net.kiar.collectorr.repository.MqttTopicStats;
 import net.redhogs.cronparser.CronExpressionDescriptor;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -83,6 +85,12 @@ public class ConnectorFactory {
             }
             
             return handler.consumer.getStats().getUnknowTopicsStatistics();
+        }
+        
+        public List<HealthState> overAllHealtStates() {
+            return map.entrySet().stream()
+                        .map(entry -> new HealthState(entry.getKey(), entry.getValue().consumer.healthState()))
+                        .collect(Collectors.toList());
         }
     }
     
@@ -180,9 +188,11 @@ public class ConnectorFactory {
                 if (subTopic == null || subTopic.isBlank()) {
                     subTopic = "#";
                 }
+                
+                HealthThresholds healtThresholds = new HealthThresholds(mqttConnectorConfig.getMaxIdleTimeMillis());
 
                 // Callback - Anonymous inner-class for receiving messages
-                consumer = new MqttMessageConsumer(mappingConf, new MqttTopicStats());
+                consumer = new MqttMessageConsumer(mappingConf, healtThresholds, new MqttTopicStats( connectorName));
                 mqttClient.setCallback(consumer);
 
                 // Subscribe client to the topic filter and a QoS level of 0

@@ -26,6 +26,9 @@ public class MqttConnectorConfig {
     private String name;
     private String url;
     
+    /** maximum time between 2 received and valid processed messages. Used as indicator for healthy state. */
+    private long maxIdleTimeMillis = -1;
+    
     @JsonProperty("mapping-file")
     private String mappingConfigFile;
     
@@ -75,5 +78,16 @@ public class MqttConnectorConfig {
     public void setHeartbeat(MqttHeartbeatConfig heartbeat) {
         this.heartbeat = heartbeat;
     }
+
+    /** maximum time between 2 received and valid processed messages. Used as indicator for healthy state. */
+    public long getMaxIdleTimeMillis() {
+        return maxIdleTimeMillis;
+    }
+
+    public void setMaxIdleTimeMillis(long maxIdleTimeMillis) {
+        this.maxIdleTimeMillis = maxIdleTimeMillis;
+    }
+    
+    
     
 }

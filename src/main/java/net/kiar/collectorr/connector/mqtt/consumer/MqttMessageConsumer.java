@@ -21,13 +21,18 @@ import org.slf4j.LoggerFactory;
  */
 public class MqttMessageConsumer implements MqttCallback {
 
+    private static final long FIVE_MINUTES = 5 * 60 * 1000;
+    
     private static final Logger log = LoggerFactory.getLogger(MqttMessageConsumer.class);
 
     private final TopicMatcher topicMatcher;
     private final MqttTopicStats stats;
 
-    public MqttMessageConsumer(MappingsConfigLoader watchingConfig, MqttTopicStats stats) {
+    private final HealthThresholds healthThresholds;
+    
+    public MqttMessageConsumer(MappingsConfigLoader watchingConfig, HealthThresholds healthThresholds, MqttTopicStats stats) {
         this.topicMatcher = TopicMatcher.getMatcherFor( watchingConfig.getTopicsToObserve());
+        this.healthThresholds = healthThresholds;
         this.stats = stats;
     }
     
@@ -83,6 +88,18 @@ public class MqttMessageConsumer implements MqttCallback {
 
     public MqttTopicStats getStats() {
         return stats;
+    }
+    
+    /**
+     * timestamp of the last valid incoming message
+     * @return 
+     */
+    public boolean healthState() {
+        if (healthThresholds.getMaxIdleTimeMillis() > 1) {
+            long timeStamp = stats.getLastTimeStamp();
+            return (timeStamp == 0 || (System.currentTimeMillis() - timeStamp) < healthThresholds.getMaxIdleTimeMillis());
+        }
+        return true;
     }
 
 }

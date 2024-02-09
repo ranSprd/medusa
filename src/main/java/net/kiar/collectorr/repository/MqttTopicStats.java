@@ -21,11 +21,13 @@ public class MqttTopicStats {
     private final Map<String, UnknownTopicStatistic> unknownData = new ConcurrentHashMap<>();
     
     private long lastProcessed = System.currentTimeMillis();
+    private long lastTimeStamp = 0;
+    
     private AtomicLong gauge;
 
-    public MqttTopicStats() {
+    public MqttTopicStats(String connectorName) {
         
-        gauge = registry.gauge("updated_metrics", new AtomicLong(0));        
+        gauge = registry.gauge("updated_metrics_" +connectorName, new AtomicLong(0));        
 //        Gauge.builder("jvm.threads.peak", threadBean, ThreadMXBean::getPeakThreadCount) 
 //    .baseUnit(BaseUnits.THREADS) // optional 
 //    .description("The peak live thread count...") // optional 
@@ -33,6 +35,10 @@ public class MqttTopicStats {
 //    .register(registry);         
     }
     
+    
+    private void markAction() {
+        lastTimeStamp = System.currentTimeMillis();
+    }
     
     
     /** 
@@ -47,6 +53,7 @@ public class MqttTopicStats {
                 Integer.toHexString(topic.hashCode()), 
                 x -> new UnknownTopicStatistic(topic, payload));
         stat.incReceivedCount();
+        markAction();
     }
 
     public Map<String, UnknownTopicStatistic> getUnknowTopicsStatistics() {
@@ -58,9 +65,22 @@ public class MqttTopicStats {
             lastProcessed = System.currentTimeMillis();
             gauge.set( gauge.get() + results.size());
         }
+        markAction();
     }
-    
-    
+
+    public long getLastProcessed() {
+        return lastProcessed;
+    }
+
+    /**
+     * last time of a processed or unpressed event 
+     * 
+     * @return 
+     */    
+    public long getLastTimeStamp() {
+        return lastTimeStamp;
+    }
+
     public static class ProcessedTopicStatistic {
         private int receivedCount = 0;
         private int processedCount = 0;

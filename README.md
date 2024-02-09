@@ -63,7 +63,6 @@ messages. You can find all detected/received topics under the *unprocessed endpo
 ## MQTT configuration
 
 
-
 Metrics are only collected if the topic is defined in mapping file. This file is
 defined as *mapping-file* in *config/connectors.yaml*
 
@@ -83,7 +82,7 @@ generated. It can be found as *devices_free_heap* (name) and can be picked up by
 the default metrics endpoint. Furthermore the metric is enriched with the labels *place* and *deviceId*. 
 Both fields are part of the topic path.
 
-## configuration examples 
+### configuration examples 
 
 - [Example Configuration for Victron Cerbo GX](documentation/victron_cerbo.md)
 - [Example Configuration for Zehnder ComfoAir Q350/450/600](documentation/zehnder_comfoair.md)
@@ -165,6 +164,25 @@ The input
     }
 
 will produce a metric with value 26.61 and a label unit=W/m2.
+
+## MQTT based health
+
+In some cases the MQTT connection breaks down and no new messages are received from MQTT. 
+Only a connection reset helps. 
+
+The configuration value **maxIdleTimeMillis** is used for detection of this case. It defines the
+maximum number of millis between two received and processed mqtt messages. If no new messages 
+come in, the measured time for the last valid message increases and at some point the threshold 
+is reached. This measurement is used for a health check, means the overall health check of medusa
+will report _unhealthy_
+
+example config with 5 minutes (5 *60 *1000) threashold: 
+
+        mqtt-brokers:
+        - name: central
+          maxIdleTimeMillis: 300000
+          url: tcp://192.168.1.2:1883
+          mapping-file: config/topic-mappings.yaml
 
 
 ## service metrics
