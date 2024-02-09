@@ -66,9 +66,17 @@ public class TopicStructureTest {
         
     }
     
+    @Test
     public void testPatternWithEndingSlash() {
         TopicStructure result = TopicStructure.build("first/second/");
-        
+        assertEquals(2, result.getNumberOfSegments());
+    }
+    
+    @Test
+    public void testWildcard() {
+        TopicStructure result = TopicStructure.build("#");
+        assertEquals(1, result.getNumberOfSegments());
+        assertEquals(".*", result.getTopicPatternStr());
     }
     
     @Test

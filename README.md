@@ -49,16 +49,21 @@ Then run the container using:
 
 Medusa can handle several data sources and transform the received data into metric compatible
 formats. To define a new mqtt data sources, add a new connector entry in section **mqtt-brokers**
-of 'config/connectors.yaml' file
+of 'config/quickstart-connectors.yaml' file
 
         mqtt-brokers:
         - name: central
           url: tcp://192.168.1.2:1883
-          mapping-file: config/topic-mappings.yaml
+          mapping-file: config/quickstart-topic-mappings.yaml
 
 This creates a new connector named *central* connected to a local mqtt broker. 
 The *central* connector subsripes to all mqtt topics but, as now, no metrics are read from the
 messages. You can find all detected/received topics under the *unprocessed endpoint* (see above).
+
+
+**Hint**
+The path and name of your connector file (_here config/quickstart-connectors.yaml_) is defined in 
+application config file called 'application.yaml'. This file is expected in your 'config' folder
 
 
 
@@ -84,7 +89,7 @@ generated. It can be found as *devices_free_heap* (name) and can be picked up by
 the default metrics endpoint. Furthermore the metric is enriched with the labels *place* and *deviceId*. 
 Both fields are part of the topic path.
 
-### configuration examples 
+### more detailed configuration examples 
 
 - [Example Configuration for Victron Cerbo GX](documentation/victron_cerbo.md)
 - [Example Configuration for Zehnder ComfoAir Q350/450/600](documentation/zehnder_comfoair.md)
@@ -166,6 +171,24 @@ The input
     }
 
 will produce a metric with value 26.61 and a label unit=W/m2.
+
+### configuration helper
+
+The MQTT connectors support 2 modes which can be set for each topic seperatly.
+
+- **verbose mode** enables verbose logging. It can be set by 'mode: verbose'
+- **discovery mode** includes the verbose mode and change some standard behaviour during metric auto detection. 
+It can be set by 'mode: discover'.
+
+Here a small example from a mapping.yaml
+
+    topics:
+    - topic: topic/A
+      mode:verbose
+    - topic: topic/B
+    - topic: topic/C
+      mode:discover
+
 
 ## MQTT based health
 

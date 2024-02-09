@@ -31,12 +31,26 @@ public class TopicProcessor {
     private final List<MetricDefinition> definedMetrics = new ArrayList<>();
     
     private boolean invalid = false;
+    
+    private boolean verbose = false;
+    private boolean discovery = false;
 
     public TopicProcessor(TopicConfig topicConfig, TopicStructure topicStructure) {
         this.topicConfig = topicConfig;
         this.topicStructure = topicStructure;
+        resolveBehaviourFlagsFromMode();
     }
 
+    
+    private void resolveBehaviourFlagsFromMode() {
+        if ("discover".equalsIgnoreCase(topicConfig.getMode())) {
+            verbose = true;
+            discovery = true;
+        } else if ("verbose".equalsIgnoreCase(topicConfig.getMode())) {
+            verbose = true;
+            discovery = false;
+        }
+    }
     /**
      * process the given payload and update all available metrics based on that data
      * 
@@ -57,8 +71,14 @@ public class TopicProcessor {
             definedMetrics.addAll(
                 TopicMetricsFactory.INSTANCE.buildMetric(payloadResolver, topic, topicConfig, topicStructure)
             );
-            if (definedMetrics.isEmpty()) {
+            if (definedMetrics.isEmpty() && !discovery) {
                 invalid = true;
+            }
+            if (verbose) {
+                log.info("found {} metrics in payload.", definedMetrics.size());
+            }
+            if (!definedMetrics.isEmpty()) {
+                log.info("\n use {} as source ", topic);
             }
         }
         
@@ -131,4 +151,12 @@ public class TopicProcessor {
         return definedMetrics;
     }
 
+    public boolean isVerbose() {
+        return verbose;
+    }
+
+    public boolean isDiscovery() {
+        return discovery;
+    }
+    
 }

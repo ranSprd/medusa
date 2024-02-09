@@ -21,8 +21,6 @@ import org.slf4j.LoggerFactory;
  */
 public class MqttMessageConsumer implements MqttCallback {
 
-    private static final long FIVE_MINUTES = 5 * 60 * 1000;
-    
     private static final Logger log = LoggerFactory.getLogger(MqttMessageConsumer.class);
 
     private final TopicMatcher topicMatcher;
@@ -51,11 +49,11 @@ public class MqttMessageConsumer implements MqttCallback {
             String payload = new String(message.getPayload());
 
             if (processor.isPresent()) {
-//                String time = new Timestamp(System.currentTimeMillis()).toString();
-//                log.info("\n\tTopic:   " + topic
-//                        + "\n\tMessage: " + payload
-    //                    + "\n\tQoS:     " + message.getQos()
-//                        + "\n");
+                if (processor.get().isVerbose()) {
+                    log.info("\n\tTopic:   " + topic
+    //                        + "\n\tMessage: " + payload
+                            + "\n");
+                }
                 List<PrometheusCounterGauge> results = processor.get().consumeMessage(payload, topic);
                 MetricsRepo.INSTANCE.add( results);
                 stats.registerProcessed(topic, results);

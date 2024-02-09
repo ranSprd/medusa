@@ -43,6 +43,7 @@ public class TopicStructure {
         
         int indexOfWildCard = topicPath.indexOf('#');
         
+        // ignore everthing behind #
         final String path = indexOfWildCard > -1
                 ? topicPath.substring(0, indexOfWildCard+1).trim()
                 : topicPath.trim();

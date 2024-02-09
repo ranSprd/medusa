@@ -1,0 +1,5 @@
+mqtt-brokers:
+- name: central
+  url: tcp://192.168.2.145:1883
+  mapping-file: config/quickstart-topic-mappings.yaml
+

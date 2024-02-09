@@ -1,0 +1,19 @@
+
+topics: 
+
+# This defines a listener on a example topic, which should not exists in an real life environement
+# but it can be used for the first steps. 
+# You can use informations delivered by http://localhost:8085/connectors/central/unprocessed for your own config
+- topic: /some/topic
+
+
+
+## This configuration responds to all incoming topics   
+## it can be used for the first steps and some verbose output
+#- topic: "#"
+#  # remove the following line in production
+#  # the discovery mode enables verbose output and extended payload analysis
+#  mode: discover  
+  
+
+
