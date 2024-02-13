@@ -27,6 +27,8 @@ public class JsonResolver implements PayloadResolver {
     private static final ObjectMapper mapper = new ObjectMapper();
     static {
         mapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
+        mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
+        mapper.configure(JsonParser.Feature.AUTO_CLOSE_SOURCE, true);
     }
 
 //    private final JsonNode root;

@@ -1,0 +1,13 @@
+{
+   'comfoair':'Q600',
+   'Device_State':1,
+   'Heating_Season_is_active':True,
+   'Cooling_Season_is_active':False,
+   'Target_Temperature':{
+      'value':24.0,
+      'unit':'°C'
+   },
+   'sensor_402':False,
+   'sensor_419':True,
+   'sensor_802':0.0
+}
