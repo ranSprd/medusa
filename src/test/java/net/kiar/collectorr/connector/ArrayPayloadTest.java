@@ -51,10 +51,10 @@ topics:
                 .filter(gauge -> gauge.getName().endsWith("list.#0.val"))
                 .findAny();
         assertTrue(anyGauge.isPresent());
-        assertEquals(anyGauge.get().getNumberOfLabels(), 3);
+        assertEquals(anyGauge.get().getNumberOfLabels(), 2);
         assertEquals( "0x02", anyGauge.get().getLabelValue("common_list.#0.id"));
         assertEquals( "C", anyGauge.get().getLabelValue("common_list.#0.unit"));
-        assertEquals( "ecowitt", anyGauge.get().getLabelValue("device"));
+//        assertEquals( "ecowitt", anyGauge.get().getLabelValue("device"));
         System.out.println( anyGauge.get().toMetricString());
                 
         
@@ -62,7 +62,7 @@ topics:
         assertEquals(1, metricDefs.size());
         
         MetricDefinition firstMetric = anyGauge.get().getMetricDefinition();
-        assertEquals(3, firstMetric.getLabels().size());
+        assertEquals(2, firstMetric.getLabels().size());
     }
     
     private final String configWithSomeLabels = """

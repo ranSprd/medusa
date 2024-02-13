@@ -73,7 +73,7 @@ public class JsonResolver implements PayloadResolver {
 //                if (valueNode.isNumber() || valueNode.isBoolean()) {
             if (valueNode.isNumber()) {
                 values.add( new PayloadDataNode( new FieldName(nodeNameStr), valueNode.asText()));
-            } else if (valueNode.isTextual() || valueNode.isBoolean()) {
+            } else if (valueNode.isTextual() ) { // || valueNode.isBoolean()) {
                 labels.add( new PayloadDataNode(new FieldName(nodeNameStr), valueNode.asText()));
             } else if (valueNode.isObject()) {
                 processNode(values, labels, nodeNameStr +".", valueNode);

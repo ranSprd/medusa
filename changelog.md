@@ -18,11 +18,19 @@ The main types of changes used in this file are:
 
 ## [Unreleased]
 
+### Added
+
+- health check
+- self service metrics 
+
 ### Breaking changes
 
 - set/overwrite label fields based on a value (mappings)
-- health check
-- self service metrics 
+- ignore boolean fields
+
+### Fixed
+
+- automatic generated labels only for same object 
 
 ## 0.1.1 SNAPSHOT
 

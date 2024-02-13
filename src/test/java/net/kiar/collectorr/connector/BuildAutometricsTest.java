@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import net.kiar.TestHelper;
 import net.kiar.collectorr.config.MappingsConfigLoader;
 import net.kiar.collectorr.config.model.TopicConfig;
 import net.kiar.collectorr.connector.mqtt.mapping.TopicCache;
@@ -60,8 +61,29 @@ topics:
             assertFalse(m.getName().isBlank());
             assertEquals(0, m.getNumberOfLabels());
         }
+    }
+    
+    
+    private final String configWithIntern = """
+topics:
+- topic: /home/heizung/comfoconnect/sensors
+  metrics:
+  - valueField: Exhaust_Fan_Flow.value
+""";
+    @Test
+    public void testNoLabelsFromOuterLevel() throws IOException {
+        TestHelper.Result result = TestHelper.buildAndProcessFirst(configWithIntern, 
+                "/home/heizung/comfoconnect/sensors", 
+                "src/test/resources/mqtt/payloads/comfoconnect01.json");
+        
+        assertFalse(result.metrics().isEmpty());
+        PrometheusCounterGauge anyGauge = result.metrics().get(0);
+        
+        System.out.println( anyGauge.toMetricString());
+        assertEquals(1, anyGauge.getNumberOfLabels());
         
     }
+    
     
     
 }

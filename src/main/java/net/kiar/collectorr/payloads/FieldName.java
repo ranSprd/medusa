@@ -73,6 +73,9 @@ public class FieldName {
         return arrayItem;
     }
     
+    public boolean hasPrefix() {
+        return prefix != null && !prefix.isBlank();
+    }
     
     public boolean isSamePrefix(FieldName other) {
         String str = prefix.replaceAll("\\.\\*\\.", "\\\\.#[0-9]*\\\\.");

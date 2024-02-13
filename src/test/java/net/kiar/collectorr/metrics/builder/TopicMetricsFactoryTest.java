@@ -179,7 +179,7 @@ topics:
         TopicConfig topicToTest = conf.findTopic(topicPath).get();
         
         String jsonPayload = """ 
-                             { "strField" : "12", "outdoor" : true, "place" : "roof" } 
+                             { "strField" : "12", "outdoor" : "yes", "place" : "roof" } 
         """;
         
         PayloadResolver payloadResolver = JsonResolver.consume(jsonPayload);

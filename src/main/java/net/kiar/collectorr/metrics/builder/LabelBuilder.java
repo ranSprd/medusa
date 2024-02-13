@@ -102,11 +102,9 @@ public class LabelBuilder {
     
     private boolean isSimpleOrHasSameArrayPrefix(FieldName fieldName, FieldDescription valueField) {
         if (fieldName.isArrayItem() && !valueField.getFieldName().isUnique()) {
-//            return fieldName.getPrefix().equals( valueField.fieldName().getPrefix());
-//            return valueField.fieldName().match( fieldName.getFullName());
             return valueField.getFieldName().isSamePrefix(fieldName);
-        }
-        return true;
+        } 
+        return fieldName.getPrefix().equals( valueField.getFieldName().getPrefix());
     }
     
     public void addLabelsToMetric(TopicConfigMetric givenMetricConfig, MetricDefinitionBuilder builder, PayloadResolver payloadResolver) {
