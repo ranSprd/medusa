@@ -27,6 +27,7 @@ import net.kiar.collectorr.metrics.FieldDescription;
 import net.kiar.collectorr.metrics.FieldSourceType;
 import net.kiar.collectorr.metrics.MetricDefinitionBuilder;
 import net.kiar.collectorr.payloads.FieldName;
+import net.kiar.collectorr.payloads.PayloadDataNode;
 import net.kiar.collectorr.payloads.PayloadResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,17 +89,46 @@ public class LabelBuilder {
             labelsInTopic.values().stream()
                     .forEach(labelInTopic -> builder.insertLabel(labelInTopic));
             if (payloadResolver != null) {
+//                payloadResolver.getLabelNodes().stream()
+//                        .filter(labelNode -> isSimpleOrHasSameArrayPrefix( labelNode.fieldName(), builder.getFieldOfMetricValue()))
+//                        .map(labelNode -> labelNode.fieldName().getFullName().replaceAll("#[0-9]*\\.", "*."))
+//                        // don't add as label if the field is defined as value
+//                        .filter(labelName -> !labelName.equalsIgnoreCase( builder.getFieldNameOfMetricValue()))
+//                        .map(labelName -> toIncludedPayloadFieldDescription(labelName))
+//                        .forEach(fieldDesc -> builder.insertLabel(fieldDesc));
                 payloadResolver.getLabelNodes().stream()
                         .filter(labelNode -> isSimpleOrHasSameArrayPrefix( labelNode.fieldName(), builder.getFieldOfMetricValue()))
-                        .map(labelNode -> labelNode.fieldName().getFullName().replaceAll("#[0-9]*\\.", "*."))
-                        // don't add as label if the field is defined as value
-                        .filter(labelName -> !labelName.equalsIgnoreCase( builder.getFieldNameOfMetricValue()))
-                        .map(labelName -> toIncludedPayloadFieldDescription(labelName))
+                        .map(labelNode -> toIncludedPayloadFieldDescription(labelNode, builder.getFieldOfMetricValue()))
+                        .filter(Objects::nonNull)
                         .forEach(fieldDesc -> builder.insertLabel(fieldDesc));
             }
         } 
         // @todo add labels found in valueMappingsSection
     }
+    
+    private FieldDescription toIncludedPayloadFieldDescription(PayloadDataNode payloadDataNode, FieldDescription valueField) {
+        String fieldName = payloadDataNode.fieldName().getFullName().replaceAll("#[0-9]*\\.", "*.");
+        
+        // don't add as label if the field is defined as value
+        if (fieldName.equalsIgnoreCase( valueField.getFieldName().getFullName())) {
+            return null;
+        }
+        
+        String name = null;
+        if (payloadDataNode.fieldName().isArrayItem()) {
+            if (payloadDataNode.fieldName().getPrefix().replaceAll("#[0-9]*\\.", "*.").equals(valueField.getFieldName().getPrefix())) {
+                name = payloadDataNode.fieldName().getName();
+            }
+        } else if (payloadDataNode.fieldName().hasPrefix() && payloadDataNode.fieldName().getPrefix().equals( valueField.getFieldName().getPrefix())) {
+            name = payloadDataNode.fieldName().getName();
+        }
+        
+        FieldDescription result = new FieldDescription(fieldName, name);
+        result.setIncluded(true);
+        result.setType(FieldSourceType.PAYLOAD);
+        return result;
+    }
+    
     
     private boolean isSimpleOrHasSameArrayPrefix(FieldName fieldName, FieldDescription valueField) {
         if (fieldName.isArrayItem() && !valueField.getFieldName().isUnique()) {

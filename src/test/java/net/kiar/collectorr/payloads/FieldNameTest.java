@@ -55,4 +55,11 @@ public class FieldNameTest {
         assertTrue( valueField.isSamePrefix(fieldInPayload));
     }
     
+    @Test
+    public void testExtractName() {
+        assertEquals("test", new FieldName("test").getName());
+        assertEquals("A", new FieldName("test.A").getName());
+        assertEquals("test.", new FieldName("test.").getName());
+    }
+    
 }

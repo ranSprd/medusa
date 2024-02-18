@@ -51,11 +51,13 @@ topics:
                 .filter(gauge -> gauge.getName().endsWith("list.#0.val"))
                 .findAny();
         assertTrue(anyGauge.isPresent());
-        assertEquals(anyGauge.get().getNumberOfLabels(), 2);
-        assertEquals( "0x02", anyGauge.get().getLabelValue("common_list.#0.id"));
-        assertEquals( "C", anyGauge.get().getLabelValue("common_list.#0.unit"));
-//        assertEquals( "ecowitt", anyGauge.get().getLabelValue("device"));
         System.out.println( anyGauge.get().toMetricString());
+        assertEquals(2, anyGauge.get().getNumberOfLabels());
+        assertEquals( "0x02", anyGauge.get().getLabelValue("id"));
+        assertEquals( "C", anyGauge.get().getLabelValue("unit"));
+//        assertEquals( "0x02", anyGauge.get().getLabelValue("common_list.#0.id"));
+//        assertEquals( "C", anyGauge.get().getLabelValue("common_list.#0.unit"));
+//        assertEquals( "ecowitt", anyGauge.get().getLabelValue("device"));
                 
         
         List<MetricDefinition> metricDefs = result.topicCache().getTopicProcessor().getDefinedMetrics();

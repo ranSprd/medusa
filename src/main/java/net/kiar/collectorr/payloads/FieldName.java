@@ -29,11 +29,13 @@ public class FieldName {
     private boolean arrayItem = false;
     
     private final String fullName;
+    private String name;
     
     private String prefix = "";
 
     public FieldName(String rawName) {
         this.fullName = rawName == null? "" : rawName;
+        this.name = extractName( this.fullName);
         if (this.fullName.contains("*")) {
             unique = false;
             
@@ -60,6 +62,14 @@ public class FieldName {
             }
         }
     }
+    
+    private static String extractName(String input) {
+        int index = input.lastIndexOf('.')+1;
+        if (index > 0 && index < input.length()) {
+            return input.substring(index);
+        }
+        return input;
+    }
 
     /**
      * fieldname can match several fields (e.g. arrays)
@@ -84,12 +94,19 @@ public class FieldName {
         return searchPattern.matcher( other.prefix).matches();
     }
     
+    /** name with prefix, if available */
     public String getFullName() {
         return fullName;
     }
     
+    /** prefix part of the full name */
     public String getPrefix() {
         return prefix;
+    }
+    
+    /** part of the name without prefix */
+    public String getName(){
+        return name;
     }
     
     
