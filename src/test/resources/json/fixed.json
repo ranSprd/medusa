@@ -1,0 +1,171 @@
+{
+    "Airflow_constraints": null,
+    "Analog_Input_1": 0,
+    "Analog_Input_2": 0,
+    "Analog_Input_3": 0,
+    "Analog_Input_4": 0,
+    "Avoided_Cooling_Power_Usage": {
+        "unit": "W",
+        "value": 0
+    },
+    "Avoided_Cooling_Power_Usage_(total)": {
+        "unit": "kWh",
+        "value": 0
+    },
+    "Avoided_Cooling_Power_Usage_(year)": {
+        "unit": "kWh",
+        "value": 0
+    },
+    "Avoided_Heating_Power_Usage": {
+        "unit": "W",
+        "value": 611
+    },
+    "Avoided_Heating_Power_Usage_(total)": {
+        "unit": "kWh",
+        "value": 1419
+    },
+    "Avoided_Heating_Power_Usage_(year)": {
+        "unit": "kWh",
+        "value": 577
+    },
+    "Bypass_Activation_State": 0,
+    "Bypass_Next_Change": -1,
+    "Bypass_Override": 0,
+    "Bypass_State": {
+        "unit": "%",
+        "value": 0
+    },
+    "Changing_filters": 1,
+    "comfoair": "Q600",
+    "Cooling_Season_is_active": false,
+    "Days_remaining_to_replace_the_filter": 56,
+    "Device_Airflow_Unit": "m3ph",
+    "Device_State": 1,
+    "Device_Temperature_Unit": "celcius",
+    "Exhaust_Air_Humidity": {
+        "unit": "%",
+        "value": 79
+    },
+    "Exhaust_Air_Temperature": {
+        "unit": "\u00b0C",
+        "value": 11.6
+    },
+    "Exhaust_Fan_Duty": {
+        "unit": "%",
+        "value": 28
+    },
+    "Exhaust_Fan_Flow": {
+        "unit": "m\u00b3/h",
+        "value": 114
+    },
+    "Exhaust_Fan_Mode": 0,
+    "Exhaust_Fan_Next_Change": -1,
+    "Exhaust_Fan_Speed": {
+        "unit": "rpm",
+        "value": 1198
+    },
+    "Extract_Air_Humidity": {
+        "unit": "%",
+        "value": 60
+    },
+    "Extract_Air_Temperature": {
+        "unit": "\u00b0C",
+        "value": 19.8
+    },
+    "Fan_Speed": 1,
+    "Fan_Speed_(modulated)": 100,
+    "Fan_Speed_Next_Change": -1,
+    "frostprotection_unbalance": 0,
+    "Heating_Season_is_active": true,
+    "Operating_Mode": 1,
+    "Outdoor_Air_Humidity": {
+        "unit": "%",
+        "value": 86
+    },
+    "Outdoor_Air_Humidity_(after_preheater)": {
+        "unit": "%",
+        "value": 86
+    },
+    "Outdoor_Air_Temperature": {
+        "unit": "\u00b0C",
+        "value": 9.2
+    },
+    "Power_Usage": {
+        "unit": "W",
+        "value": 20
+    },
+    "Power_Usage_(total)": {
+        "unit": "kWh",
+        "value": 46
+    },
+    "Power_Usage_(year)": {
+        "unit": "kWh",
+        "value": 19
+    },
+    "Preheater_Power_Usage": {
+        "unit": "W",
+        "value": 0
+    },
+    "Preheater_Power_Usage_(total)": {
+        "unit": "kWh",
+        "value": 0
+    },
+    "Preheater_Power_Usage_(year)": {
+        "unit": "kWh",
+        "value": 0
+    },
+    "RF_Pairing_Mode": 0,
+    "Running_Mean_Outdoor_Temperature_(RMOT)": {
+        "unit": "\u00b0C",
+        "value": 9.5
+    },
+    "sensor_219": 0,
+    "sensor_321": 3,
+    "sensor_325": 1,
+    "sensor_33": 0,
+    "sensor_337": 34,
+    "sensor_341": 0,
+    "sensor_37": 0,
+    "sensor_384": -40.0,
+    "sensor_386": false,
+    "sensor_400": -40.0,
+    "sensor_401": 0,
+    "sensor_402": false,
+    "sensor_416": 9.1,
+    "sensor_417": 9.3,
+    "sensor_418": 0,
+    "sensor_419": true,
+    "sensor_53": -1,
+    "sensor_784": 0,
+    "sensor_785": 0,
+    "sensor_802": 0.0,
+    "sensor_85": -1,
+    "Sensor_based_ventilation_mode": 0,
+    "Supply_Air_Humidity": {
+        "unit": "%",
+        "value": 60
+    },
+    "Supply_Air_Temperature": {
+        "unit": "\u00b0C",
+        "value": 18.9
+    },
+    "Supply_Fan_Duty": {
+        "unit": "%",
+        "value": 33
+    },
+    "Supply_Fan_Flow": {
+        "unit": "m\u00b3/h",
+        "value": 127
+    },
+    "Supply_Fan_Mode": 0,
+    "Supply_Fan_Next_Change": -1,
+    "Supply_Fan_Speed": {
+        "unit": "rpm",
+        "value": 1463
+    },
+    "Target_Temperature": {
+        "unit": "\u00b0C",
+        "value": 24.0
+    },
+    "Temperature_Profile_Mode": 2
+}

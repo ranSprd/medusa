@@ -1,20 +1,22 @@
 # Medusa
 
-Medusa is a mapper for prometheus metrics. Currently it can handle mqtt
-messages and convert they in a prometheus compatible metric format.
+Medusa can collect message published on a mqtt bus and map they in a prometheus 
+compatible metric format. 
 
 ## Features
 
 - transform MQTT message into Prometheus metrics
+    - currently prometheus gauge and counter types are supported
+    - support for prometheus labels
 - connections to multiple mqtt brokers possible
-- automatic mode which detects metrics in incoming messages without manual configuration
+- automatic mode which transforms incoming messages without manual configuration into metrics
 
 ## How it works
 
-After startup the application connects to the configured MQTT broker(s) in your system 
+After startup, the application connects to the configured MQTT broker(s) in your system 
 and subscripes to all topics. In the background it collects all incoming
-messages. For these topics which are configured, meduase tries to extract metrics, all other metrics 
-will be marked as unprocessed and collected as 'unknow' topics.
+messages. You can mark some or all of the topics, that means such topics will be 
+processed and transformed into a metric. All other topics will be marked as 'unnown'. 
 
 The web-server part of this application provides a prometheus endpoint. You can 
 configure your running prometheus to read all metrics from there.  
