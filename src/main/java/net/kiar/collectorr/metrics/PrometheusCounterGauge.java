@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import net.kiar.collectorr.metrics.prometheus.PrometheusDataModelValidator;
 import net.kiar.collectorr.payloads.DoubleParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,8 +84,7 @@ public class PrometheusCounterGauge {
      * @return 
      */
     public static String getValidMetricName(String input) {
-        return  input.replaceAll("#", ":")
-                     .replaceAll("\\.", "_");
+        return  PrometheusDataModelValidator.fixMetricName(input);
     }
     /**
      * Labels may contain ASCII letters, numbers, as well as underscores. They must match the regex [a-zA-Z_][a-zA-Z0-9_]*
@@ -92,8 +92,7 @@ public class PrometheusCounterGauge {
      * @return 
      */
     public static String getValidLabelName(String input) {
-        return  input.replaceAll("#", "")
-                     .replaceAll("\\.", "_");
+        return  PrometheusDataModelValidator.fixLabelName(input);
     }
 
     public long getMillisTimestamp() {
