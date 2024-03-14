@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import net.kiar.collectorr.metrics.FieldDescription;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
@@ -143,6 +144,34 @@ public class TopicStructureTest {
         assertEquals( "#0", struct.getFieldNameOfSegment(0, true));
         assertEquals( "#7", struct.getFieldNameOfSegment(7, true));
         assertEquals( "field-x", struct.getFieldNameOfSegment(3, true));
+    }
+    
+    @Test
+    public void testAllowedSegments() {
+        TopicStructure struct = TopicStructure.build("/start/{field-x}[a, b,cc]/");
+
+        TopicStructure.TopicSegment segment = struct.getSegment(2);
+        assertTrue(segment.isSegmentNameAllowed("a"));
+        assertTrue(segment.isSegmentNameAllowed("b"));
+        assertTrue(segment.isSegmentNameAllowed("cc"));
+        
+        assertFalse(segment.isSegmentNameAllowed(""));
+        assertFalse(segment.isSegmentNameAllowed(null));
+        assertFalse(segment.isSegmentNameAllowed("xyz"));
+    }
+    
+    @Test
+    public void testAllowedSegmentsOfEmpty() {
+        TopicStructure struct = TopicStructure.build("/start/{field-x}[ ]/");
+
+        TopicStructure.TopicSegment segment = struct.getSegment(2);
+        assertTrue(segment.isSegmentNameAllowed("a"));
+        assertTrue(segment.isSegmentNameAllowed("b"));
+        assertTrue(segment.isSegmentNameAllowed("cc"));
+        
+        assertTrue(segment.isSegmentNameAllowed(""));
+        assertTrue(segment.isSegmentNameAllowed(null));
+        assertTrue(segment.isSegmentNameAllowed("xyz"));
     }
     
 }

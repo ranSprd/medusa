@@ -144,48 +144,56 @@ public class TopicStructure {
         
         private String segmentPattern = "";
         private String fieldName = "";
+        
+        private List<String> allowedContent = null;
 
         public TopicSegment(String raw, int index) {
             this.raw = raw;
             this.segementIndex = index;
             
-            boolean inPrefix = true;
-            boolean parserEnd = false;
+            boolean beforeBrace = true;
+            boolean inBrace = false;
+            boolean afterBrace = false;
             char last =' ';
             StringBuilder fieldNameStack = null;
+            
+            PatternParser patternParser = new PatternParser();
+            
             for(int t = 0, len = raw.length(); t < len; t++) {
                 char c = raw.charAt(t);
                 if (c == '#') {
                    segmentPattern = segmentPattern + TOPIC_WILDCARD; 
                    return;
-                } else if (inPrefix) {
+                } else if (beforeBrace) {
                     switch (c) {
-                        case '{':
-                            inPrefix = false;
+                        case '{' -> {
+                            beforeBrace = false;
+                            inBrace = true;
                             if (last != '+') {
                                 segmentPattern = segmentPattern + SEGMENT_WILDCARD;
                             } 
                             fieldNameStack = new StringBuilder();
-                            break;
-                        case '+':
-                            segmentPattern = segmentPattern + SEGMENT_WILDCARD;
-                            break;
-                        default:
-                            segmentPattern = segmentPattern + c;
-                            break;
+                        }
+                        case '+' -> segmentPattern = segmentPattern + SEGMENT_WILDCARD;
+                        default -> segmentPattern = segmentPattern + c;
                     }
-                } else if (!parserEnd) {
+                } else if (inBrace) {
                     if (c == '}') {
-                        parserEnd = true;
+                        afterBrace = true;
+                        inBrace= false;
                         if (fieldNameStack != null) {
                             fieldName = fieldNameStack.toString();
                         }
                     } else {
                         fieldNameStack.append(c);
                     }
+                } else {
+                    patternParser.consume(c);
                 }
                 last = c;
             }
+            
+            allowedContent = patternParser.getData();
         }
 
         public String getSegmentPattern() {
@@ -204,7 +212,48 @@ public class TopicStructure {
             return fieldName != null && !fieldName.isBlank();
         }
         
+        public boolean isSegmentNameAllowed(String name) {
+            if (allowedContent == null || allowedContent.isEmpty()) {
+                return true;
+            }
+            return allowedContent.stream()
+                    .anyMatch(item -> item.equals(name));
+        }
+        
     }
     
+    
+    private static class PatternParser {
+        private boolean inSquareBraket = false;
+        private StringBuilder pattern = null;
+        private final List<String> data = new ArrayList<>();
+
+        public List<String> getData() {
+            return data;
+        }
+        
+        public void consume(char c) {
+            if (inSquareBraket) {
+                if (c == ']') {
+                    inSquareBraket = false;
+                    nextPattern();
+                } else if (c == ',') {
+                    nextPattern();
+                    pattern = new StringBuilder();
+                } else if (c != ' ') {
+                    pattern.append(c);
+                }
+            } else if (c == '[') {
+                inSquareBraket = true;
+                pattern = new StringBuilder();
+            }
+        }
+        
+        private void nextPattern() {
+            if (!pattern.isEmpty()) {
+                data.add(pattern.toString().trim());
+            } 
+        }
+    }
     
 }

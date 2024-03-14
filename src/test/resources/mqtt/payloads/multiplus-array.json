@@ -1,0 +1,27 @@
+{
+   "value": [
+      {
+         "active_battery_service": false,
+         "current": -1.899999976158142,
+         "id": "com.victronenergy.battery.socketcan_can0",
+         "instance": 512,
+         "name": "Pylontech battery",
+         "power": -94,
+         "soc": 82,
+         "state": 2,
+         "temperature": 14.600000381469727,
+         "voltage": 49.66999816894531
+      },
+      {
+         "active_battery_service": true,
+         "current": -2,
+         "id": "com.victronenergy.vebus.ttyS4",
+         "instance": 276,
+         "name": "MultiPlus-II 48/3000/35-32",
+         "power": -69,
+         "soc": 86,
+         "state": 2,
+         "voltage": 49.540000915527344
+      }
+   ]
+}

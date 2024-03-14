@@ -18,6 +18,7 @@ public class TopicPathResolver implements PayloadResolver {
 
     private final String topicPath;
     private final List<PayloadDataNode> data = new ArrayList<>();
+    private boolean excluded = false;
 
     public TopicPathResolver(String topicPath, TopicStructure topicStructure) {
         this.topicPath = topicPath;
@@ -26,12 +27,28 @@ public class TopicPathResolver implements PayloadResolver {
             String parts[] = topicPath.split("/");
             for(String p : parts) {
                 if (p != null) {
-                    String fieldName = topicStructure.getFieldNameOfSegment(t, true);
-                    data.add(new PayloadDataNode( new FieldName(fieldName), p));
+                    TopicStructure.TopicSegment segment = topicStructure.getSegment(t);
+                    if (segment != null) {
+                        if (!segment.isSegmentNameAllowed(p)) {
+                            excluded = true;
+                        } 
+                        String fieldName = segment.getFieldName();
+                        data.add(new PayloadDataNode( new FieldName(fieldName), p));
+                    } else {
+                        data.add(new PayloadDataNode( new FieldName(""), p));
+                    }
                 }
                 t++;
             }
         }
+    }
+
+    /**
+     * some segments of a topic can have restricted content 
+     * @return 
+     */
+    public boolean isExcluded() {
+        return excluded;
     }
 
     public String getTopicPath() {

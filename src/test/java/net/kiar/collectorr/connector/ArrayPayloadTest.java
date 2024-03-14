@@ -127,4 +127,42 @@ topics:
         assertEquals( "temperature", anyGauge.get().getLabelValue("detailedName"));
         assertNull(anyGauge.get().getLabelValue("ignoreable"));
     }
+    
+    private final String multiplus = """
+topics:
+- topic: /get_livedata_info
+  mappings:
+    value.*.name:
+      "Pylontech battery":
+        detailedName: Battery
+      "MultiPlus-II 48/3000/35-32":
+        detailedName: Multiplus
+                                     
+  metrics:
+  - name: "soc"
+    valueField: value.*.soc
+    labels: [detailedName|name]                                            
+    
+""";
+    @Test
+    public void testHandleMultipleArrayItems() throws IOException {
+    
+        Result result = TestHelper.buildAndProcessFirst(multiplus, "/get_livedata_info", "src/test/resources/mqtt/payloads/multiplus-array.json");
+        
+        
+        for( PrometheusCounterGauge m : result.metrics()) {
+            System.out.println( m.toMetricString());
+        }
+//        Optional<PrometheusCounterGauge> anyGauge = result.metrics().stream()
+//                .filter(gauge -> gauge.getMetricDefinition().getFieldOfValue().getFieldName().getFullName().endsWith("*.val"))
+//                .findAny();
+//        assertTrue(anyGauge.isPresent());
+//        System.out.println( anyGauge.get().toMetricString());
+
+    }
+    
+    
+    
+    
+    
 }

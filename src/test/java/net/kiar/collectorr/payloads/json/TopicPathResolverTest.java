@@ -30,15 +30,23 @@ public class TopicPathResolverTest {
     
     @Test
     public void testSomeMethod() {
-        TopicStructure struct = TopicStructure.build("/{field-a}/{field-b}/{field-c}");
+        TopicStructure struct = TopicStructure.build("/{field-a}/xyz/{field-b}/{field-c}");
         
-        TopicPathResolver tpr = new TopicPathResolver("/a/b/c", struct);
+        TopicPathResolver tpr = new TopicPathResolver("/a/xyz/b/c", struct);
         
         Optional<PayloadDataNode> x = tpr.findNode("field-c");
         assertTrue(tpr.findNode("field-a").isPresent());
         assertTrue(tpr.findNode("field-b").isPresent());
         assertTrue(tpr.findNode("field-c").isPresent());
         assertFalse(tpr.findNode("field").isPresent());
+    }
+    
+    @Test
+    public void testRestrictedSegments() {
+        TopicStructure struct = TopicStructure.build("/first/{name}[a,b,c]/second");
+        
+        assertFalse(new TopicPathResolver("/first/a/second", struct).isExcluded());
+        assertTrue(new TopicPathResolver("/first/x/second", struct).isExcluded());
     }
     
 }

@@ -82,8 +82,12 @@ public class TopicProcessor {
             }
         }
         
+        TopicPathResolver pathResolver = new TopicPathResolver(topic, topicStructure);
+        if (pathResolver.isExcluded()) {
+            return List.of();
+        }
         // consume values
-        DataProvider.DataProviderFactory dataFactory = DataProvider.getFactory(payloadResolver, new TopicPathResolver(topic, topicStructure));
+        DataProvider.DataProviderFactory dataFactory = DataProvider.getFactory(payloadResolver, pathResolver);
         return definedMetrics.stream()
                 .map( metric -> createValueEntriesForMetric(metric, dataFactory))
                 .flatMap(list -> list.stream())
