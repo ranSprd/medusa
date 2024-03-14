@@ -24,7 +24,7 @@ The next section is the **topic** part. It contains a list of all observed mqtt 
 
 ### labels
 
-Normally all string fields from a payload are interpreted as *label*.
+Normally all _**string**_ fields from a payload are interpreted as *label*.
 
 #### fixed content 
 

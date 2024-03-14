@@ -31,6 +31,7 @@ The main types of changes used in this file are:
 ### Fixed
 
 - automatic generated labels only for same object 
+- fix: validate prometheus metric/label names
 
 ## 0.1.1 SNAPSHOT
 

@@ -1,7 +1,7 @@
 # Medusa
 
-Medusa can collect message published on a mqtt bus and map they in a prometheus 
-compatible metric format. 
+Medusa can collect messages published on an MQTT bus and convert them into a 
+Prometheus-compatible metric format with minimal manual effort.
 
 ## Features
 
@@ -96,6 +96,8 @@ Both fields are part of the topic path.
 
 - [Example Configuration for Victron Cerbo GX](documentation/victron_cerbo.md)
 - [Example Configuration for Zehnder ComfoAir Q350/450/600](documentation/zehnder_comfoair.md)
+- [General mapping features](documentation/mapping-config.md)
+- [Matching and Processing of topics](documentation/topics.md)
 
 
 ### use placeholders in metric names
@@ -114,7 +116,7 @@ Instead of define 3 mappings you can use a placeholder in your metric name
         name: "{phase}_data"
 
 In this case we use a reference to to label *phase* which comes from our topic. 
-Another option is to use the index of the topic segment. For instance '#5' for our case.
+Another option is to use the index of the topic segment. For instance '#5' for our case (counter starts at 0).
 
     - topic: N/c0678ab49344/system/+/Ac/{phase}
       metrics:
@@ -156,7 +158,7 @@ or
     'val#1|unit'
 
 is interpreted as: use the field *val*, splitt its content by whitespace and take the
-2nd entry as value. The name should be *unit*. 
+2nd entry as value (counter starts at 0). The name should be *unit*. 
 
 For the example above a full definition whould be
 
