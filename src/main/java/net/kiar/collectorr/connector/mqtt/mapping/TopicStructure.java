@@ -132,7 +132,7 @@ public class TopicStructure {
     public Map<String, FieldDescription> getFieldDescriptions() {
         return segments.stream()
                 .filter(segment -> segment.hasField())
-                .map(segment -> FieldDescription.topicField(segment.getSegementIndex(), segment.getFieldName()))
+                .map(segment -> FieldDescription.topicField(segment.getSegmentIndex(), segment.getFieldName()))
                 .collect( Collectors.toUnmodifiableMap(keyMapper -> keyMapper.getFieldName().getFullName(), value -> value));
     }
 
@@ -145,7 +145,7 @@ public class TopicStructure {
         private String segmentPattern = "";
         private String fieldName = "";
         
-        private List<String> allowedContent = null;
+        private final List<SegmentRestriction> allowedSegmentNames = new ArrayList<>();
 
         public TopicSegment(String raw, int index) {
             this.raw = raw;
@@ -157,7 +157,7 @@ public class TopicStructure {
             char last =' ';
             StringBuilder fieldNameStack = null;
             
-            PatternParser patternParser = new PatternParser();
+            SegmentPatternParser patternParser = new SegmentPatternParser(allowedSegmentNames);
             
             for(int t = 0, len = raw.length(); t < len; t++) {
                 char c = raw.charAt(t);
@@ -192,8 +192,6 @@ public class TopicStructure {
                 }
                 last = c;
             }
-            
-            allowedContent = patternParser.getData();
         }
 
         public String getSegmentPattern() {
@@ -204,7 +202,7 @@ public class TopicStructure {
             return fieldName;
         }
 
-        public int getSegementIndex() {
+        public int getSegmentIndex() {
             return segementIndex;
         }
         
@@ -213,25 +211,43 @@ public class TopicStructure {
         }
         
         public boolean isSegmentNameAllowed(String name) {
-            if (allowedContent == null || allowedContent.isEmpty()) {
+            if (allowedSegmentNames == null || allowedSegmentNames.isEmpty()) {
                 return true;
             }
-            return allowedContent.stream()
-                    .anyMatch(item -> item.equals(name));
+            return allowedSegmentNames.stream()
+                    .anyMatch(item -> item.getPattern().equals(name));
+        }
+        
+        public String getOverwrittenSegmentName(String origin) {
+            return allowedSegmentNames.stream()
+                    .filter(entry -> entry.hasOverwrittenName())
+                    .filter(entry -> entry.hasPattern())
+                    .filter(entry -> entry.getPattern().equals(origin))
+                    .findAny()
+                    .map(selected -> selected.getOverwrittenName().toString())
+                    .orElse(origin);
         }
         
     }
     
     
-    private static class PatternParser {
-        private boolean inSquareBraket = false;
-        private StringBuilder pattern = null;
-        private final List<String> data = new ArrayList<>();
+    private static class SegmentPatternParser {
 
-        public List<String> getData() {
+        private boolean inSquareBraket = false;
+        private boolean afterEqualSign = false;
+        private final List<SegmentRestriction> data;
+        
+        private StringBuilder patternBuffer = new StringBuilder();
+        private StringBuilder overwrittenNameBuffer = new StringBuilder();
+        
+        public SegmentPatternParser(java.util.List<SegmentRestriction> data) {
+            this.data = data;
+        }
+
+        public List<SegmentRestriction> getData() {
             return data;
         }
-        
+
         public void consume(char c) {
             if (inSquareBraket) {
                 if (c == ']') {
@@ -239,20 +255,61 @@ public class TopicStructure {
                     nextPattern();
                 } else if (c == ',') {
                     nextPattern();
-                    pattern = new StringBuilder();
+                    patternBuffer = new StringBuilder();
+                } else if (afterEqualSign) {
+                    overwrittenNameBuffer.append(c);
+                } else if (c == '=') {
+                    afterEqualSign = true;
+                    overwrittenNameBuffer = new StringBuilder();
                 } else if (c != ' ') {
-                    pattern.append(c);
+                    patternBuffer.append(c);
                 }
             } else if (c == '[') {
                 inSquareBraket = true;
-                pattern = new StringBuilder();
+                patternBuffer = new StringBuilder();
             }
         }
         
         private void nextPattern() {
-            if (!pattern.isEmpty()) {
-                data.add(pattern.toString().trim());
+            if (patternBuffer != null && !patternBuffer.isEmpty()) {
+                if (overwrittenNameBuffer != null && !overwrittenNameBuffer.isEmpty()) {
+                    data.add( new SegmentRestriction(patternBuffer.toString(), overwrittenNameBuffer.toString().trim()));
+                } else {
+                    data.add( new SegmentRestriction(patternBuffer.toString()));
+                }
             } 
+            afterEqualSign = false;
+            overwrittenNameBuffer = null;
+        }
+    }
+    
+    private static class SegmentRestriction {
+        private final String pattern;
+        private final String overwrittenName;
+
+        public SegmentRestriction(String pattern) {
+            this(pattern, "");
+        }
+        
+        public SegmentRestriction(String pattern, String overwrittenName) {
+            this.pattern = pattern;
+            this.overwrittenName = overwrittenName;
+        }
+        
+        public String getPattern() {
+            return pattern;
+        }
+
+        public String getOverwrittenName() {
+            return overwrittenName;
+        }
+
+        public boolean hasPattern() {
+            return !pattern.isEmpty();
+        }
+        
+        public boolean hasOverwrittenName() {
+            return !overwrittenName.isEmpty();
         }
     }
     

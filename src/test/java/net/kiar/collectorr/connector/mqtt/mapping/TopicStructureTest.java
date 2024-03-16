@@ -21,6 +21,7 @@ import net.kiar.collectorr.metrics.FieldDescription;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
@@ -148,7 +149,7 @@ public class TopicStructureTest {
     
     @Test
     public void testAllowedSegments() {
-        TopicStructure struct = TopicStructure.build("/start/{field-x}[a, b,cc]/");
+        TopicStructure struct = TopicStructure.build("/start/{field-x}[a, b=xyz,cc]/");
 
         TopicStructure.TopicSegment segment = struct.getSegment(2);
         assertTrue(segment.isSegmentNameAllowed("a"));
@@ -172,6 +173,18 @@ public class TopicStructureTest {
         assertTrue(segment.isSegmentNameAllowed(""));
         assertTrue(segment.isSegmentNameAllowed(null));
         assertTrue(segment.isSegmentNameAllowed("xyz"));
+    }
+    
+    @Test
+    public void testSegmentOverwrite() {
+        TopicStructure struct = TopicStructure.build("/start/{field}[a,b=neu  ,c]/");
+
+        TopicStructure.TopicSegment segment = struct.getSegment(2);
+        assertEquals("a", segment.getOverwrittenSegmentName("a"));
+        assertEquals("neu", segment.getOverwrittenSegmentName("b"));
+        assertEquals("c", segment.getOverwrittenSegmentName("c"));
+        assertEquals("something", segment.getOverwrittenSegmentName("something"));
+        assertNull(segment.getOverwrittenSegmentName(null));
     }
     
 }

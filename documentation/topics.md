@@ -47,7 +47,7 @@ would match several topics. For instance:
 If you need the different parts 
 
 
-#### Matching
+#### Segment Matching
 
 For some cases only a subset of all topics should be used. In such cases the following 
 syntax is used
@@ -55,4 +55,15 @@ syntax is used
     myhome/groundfloor/{roomName}[kitchen, bathroom]/temperature
 
 This selects only the topics for `kitchen` and `bathroom`. This feature works currently 
-only in combination with placeholders.
+only in combination with placeholders. Here named as _roomName_. This placeholder can used
+for names or labels.
+
+##### Overwrite Segments
+
+In combination with Segment Matching, the segment content can be overwritten. 
+
+    N/c8352fe69703/system/+/Ac/Out/{phase}[L1,L2,L3]/{type}[Current=amperage,Power=power]
+
+At topic segment 7 only _Current_ and _Power_ are allowed. All incoming topic with other values are ignored.
+In addition, the actual content is overwritten. In the example, _Current_ is given as _amperage_.
+

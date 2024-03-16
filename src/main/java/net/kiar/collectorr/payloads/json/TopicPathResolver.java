@@ -29,11 +29,13 @@ public class TopicPathResolver implements PayloadResolver {
                 if (p != null) {
                     TopicStructure.TopicSegment segment = topicStructure.getSegment(t);
                     if (segment != null) {
-                        if (!segment.isSegmentNameAllowed(p)) {
+                        if (segment.isSegmentNameAllowed(p)) {
+                            String fieldName = segment.getFieldName();
+                            data.add(new PayloadDataNode( 
+                                    new FieldName(fieldName), segment.getOverwrittenSegmentName(p)));
+                        } else {
                             excluded = true;
-                        } 
-                        String fieldName = segment.getFieldName();
-                        data.add(new PayloadDataNode( new FieldName(fieldName), p));
+                        }
                     } else {
                         data.add(new PayloadDataNode( new FieldName(""), p));
                     }

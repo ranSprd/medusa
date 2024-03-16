@@ -49,4 +49,12 @@ public class TopicPathResolverTest {
         assertTrue(new TopicPathResolver("/first/x/second", struct).isExcluded());
     }
     
+    @Test
+    public void testSegmentSelected() {
+        TopicStructure struct = TopicStructure.build("N/id/vebus/276/{direction}/0/{sourceType}[Power=power,Current=amperage, Voltage=voltage]");
+        
+        assertFalse(new TopicPathResolver("N/id/vebus/276/ac/0/Power",struct).isExcluded());
+        assertFalse(new TopicPathResolver("N/id/vebus/276/ac/0/Current",struct).isExcluded());
+        assertFalse(new TopicPathResolver("N/id/vebus/276/ac/0/Voltage",struct).isExcluded());
+    }
 }
