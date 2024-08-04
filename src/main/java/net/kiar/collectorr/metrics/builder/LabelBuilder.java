@@ -53,6 +53,7 @@ public class LabelBuilder {
         if (givenConfig != null && givenConfig.hasValueMappings()) {
             return givenConfig.getValueMappings().values().stream()
                     .flatMap(fieldValueMap -> fieldValueMap.values().stream())
+                    .filter(Objects::nonNull)
                     .flatMap(pairs -> pairs.keySet().stream())
                     .distinct()
                     .collect(Collectors.toSet());

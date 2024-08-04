@@ -64,8 +64,10 @@ public class FieldValueMappings {
             list = new ArrayList<>();
             targetFieldValues.put(sourceValue, list);
         }
-        for(Map.Entry<String, String> entry : targetMapping.entrySet()) {
-            list.add( new FieldMappingContent(entry.getKey(), entry.getValue()));
+        if (targetMapping != null) {
+            for(Map.Entry<String, String> entry : targetMapping.entrySet()) {
+                list.add( new FieldMappingContent(entry.getKey(), entry.getValue()));
+            }
         }
     }
     
