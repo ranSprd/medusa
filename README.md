@@ -27,7 +27,7 @@ The default port of the appilcation is 8085. After startup the following resourc
 are available:
 
 - prometheus endpoint with collected metrics http://localhost:8085/metrics
-- a list of received but not processed metrics http://localhost:8085/topics/unprocessed
+- a list of received but not processed metrics http://localhost:8085/connectors/{connector-name}/unprocessed
   for each entry you see the received count (means, how often a message came in) and a
   possible list of values and labels. The values are important, because these are good
   candidates for metric values.
@@ -115,7 +115,7 @@ Instead of define 3 mappings you can use a placeholder in your metric name
       - valueField: value
         name: "{phase}_data"
 
-In this case we use a reference to to label *phase* which comes from our topic. 
+In this case we use a reference to a label *phase* which comes from our topic. 
 Another option is to use the index of the topic segment. For instance '#5' for our case (counter starts at 0).
 
     - topic: N/c0678ab49344/system/+/Ac/{phase}
