@@ -13,16 +13,7 @@ import org.slf4j.LoggerFactory;
 public class MappingConfiguration {
     private static final Logger log = LoggerFactory.getLogger(MappingConfiguration.class);
     
-    private BaseConfig generic;
     private List<TopicConfig> topics = new ArrayList<>();
-
-    public BaseConfig getGeneric() {
-        return generic;
-    }
-
-    public void setGeneric(BaseConfig generic) {
-        this.generic = generic;
-    }
 
     public List<TopicConfig> getTopics() {
         return topics;
