@@ -28,7 +28,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
     <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
-    <quarkus.platform.version>3.7.2</quarkus.platform.version>
+    <quarkus.platform.version>3.12.2</quarkus.platform.version>
     <skipITs>true</skipITs>
     <surefire-plugin.version>3.2.3</surefire-plugin.version>
   </properties>
@@ -80,7 +80,7 @@
     <dependency>
       <groupId>org.eclipse.paho</groupId>
       <artifactId>org.eclipse.paho.client.mqttv3</artifactId>
-      <version>1.1.0</version>
+      <version>1.2.5</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.dataformat</groupId>
@@ -138,15 +138,6 @@
                   <include>**/application.yaml</include>
                   <include>**/buildnumber</include>
               </includes>
-          </resource>
-          <resource>
-              <directory>src/main/resources</directory>
-              <filtering>false</filtering>
-              <excludes>
-                  <exclude>**/index.html</exclude>
-                  <exclude>**/applcation.yaml</exclude>
-                  <exclude>**/buildnumber</exclude>
-              </excludes>
           </resource>
       </resources>      
       
@@ -207,7 +198,7 @@
       <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>buildnumber-maven-plugin</artifactId>
-          <version>3.1.0</version>
+          <version>3.2.0</version>
           <executions>
               <execution>
                   <phase>validate</phase>
