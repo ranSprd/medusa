@@ -34,7 +34,7 @@ public class ConnectorsConfigLoader {
             File workingDir = new File(".");
             log.info("looking for configuration in folger {}", workingDir.getCanonicalPath());
 //            log.debug(" scan folders \n{}", getAllFiles(workingDir, null, " ").toString());
-            log.info("read topic mappings from {}", configFileName);
+            log.info("read connectors config from {}", configFileName);
             String content = Files.readString( Path.of(configFileName));
             return readContent(content);
         } catch (Exception e) {

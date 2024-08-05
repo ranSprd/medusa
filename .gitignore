@@ -43,3 +43,9 @@ nb-configuration.xml
 /.quarkus/cli/plugins/
 /config/topic-mappings.yaml
 /src/test/resources/mqtt/topics.txt
+/config/victron-mappings.yaml
+/config/weather.yaml
+/config/connectors.yaml
+/config/tasmota.yml
+/config/comfoair.yaml
+/config/buderus.yaml

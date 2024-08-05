@@ -16,6 +16,7 @@
 package net.kiar.collectorr.config.model.connectors;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.List;
 
 /**
  *
@@ -31,6 +32,9 @@ public class MqttConnectorConfig {
     
     @JsonProperty("mapping-file")
     private String mappingConfigFile;
+    
+    @JsonProperty("mapping-files")
+    private List<String> mappingConfigFiles;
     
     /**
      * Optional: subscripe to the given topic. If empty the topic is set to #
@@ -63,6 +67,18 @@ public class MqttConnectorConfig {
         this.mappingConfigFile = mappingConfigFile;
     }
 
+    public List<String> getMappingConfigFiles() {
+        return mappingConfigFiles;
+    }
+
+    public void setMappingConfigFiles(List<String> mappingConfigFiles) {
+        this.mappingConfigFiles = mappingConfigFiles;
+    }
+    
+    public boolean hasMappingConfigFiles() {
+        return (mappingConfigFiles != null && !mappingConfigFiles.isEmpty());
+    }
+    
     public String getRootTopic() {
         return rootTopic;
     }

@@ -2,6 +2,7 @@ package net.kiar.collectorr.config.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,6 +27,18 @@ public class MappingConfiguration {
         } else {
             this.topics = topics;
         }
+    }
+    
+    
+    /** 
+     * Find a topic whereby the mqtt wildcards (+, #) are ignored. 
+     * @param topic
+     * @return 
+     */
+    public Optional<TopicConfig> findTopic(String topic) {
+        return topics.stream()
+                .filter(t -> topic.equals(t.getTopic()))
+                .findAny();
     }
     
     

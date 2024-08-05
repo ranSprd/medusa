@@ -151,17 +151,19 @@ public class ConnectorFactory {
                 failed = true;
                 return this;
             }
-
-            String mappingFile = mqttConnectorConfig.getMappingConfigFile();
-            if (mappingFile == null || mappingFile.isBlank()) {
-                log.warn(" {} - no configuration file for mapping 'topic to metric' defined. No topics will be observed.", connectorName);
+            
+            if (mqttConnectorConfig.hasMappingConfigFiles()) {
+                mappingConf = MappingsConfigLoader.readFiles( mqttConnectorConfig.getMappingConfigFiles());
+                log.info(" {} - loaded {} configured topics from {} files.", connectorName, 
+                        mappingConf.getNumberOfTopics(), mqttConnectorConfig.getMappingConfigFiles().size());
+            } else {
+                String mappingFile = mqttConnectorConfig.getMappingConfigFile();
+                mappingConf = MappingsConfigLoader.readFromFile(connectorName, mappingFile);
+                log.info(" {} - file [{}] with mqtt procssing config read, found {} configured topics", 
+                        connectorName, mappingFile, mappingConf.getNumberOfTopics());
             }
-    //        ConfigLoader conf = ConfigLoader.readFromFile("src/test/resources/example-config01.yaml");
-            mappingConf = MappingsConfigLoader.readFromFile(mappingFile);
+                
             RuntimeData.registerConfig(connectorName, mappingConf);
-
-            log.info(" {} - file [{}] with mqtt procssing config read, found {} configured topics", 
-                    connectorName, mappingFile, mappingConf.getNumberOfTopics());
 
             try {
                 // Create an Mqtt client

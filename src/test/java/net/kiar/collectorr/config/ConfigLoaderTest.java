@@ -21,7 +21,7 @@ public class ConfigLoaderTest {
     @Test
     public void testLoading() throws FileNotFoundException {
 
-        MappingsConfigLoader conf = MappingsConfigLoader.readFromFile("src/test/resources/example-config01.yaml");
+        MappingsConfigLoader conf = MappingsConfigLoader.readFromFile("testcase", "src/test/resources/example-config01.yaml");
         
         assertNotNull(conf);
         
@@ -39,7 +39,22 @@ public class ConfigLoaderTest {
 //        }
     }
     
+    @Test
+    public void testInvalidInput() {
+        checkInput(null);
+        checkInput("");
+        checkInput("   ");
+        checkInput("   topics: ");
+        checkInput("   topics: blank"); // prints a warning but catched correctly
+    }
+
+    private void checkInput(String input) {
+        MappingsConfigLoader r2 = MappingsConfigLoader.readContent(input);
+        assertNotNull(r2);
+        assertEquals(0, r2.getNumberOfTopics());
+    }
     
+    @Test
     public void testReading() {
         MappingsConfigLoader conf = MappingsConfigLoader.readContent("""
 topics:
