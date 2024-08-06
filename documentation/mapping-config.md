@@ -69,8 +69,9 @@ Some payload can contain arrays, for instance
                 }]
     }
 
-Additionally all fields are json strings. Aus diesem Grund werden keine Wertefelder erkannt.
-Die Felder werden beim Lesen folgenden Schlüsseln zugeordnet
+Additionally all fields in this sample payload are json strings. For this reason, 
+no value fields are automatically detected. But the fields are assigned to the 
+following keys and available as *labels* when read.
 
     common_list.#0.id
     common_list.#0.val
@@ -82,16 +83,22 @@ Die Felder werden beim Lesen folgenden Schlüsseln zugeordnet
     common_list.#2.id
     ...
 
-#### Zugriff über Feldindex
+If a metric is to be created from these fields, the names must be specified as
+**valueField**. There are two ways to do this.
+
+#### Access via field index
 
     metrics:
     - valueField: "common_list.#1.val"
 
-#### Zugriff mit Wildcard
+This access is unique and references exactly one value, i.e. a single metric is generated.
+
+#### Access with Wildcard
 
     metrics:
     - valueField: "common_list.*.val"
 
+This access references all items of the array. It generates multiples metrics. 
 
 
 ## metric types

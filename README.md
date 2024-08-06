@@ -23,7 +23,7 @@ configure your running prometheus to read all metrics from there.
 
 ### endpoints
 
-The default port of the appilcation is 8085. After startup the following resources
+The *default port* of the appilcation is *8085*. After startup the following resources
 are available:
 
 - prometheus endpoint with collected metrics http://localhost:8085/metrics
@@ -42,6 +42,7 @@ are available:
 Medusa is shipped with a docker configuration. The easiest way is to build and 
 start with docker. Build the image with:
 
+    mvn install
     docker build -f src/main/docker/Dockerfile.jvm -t quarkus/medusa-jvm .
 
 Then run the container using:
@@ -56,7 +57,7 @@ of 'config/quickstart-connectors.yaml' file
 
         mqtt-brokers:
         - name: central
-          url: tcp://192.168.1.2:1883
+          url: tcp://192.168.1.1:1883
           mapping-file: config/quickstart-topic-mappings.yaml
 
 This creates a new connector named *central* connected to a local mqtt broker. 
@@ -79,7 +80,7 @@ defined as *mapping-file* in *config/connectors.yaml*
 Here is a short example of a mapping for a topic. It contains placeholder and therefor it 
 can handle several topics.
 
-    # /home/kitchen/ESP8266-1076281
+    # something like /home/kitchen/ESP8266-1076281
     - topic: /home/{place}/ESP8266-{deviceId}
       metrics:
       - valueField: freeheap
@@ -90,7 +91,12 @@ In short all topics of the following format are catched */home/+/ESP-8266-+*
 If the payload contains a field *feeheap* with a valid numeric value, a metric is 
 generated. It can be found as *devices_free_heap* (name) and can be picked up by prometheus under 
 the default metrics endpoint. Furthermore the metric is enriched with the labels *place* and *deviceId*. 
-Both fields are part of the topic path.
+Both fields are part of the topic path. For the definition above a sample reported under
+http://localhost:8085/metrics could be:
+
+    # HELP devices_free_heap from /home/kitchen/ESP8266-1076281
+    # TYPE devices_free_heap gauge
+    devices_free_heap{place="kitchen",deviceId="ESP8266-1076281"} 6134.0 1722864669676
 
 ### more detailed configuration examples 
 
