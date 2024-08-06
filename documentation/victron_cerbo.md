@@ -10,7 +10,7 @@ default 1883 port. You can check it on command line (mosquitto toolset)
 
         mosquitto_sub -h 192.168.2.228 -t \# -d
 
-wheryby 192.168.2.228 is my internal IP adress. You should see messages like:
+wheryby 192.168.2.228 is my internal IP adress of the victron device. You should see messages like:
 
         Client null sending CONNECT
         Client null received CONNACK (0)
@@ -73,13 +73,21 @@ A short mapping file (*config/cerbo-mappings.yaml*) can look like:
         labels: [sourceType, type, value]
         name: "{phase}_power"
 
-In a system with 3 line conductors (L1, L2, L3) you will see multiple metrics named
+In a system with 3 line conductors (L1, L2, L3) you will see multiple metrics (under the prometheus /metrics endpoint) named
 
 - L1_power
 - L2_power
 - L3_power
 
+In more detail, for L1 several metrics (with different labels) are generated
 
-
-
+    # HELP L1_power from N/c0719ba04388/system/+/Ac/{sourceType}/{phase}[L1,L2,L3]/{type}[Current=amperage,Power=power]
+    # TYPE L1_power gauge
+    L1_power{sourceType="ConsumptionOnInput"} 0.0 1722921836038
+    L1_power{sourceType="Consumption"} 26.0 1722921836038
+    L1_power{sourceType="Grid"} -8.4 1722921836038
+    L1_power{device="Multiplus",sourceType="ActiveIn"} 20.0 1722921836038
+    L1_power{device="Multiplus",sourceType="Out"} 26.0 1722921836038
+    L1_power{sourceType="ActiveIn"} -8.4 1722921836038
+    L1_power{sourceType="ConsumptionOnOutput"} 26.0 1722921836038
 

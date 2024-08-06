@@ -2,9 +2,6 @@
 
 ## Simple structure
 
-    generic:
-      name: "collectorr"
-    
     topics:   
     - topic: tele/tasmota/meter/SENSOR
     - topic: foo/bar/blub
@@ -35,6 +32,20 @@ added to prometheus metric entry.
       - valueField: value
         labels: [label-1=fixed, label-2, label-3=overwritten]
 
+The above definition produces at least 2 labels. The label _**label-1**_ always has the content _fixed_
+while the _**label-3**_ always has the content _overwritten_. If _**label-2**_ has a value in the payload
+a 3rd label with this value is added.
+
+An output could look like this:
+
+    # HELP foo_bar_blub_value 
+    # TYPE foo_bar_blub_value gauge
+    foo_bar_blub_value[label-1="fixed",label-3="overwritten"] 122.0 1722921836039
+
+Note: In that configuration no metric is set. By default the name of the metric is generated
+from the value field name an the topic. 
+
+The following configuration shows how to exclude a label. 
 
     topics:
     - topic: foo/bar/blub
