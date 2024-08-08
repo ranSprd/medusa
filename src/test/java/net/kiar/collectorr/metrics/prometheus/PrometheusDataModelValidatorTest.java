@@ -16,6 +16,7 @@
 package net.kiar.collectorr.metrics.prometheus;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -50,6 +51,13 @@ public class PrometheusDataModelValidatorTest {
         
         assertEquals("valid", PrometheusDataModelValidator.fixLabelName("valid"));
         
+    }
+    
+    @Test
+    public void testFixLabelValue() {
+        assertNull(PrometheusDataModelValidator.fixLabelValue(null));
+        assertEquals(" ", PrometheusDataModelValidator.fixLabelValue(" "));
+        assertEquals("Couch", PrometheusDataModelValidator.fixLabelValue("\"Couch\""));
     }
     
 }

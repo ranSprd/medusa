@@ -94,4 +94,11 @@ public class PrometheusDataModelValidator {
         return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
     }
     
+    public static String fixLabelValue(String str) {
+        if (str != null) {
+            return str.replaceAll("\"", "");
+        }
+        return null;
+    }
+    
 }

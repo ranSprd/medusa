@@ -191,7 +191,8 @@ public class PrometheusCounterGauge {
                     builder.append(",");
                 }
                 
-                builder.append(getValidLabelName(metricDefinition.resolveLabelName(labelValue.key))).append("=\"").append(labelValue.value).append("\"");
+                builder.append(getValidLabelName(metricDefinition.resolveLabelName(labelValue.key)))
+                       .append("=\"").append(labelValue.value).append("\"");
                 addComma = true;
             }
             builder.append("}");
@@ -222,7 +223,7 @@ public class PrometheusCounterGauge {
         }
 
         public void setValue(String value) {
-            this.value = value;
+            this.value = PrometheusDataModelValidator.fixLabelValue(value);
         }
     }
 }
