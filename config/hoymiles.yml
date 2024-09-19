@@ -1,0 +1,12 @@
+
+
+#########################################################################################
+## Hoymiles - PV inverter
+#########################################################################################
+topics:
+- topic: solar/{inverterId}/0/{field}[power, temperature, yieldday, yieldtotal, powerfactor]
+  metrics:
+  - labels: [inverterId]
+    name: "inverter_{field}"
+
+

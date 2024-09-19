@@ -15,6 +15,7 @@
  */
 package net.kiar.collectorr.payloads.json;
 
+import net.kiar.collectorr.payloads.plain.TopicPathResolver;
 import java.util.Optional;
 import net.kiar.collectorr.connector.mqtt.mapping.TopicStructure;
 import net.kiar.collectorr.payloads.PayloadDataNode;

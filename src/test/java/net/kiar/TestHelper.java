@@ -41,16 +41,19 @@ public class TestHelper {
      * @return
      * @throws IOException 
      */
-    public static Result buildAndProcessFirst(String mappingConfiguration, String topicPath, String payloadfile) throws IOException {
-//        MappingsConfigLoader conf = MappingsConfigLoader.readFromFile("src/test/resources/http/ecowitt-mappings.yaml");
+    public static Result buildAndProcessFirstFromFile(String mappingConfiguration, String topicPath, String payloadfile) throws IOException {
+
+        String message = Files.readString( Paths.get( payloadfile));
+        return buildAndProcessFirstWithPayload(mappingConfiguration, topicPath, message);
+    }
+    
+    public static Result buildAndProcessFirstWithPayload(String mappingConfiguration, String topicPath, String payload) throws IOException {
         MappingsConfigLoader conf = MappingsConfigLoader.readContent(mappingConfiguration);
         
         TopicConfig topicToTest = conf.getTopicsToObserve().get(0);
         TopicCache topicCache = TopicCache.buildTopicPattern(topicToTest).get();
         
-        String message = Files.readString( Paths.get( payloadfile));
-        
-        List<PrometheusCounterGauge> result = topicCache.getTopicProcessor().consumeMessage(message, topicPath);
+        List<PrometheusCounterGauge> result = topicCache.getTopicProcessor().consumeMessage(payload, topicPath);
         return new Result(result, topicCache);
     }
     

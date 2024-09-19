@@ -25,7 +25,7 @@ import static net.kiar.collectorr.metrics.FieldSourceType.PAYLOAD;
 import static net.kiar.collectorr.metrics.FieldSourceType.TOPIC;
 import net.kiar.collectorr.metrics.FieldValueMappings;
 import net.kiar.collectorr.metrics.MetricDefinition;
-import net.kiar.collectorr.payloads.json.TopicPathResolver;
+import net.kiar.collectorr.payloads.plain.TopicPathResolver;
 
 /**
  *

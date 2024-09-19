@@ -13,8 +13,8 @@ import net.kiar.collectorr.metrics.PrometheusCounterGauge;
 import net.kiar.collectorr.metrics.builder.TopicMetricsFactory;
 import net.kiar.collectorr.payloads.PayloadDataNode;
 import net.kiar.collectorr.payloads.PayloadResolver;
-import net.kiar.collectorr.payloads.json.JsonResolver;
-import net.kiar.collectorr.payloads.json.TopicPathResolver;
+import net.kiar.collectorr.payloads.PayloadResolverFactory;
+import net.kiar.collectorr.payloads.plain.TopicPathResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,7 +60,7 @@ public class TopicProcessor {
      * @return a list of metrics (including labels and samples)
      */
     public List<PrometheusCounterGauge> consumeMessage(String messagePayload, String topic) {
-        PayloadResolver payloadResolver = JsonResolver.consume(messagePayload);
+        PayloadResolver payloadResolver = PayloadResolverFactory.build(messagePayload);
 
         if (invalid) {
             log.debug("topic is marked as invalid, skip processing");

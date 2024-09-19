@@ -8,7 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 import net.kiar.collectorr.metrics.PrometheusCounterGauge;
 import net.kiar.collectorr.payloads.PayloadResolver;
-import net.kiar.collectorr.payloads.json.JsonResolver;
+import net.kiar.collectorr.payloads.PayloadResolverFactory;
 
 /**
  *
@@ -116,7 +116,7 @@ public class MqttTopicStats {
 
         public UnknownTopicStatistic(String topic, String messagePayload) {
             this.topic = topic;
-            PayloadResolver payloadResolver = JsonResolver.consume(messagePayload);
+            PayloadResolver payloadResolver = PayloadResolverFactory.build(messagePayload);
             detectedLabels = payloadResolver.getLabelNamesAsString();
             detectedValues = payloadResolver.getValueNamesAsString();
         }

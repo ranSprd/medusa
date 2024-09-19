@@ -1,4 +1,4 @@
-package net.kiar.collectorr.payloads.json;
+package net.kiar.collectorr.payloads.plain;
 
 import java.util.ArrayList;
 import java.util.List;

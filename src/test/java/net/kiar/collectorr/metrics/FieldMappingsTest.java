@@ -51,7 +51,7 @@ topics:
     @Test
     public void testCorrectLabelType() throws IOException {
         
-        TestHelper.Result result = TestHelper.buildAndProcessFirst(configWithMapping, "/topic/to/test", "src/test/resources/mqtt/payloads/fieldMappingPayload1.json");
+        TestHelper.Result result = TestHelper.buildAndProcessFirstFromFile(configWithMapping, "/topic/to/test", "src/test/resources/mqtt/payloads/fieldMappingPayload1.json");
         assertNotNull(result.topicCache());
         
         Optional<PrometheusCounterGauge> anyGauge = result.metrics().stream()
@@ -95,7 +95,7 @@ topics:
     
     @Test
     public void testSourceFieldIsNotPartOfMetricLabels() throws IOException {
-        TestHelper.Result result = TestHelper.buildAndProcessFirst(configWithMapping2, "/topic/to/test", "src/test/resources/mqtt/payloads/fieldMappingPayload1.json");
+        TestHelper.Result result = TestHelper.buildAndProcessFirstFromFile(configWithMapping2, "/topic/to/test", "src/test/resources/mqtt/payloads/fieldMappingPayload1.json");
         assertNotNull(result.topicCache());
         
         Optional<PrometheusCounterGauge> anyGauge = result.metrics().stream()

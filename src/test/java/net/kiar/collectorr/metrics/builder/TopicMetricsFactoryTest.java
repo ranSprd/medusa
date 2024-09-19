@@ -11,7 +11,7 @@ import net.kiar.collectorr.metrics.FieldSourceType;
 import net.kiar.collectorr.metrics.MetricDefinition;
 import net.kiar.collectorr.metrics.MetricType;
 import net.kiar.collectorr.payloads.PayloadResolver;
-import net.kiar.collectorr.payloads.json.JsonResolver;
+import net.kiar.collectorr.payloads.PayloadResolverFactory;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import org.mockito.Mockito;
@@ -62,7 +62,7 @@ topics:
                              { "temp" : 12, "outdoor" : true, "place" : "roof" } 
         """;
         
-        PayloadResolver payloadResolver = JsonResolver.consume(jsonPayload);
+        PayloadResolver payloadResolver = PayloadResolverFactory.build(jsonPayload);
         
         List<MetricDefinition> metrics = TopicMetricsFactory.INSTANCE.buildMetric(payloadResolver, topicPath, topicToTest, TopicStructure.build(topicPath));
         
@@ -95,7 +95,7 @@ topics:
                              { "temp" : 12, "outdoor" : true, "place" : "roof" } 
         """;
         
-        PayloadResolver payloadResolver = JsonResolver.consume(jsonPayload);
+        PayloadResolver payloadResolver = PayloadResolverFactory.build(jsonPayload);
         
         List<MetricDefinition> metrics = TopicMetricsFactory.INSTANCE.buildMetric(payloadResolver, topicPath, topicToTest, TopicStructure.build(topicPath));
         
@@ -182,7 +182,7 @@ topics:
                              { "strField" : "12", "outdoor" : "yes", "place" : "roof" } 
         """;
         
-        PayloadResolver payloadResolver = JsonResolver.consume(jsonPayload);
+        PayloadResolver payloadResolver = PayloadResolverFactory.build(jsonPayload);
         
         
         List<MetricDefinition> metrics = TopicMetricsFactory.INSTANCE.buildMetric(payloadResolver, topicPath, topicToTest, TopicStructure.build("topic/{label-1}"));

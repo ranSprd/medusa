@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
 import net.kiar.collectorr.metrics.FieldDescription;
 import net.kiar.collectorr.payloads.PayloadDataNode;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -21,7 +22,7 @@ public class JsonResolverTest {
     @Test
     public void testConsume() {
 
-        JsonResolver instance = JsonResolver.consume("{ \"freeheap\" : 47360, \"cpuSpeed\" : 80}");
+        JsonResolver instance = JsonResolver.consume("{ \"freeheap\" : 47360, \"cpuSpeed\" : 80}").get();
         assertNotNull(instance);
         assertNotNull(instance.getLabelNamesAsString());
         assertNotNull(instance.getLabelNodes());
@@ -38,7 +39,7 @@ public class JsonResolverTest {
     public void testFileLoading() throws IOException {
 
         JsonResolver instance = JsonResolver.consume(
-                Files.readString(Path.of("src/test/resources/mqtt/payloads/shellyPlus.json")));
+                Files.readString(Path.of("src/test/resources/mqtt/payloads/shellyPlus.json"))).get();
         assertNotNull(instance);
     }
 
@@ -46,7 +47,7 @@ public class JsonResolverTest {
     public void testReadEmbeddedObjects() throws IOException {
 
         JsonResolver instance = JsonResolver.consume(
-                Files.readString(Path.of("src/test/resources/mqtt/payloads/shellyMotion-status01.json")));
+                Files.readString(Path.of("src/test/resources/mqtt/payloads/shellyMotion-status01.json"))).get();
         assertNotNull(instance);
         assertEquals(4, instance.getValueNodes().size());
         assertEquals(1, instance.findNodes(new FieldDescription("tmp.value")).size());
@@ -54,16 +55,32 @@ public class JsonResolverTest {
     }
 
     @Test
+    public void testPlainNumberInput() throws IOException {
+
+        Optional<JsonResolver> instance42 = JsonResolver.consume("42.0");
+        assertNotNull(instance42);
+        assertTrue(instance42.isPresent());
+        assertEquals("42.0", instance42.get().getValueNodes().getFirst().value());
+
+//        Optional<JsonResolver> instanceBlank = JsonResolver.consume("   ");
+//        assertNotNull(instanceBlank);
+//        assertTrue(instanceBlank.isEmpty());
+    }
+    
+    @Test
     public void testInvalidInput() throws IOException {
 
-        JsonResolver instanceNull = JsonResolver.consume(null);
+        Optional<JsonResolver> instanceNull = JsonResolver.consume(null);
         assertNotNull(instanceNull);
+        assertTrue(instanceNull.isEmpty());
 
-        JsonResolver instanceBlank = JsonResolver.consume("   ");
+        Optional<JsonResolver> instanceBlank = JsonResolver.consume("   ");
         assertNotNull(instanceBlank);
+        assertTrue(instanceBlank.isEmpty());
 
-        JsonResolver instanceInvalidJson = JsonResolver.consume(" { 'foo'  ");
+        Optional<JsonResolver> instanceInvalidJson = JsonResolver.consume(" { 'foo'  ");
         assertNotNull(instanceInvalidJson);
+        assertTrue(instanceInvalidJson.isEmpty());
     }
 
     @Test
@@ -83,7 +100,7 @@ public class JsonResolverTest {
 
     @Test
     public void testFindNodes() {
-        JsonResolver resolver = JsonResolver.consume("{ \"foo\": [{ \"item\" : \"1\"}, { \"item\" : \"2\", \"other\" : \"2\"}], \"item\" : \"3\" }");
+        JsonResolver resolver = JsonResolver.consume("{ \"foo\": [{ \"item\" : \"1\"}, { \"item\" : \"2\", \"other\" : \"2\"}], \"item\" : \"3\" }").get();
         List<PayloadDataNode> result = resolver.findNodes(new FieldDescription("foo.*.item"));
 
         assertEquals(2, result.size());

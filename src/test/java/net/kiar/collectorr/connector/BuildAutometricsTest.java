@@ -72,7 +72,7 @@ topics:
 """;
     @Test
     public void testNoLabelsFromOuterLevel() throws IOException {
-        TestHelper.Result result = TestHelper.buildAndProcessFirst(configWithIntern, 
+        TestHelper.Result result = TestHelper.buildAndProcessFirstFromFile(configWithIntern, 
                 "/home/heizung/comfoconnect/sensors", 
                 "src/test/resources/mqtt/payloads/comfoconnect01.json");
         
@@ -82,6 +82,26 @@ topics:
         System.out.println( anyGauge.toMetricString());
         assertEquals(1, anyGauge.getNumberOfLabels());
         
+    }
+    
+    
+    private final String configPlain = """
+topics:
+- topic: solar/{inverterId}/0/{field}
+
+""";
+    @Test
+    public void testWithPlainPayload() throws IOException {
+        TestHelper.Result result = TestHelper.buildAndProcessFirstWithPayload(configPlain, 
+                "solar/ID-123/0/power", 
+                "42.0");
+        
+        assertFalse(result.metrics().isEmpty());
+        PrometheusCounterGauge anyGauge = result.metrics().get(0);
+        
+        System.out.println( anyGauge.toMetricString());
+        assertEquals(0, anyGauge.getNumberOfLabels());
+        assertEquals(42.0, anyGauge.getValue());
     }
     
     
