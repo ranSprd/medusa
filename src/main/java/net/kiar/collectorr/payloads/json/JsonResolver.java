@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 public class JsonResolver extends ResolvedData {
     private static final Logger log = LoggerFactory.getLogger(JsonResolver.class);
     
+    // @todo vielleicht die Factory verwenden?
     private static final ObjectMapper mapper = new ObjectMapper();
     static {
         mapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);

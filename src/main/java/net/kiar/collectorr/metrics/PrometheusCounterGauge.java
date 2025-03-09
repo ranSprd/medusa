@@ -63,6 +63,24 @@ public class PrometheusCounterGauge {
     }
     
     /**
+     * Prüft die Metrik und gibt true zurück, wenn diese reportfähig, d.h. 
+     * von Prometheus konsumiert werden kann.
+     * Es gibt folgende Möglichkeiten:
+     * - Metrik wurde "in letzter Zeit" geupdated, happy path, dann ist die Rückgabe true
+     * - Metrik wurde lange nicht geändert:
+     * -- entweder die Methode liefert false zurück, damit gibt es keine Daten für Prometheus
+     * -- oder die Methode liefert true aber der Wert der Metrik wird z.B. auf 0 gesetzt
+     * @return 
+     */
+    public boolean validateAndAdjust() {
+        long notUpdatedMinutes = (System.currentTimeMillis() - millisTimestamp) / 60000;
+        if (notUpdatedMinutes > 15) {
+            return false;
+        }
+        return true;        
+    }
+    
+    /**
      * set the value. The logic tries to get the first numerical value from that string
      * @param stringValue
      */
@@ -104,7 +122,7 @@ public class PrometheusCounterGauge {
     }
     
     /**
-     * update the timestamp smaple value with the current system time
+     * update the timestamp sample value with the current system time
      */
     public void updateMillisTimestamp() {
         this.millisTimestamp = System.currentTimeMillis();
