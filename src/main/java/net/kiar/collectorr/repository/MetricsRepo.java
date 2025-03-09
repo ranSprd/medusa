@@ -37,6 +37,7 @@ public enum MetricsRepo {
     
     public Map<String, List<PrometheusCounterGauge>> sortedData() {
         Map<String, List<PrometheusCounterGauge>> grouped = data.values().stream()
+                .filter(gauge -> gauge.validateAndAdjust())
                 .collect(Collectors.groupingBy(PrometheusCounterGauge::getName, Collectors.toList() ));
         
         return new TreeMap<>( grouped);
